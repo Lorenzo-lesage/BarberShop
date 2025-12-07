@@ -22,7 +22,6 @@ export default function Authenticated({
     */
 
     const { auth, flash } = usePage<AuthProps>().props;
-
     const user = auth.user;
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
