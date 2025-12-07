@@ -1,4 +1,4 @@
-import { SignupForm } from '@/components/signup-form';
+import { SignupForm } from '@/components/auth/signup-form';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head } from '@inertiajs/react';
 

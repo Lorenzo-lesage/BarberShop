@@ -1,5 +1,7 @@
-// Hooks
-import { useTheme } from '@/hooks/useTheme';
+import { useEffect } from 'react';
+
+// Stores
+import { useThemeStore } from '@/stores/themeStores';
 
 // Libraries
 import { AnimatePresence, motion } from 'framer-motion';
@@ -8,7 +10,29 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Moon, Sun } from 'lucide-react';
 
 export default function ThemeSwitcher() {
-    const { theme, toggleTheme } = useTheme();
+    /*
+    |----------------------------------------------------------------
+    | Data
+    |----------------------------------------------------------------
+    */
+
+    const theme = useThemeStore((state) => state.theme);
+    const toggleTheme = useThemeStore((state) => state.toggleTheme);
+
+    useEffect(() => {
+        const root = window.document.documentElement;
+        if (theme === 'dark') {
+            root.classList.add('dark');
+        } else {
+            root.classList.remove('dark');
+        }
+    }, [theme]);
+
+    /*
+    |----------------------------------------------------------------
+    | Render
+    |----------------------------------------------------------------
+    */
 
     return (
         <div

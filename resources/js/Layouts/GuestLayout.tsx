@@ -12,7 +12,7 @@ export default function Guest({ children }: PropsWithChildren) {
                     </Link>
                 </div>
             </nav>
-            <div className="w-25 flex min-h-screen flex-col items-center py-6 dark:bg-gray-900 sm:justify-center sm:pt-0">
+            <div className="w-25 flex min-h-screen flex-col items-center dark:bg-gray-900 sm:justify-center sm:pt-0">
                 <div className="w-50">{children}</div>
             </div>
         </div>
