@@ -3,7 +3,10 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, router, usePage } from '@inertiajs/react';
-import { PropsWithChildren, ReactNode, useEffect, useState } from 'react';
+import { PropsWithChildren, ReactNode, useState } from 'react';
+
+// Main Layout
+import AppShell from '@/Layouts/Appshell';
 
 //Interfaces
 import type { AuthProps } from '@/interfaces/auth';
@@ -21,33 +24,10 @@ export default function Authenticated({
     |----------------------------------------------------------
     */
 
-    const { auth, flash } = usePage<AuthProps>().props;
+    const { auth } = usePage<AuthProps>().props;
     const user = auth.user;
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
-
-    /*
-    |----------------------------------------------------------
-    | Hooks
-    |----------------------------------------------------------
-    */
-
-    /**
-     * Displays toast notifications based on flash messages.
-     */
-    useEffect(() => {
-        if (flash?.toast) {
-            const { type, message, description } = flash.toast;
-
-            setTimeout(() => {
-                if (type === 'success') {
-                    toast.success(message, { description });
-                } else if (type === 'error') {
-                    toast.error(message, { description });
-                }
-            }, 100);
-        }
-    }, [flash]);
 
     /*
     |----------------------------------------------------------
@@ -91,9 +71,9 @@ export default function Authenticated({
     */
 
     return (
-        <>
-            <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-                <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
+        <AppShell>
+            <div className="min-h-screen">
+                {/* <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="flex h-16 justify-between">
                             <div className="flex">
@@ -242,18 +222,18 @@ export default function Authenticated({
                             </div>
                         </div>
                     </div>
-                </nav>
+                </nav> */}
 
-                {header && (
+                {/* {header && (
                     <header className="bg-white shadow dark:bg-gray-800">
                         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                             {header}
                         </div>
                     </header>
-                )}
+                )} */}
 
                 <main>{children}</main>
             </div>
-        </>
+        </AppShell>
     );
 }
