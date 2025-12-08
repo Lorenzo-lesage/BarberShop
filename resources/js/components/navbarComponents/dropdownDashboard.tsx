@@ -66,6 +66,12 @@ export default function DropdownDashboard() {
         );
     };
 
+    /*
+    |--------------------------------------------------------------------------
+    | Render
+    |--------------------------------------------------------------------------
+    */
+
     return (
         <NavigationMenu>
             <NavigationMenuList>
@@ -83,15 +89,15 @@ export default function DropdownDashboard() {
                                 }
                                 className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
                             >
-                                <User size={16} />
+                                <User size={14} />
                                 Profile
                             </button>
                             <hr className="my-1 border-gray-200 dark:border-gray-700" />
                             <button
                                 onClick={handleLogout}
-                                className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-destructive hover:text-destructive-foreground"
+                                className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
                             >
-                                <LogOut size={16} />
+                                <LogOut size={14} />
                                 Log Out
                             </button>
                         </div>

@@ -5,7 +5,6 @@ import { Head } from '@inertiajs/react';
 import AppShell from '@/Layouts/Appshell';
 
 export default function Welcome({
-    auth,
     laravelVersion,
     phpVersion,
 }: PageProps<{ laravelVersion: string; phpVersion: string }>) {

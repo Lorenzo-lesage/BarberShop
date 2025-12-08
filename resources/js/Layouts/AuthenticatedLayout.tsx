@@ -1,69 +1,9 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link, router, usePage } from '@inertiajs/react';
-import { PropsWithChildren, ReactNode, useState } from 'react';
+import { PropsWithChildren } from 'react';
 
 // Main Layout
 import AppShell from '@/Layouts/Appshell';
 
-//Interfaces
-import type { AuthProps } from '@/interfaces/auth';
-
-// Toast
-import { toast } from 'sonner';
-
-export default function Authenticated({
-    header,
-    children,
-}: PropsWithChildren<{ header?: ReactNode }>) {
-    /*
-    |----------------------------------------------------------
-    | Data
-    |----------------------------------------------------------
-    */
-
-    const { auth } = usePage<AuthProps>().props;
-    const user = auth.user;
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
-
-    /*
-    |----------------------------------------------------------
-    | Methods
-    |----------------------------------------------------------
-    */
-
-    /**
-     * Handles user logout with feedback toasts.
-     * @param e
-     */
-    const handleLogout = (e: React.MouseEvent) => {
-        e.preventDefault();
-
-        const loadingToast = toast.loading('Logging out...');
-
-        router.post(
-            route('logout'),
-            {},
-            {
-                onSuccess: () => {
-                    toast.success('Logged out!', {
-                        id: loadingToast,
-                        description: 'See you soon!',
-                    });
-                },
-                onError: () => {
-                    toast.error('Logout failed', {
-                        id: loadingToast,
-                        description: 'Please try again',
-                    });
-                },
-            },
-        );
-    };
-
+export default function Authenticated({ children }: PropsWithChildren) {
     /*
     |----------------------------------------------------------
     | Render
