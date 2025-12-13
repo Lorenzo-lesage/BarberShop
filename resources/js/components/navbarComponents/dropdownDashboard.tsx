@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/navigation-menu';
 
 // Icons
-import { CircleUserRound, LogOut, User } from 'lucide-react';
+import { CircleUserRound, LayoutDashboard, LogOut, User } from 'lucide-react';
 
 // Toast
 import { toast } from 'sonner';
@@ -86,6 +86,14 @@ export default function DropdownDashboard() {
                                 <CircleUserRound size={18} />
                                 My Account
                             </div>
+
+                            <button
+                                onClick={() => router.get(route('dashboard'))}
+                                className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm hover:bg-accent"
+                            >
+                                <LayoutDashboard size={14} />
+                                Dashboard
+                            </button>
 
                             <button
                                 onClick={() =>

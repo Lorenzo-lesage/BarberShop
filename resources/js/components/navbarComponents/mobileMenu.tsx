@@ -6,7 +6,14 @@ import { useState } from 'react';
 
 // UI Components
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from '@/components/ui/sheet';
 
 // Icons
 import { CircleStar, LayoutDashboard, LogIn, LogOut, User } from 'lucide-react';
@@ -56,6 +63,10 @@ export default function MobileMenu() {
                 </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[240px] sm:w-[300px]">
+                <SheetHeader>
+                    <SheetTitle>{auth?.user?.name}</SheetTitle>
+                    <SheetDescription>{auth?.user?.email}</SheetDescription>
+                </SheetHeader>
                 <nav className="mt-8 flex flex-col space-y-4">
                     {auth?.user ? (
                         <>
