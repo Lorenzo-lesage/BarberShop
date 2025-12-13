@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/navigation-menu';
 
 // Icons
-import { CircleStar, LayoutDashboard, LogIn } from 'lucide-react';
+import { LayoutDashboard, LogIn } from 'lucide-react';
 
 export default function Navbar() {
     const { auth } = usePage<PageProps>().props;
@@ -29,7 +29,7 @@ export default function Navbar() {
 
             {/* Desktop Navigation */}
             <div className="ml-auto mr-4 hidden items-center gap-4 md:flex">
-                {auth.user ? (
+                {auth?.user ? (
                     <NavigationMenu>
                         <NavigationMenuList>
                             <NavigationMenuItem>
@@ -37,13 +37,13 @@ export default function Navbar() {
                                     <Link
                                         href={route('dashboard')}
                                         className={cn(
-                                            'flex items-center gap-2 underline-offset-4 hover:underline',
+                                            'flex items-center gap-2 text-sm underline-offset-4 hover:underline',
                                             route().current('dashboard') &&
                                                 'text-foreground underline underline-offset-4',
                                         )}
                                     >
                                         Dashboard
-                                        <LayoutDashboard size={18} />
+                                        <LayoutDashboard size={15} />
                                     </Link>
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
@@ -57,28 +57,13 @@ export default function Navbar() {
                                     <Link
                                         href={route('login')}
                                         className={cn(
-                                            'flex items-center gap-2 underline-offset-4 hover:underline',
+                                            'flex items-center gap-1 text-sm underline-offset-4 hover:underline',
                                             route().current('login') &&
                                                 'text-foreground underline underline-offset-4',
                                         )}
                                     >
                                         Log in
-                                        <LogIn size={18} />
-                                    </Link>
-                                </NavigationMenuLink>
-                            </NavigationMenuItem>
-                            <NavigationMenuItem>
-                                <NavigationMenuLink asChild>
-                                    <Link
-                                        href={route('register')}
-                                        className={cn(
-                                            'flex items-center gap-2 underline-offset-4 hover:underline',
-                                            route().current('register') &&
-                                                'text-foreground underline underline-offset-4',
-                                        )}
-                                    >
-                                        Register
-                                        <CircleStar size={18} />
+                                        <LogIn size={12} />
                                     </Link>
                                 </NavigationMenuLink>
                             </NavigationMenuItem>

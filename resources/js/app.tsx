@@ -27,7 +27,7 @@ function AppWrapper({
             <App {...props} />
             <Toaster
                 richColors
-                position="bottom-left"
+                position="bottom-right"
                 closeButton
                 theme={theme}
             />

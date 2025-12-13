@@ -174,7 +174,10 @@ export function NavUser({
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem onClick={() => router.visit('/')}>
+                            <DropdownMenuItem
+                                onClick={() => router.visit('/')}
+                                className="cursor-pointer"
+                            >
                                 <Sparkles />
                                 Homepage
                             </DropdownMenuItem>
@@ -184,13 +187,17 @@ export function NavUser({
                                 onClick={() =>
                                     router.visit(route('profile.edit'))
                                 }
+                                className="cursor-pointer"
                             >
                                 <BadgeCheck />
                                 Profile
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleLogout}>
+                        <DropdownMenuItem
+                            onClick={handleLogout}
+                            className="cursor-pointer"
+                        >
                             <LogOut />
                             Log out
                         </DropdownMenuItem>

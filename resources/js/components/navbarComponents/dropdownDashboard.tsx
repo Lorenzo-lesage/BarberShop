@@ -73,29 +73,35 @@ export default function DropdownDashboard() {
     */
 
     return (
-        <NavigationMenu>
-            <NavigationMenuList>
-                <NavigationMenuItem>
-                    <NavigationMenuTrigger>{user.name}</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                        <div className="w-[200px] p-2">
+        <NavigationMenu className="bg-transparent">
+            <NavigationMenuList className="bg-transparent">
+                <NavigationMenuItem className="bg-transparent">
+                    <NavigationMenuTrigger className="flex items-center gap-2 rounded-md !bg-transparent bg-transparent px-3 py-2 text-sm font-medium underline-offset-4 hover:bg-transparent focus:bg-transparent focus:underline data-[active]:bg-transparent data-[state=open]:bg-transparent data-[state=open]:underline">
+                        {user.name}
+                    </NavigationMenuTrigger>
+
+                    <NavigationMenuContent className="!bg-transparent bg-transparent data-[state=open]:bg-transparent">
+                        <div className="w-[200px] p-2 data-[state=open]:bg-transparent">
                             <div className="flex items-center gap-2 px-3 py-2 text-sm font-medium">
                                 <CircleUserRound size={18} />
                                 My Account
                             </div>
+
                             <button
                                 onClick={() =>
                                     router.get(route('profile.edit'))
                                 }
-                                className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+                                className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm hover:bg-accent"
                             >
                                 <User size={14} />
                                 Profile
                             </button>
+
                             <hr className="my-1 border-gray-200 dark:border-gray-700" />
+
                             <button
                                 onClick={handleLogout}
-                                className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+                                className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm hover:bg-accent"
                             >
                                 <LogOut size={14} />
                                 Log Out
