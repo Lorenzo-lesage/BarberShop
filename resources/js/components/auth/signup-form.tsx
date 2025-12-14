@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,12 @@ import { Eye, EyeClosed, GalleryVerticalEnd } from 'lucide-react';
 // Toast
 import { toast } from 'sonner';
 
-export function SignupForm({ className, ...props }: { className?: string }) {
+interface SignupFormProps {
+    isBarber?: boolean;
+    submitRoute: string;
+}
+
+export function SignupForm({ isBarber = false, submitRoute }: SignupFormProps) {
     /*
     |-----------------------------------------------------------
     | Data
@@ -33,7 +38,18 @@ export function SignupForm({ className, ...props }: { className?: string }) {
         email: '',
         password: '',
         password_confirmation: '',
+        is_barber: isBarber,
     });
+
+    /*
+    |-----------------------------------------------------------
+    | Hooks
+    |-----------------------------------------------------------
+    */
+
+    useEffect(() => {
+        setData('is_barber', isBarber);
+    }, [isBarber, setData]);
 
     /*
     |-----------------------------------------------------------
@@ -56,9 +72,10 @@ export function SignupForm({ className, ...props }: { className?: string }) {
             return;
         }
 
-        post(route('register'), {
+        post(route(submitRoute), {
+            // <-- qui usiamo la rotta dinamica
             onSuccess: () => {
-                toast.success('Account  created!', {
+                toast.success('Account created!', {
                     description: 'Welcome to BarberShop',
                 });
             },
@@ -94,13 +111,7 @@ export function SignupForm({ className, ...props }: { className?: string }) {
     */
 
     return (
-        <div
-            className={cn(
-                'mx-auto flex w-full max-w-sm flex-col gap-6',
-                className,
-            )}
-            {...props}
-        >
+        <div className={cn('mx-auto flex w-full max-w-sm flex-col gap-6')}>
             <form onSubmit={submit}>
                 <FieldGroup>
                     {/* Header */}
@@ -111,7 +122,9 @@ export function SignupForm({ className, ...props }: { className?: string }) {
                             </div>
                         </div>
                         <h1 className="text-xl font-bold">
-                            Create your account
+                            {isBarber
+                                ? 'Collaborate with us'
+                                : 'Create your account'}
                         </h1>
 
                         <FieldDescription>
@@ -119,6 +132,15 @@ export function SignupForm({ className, ...props }: { className?: string }) {
                             <a href={route('login')}>Login</a>
                         </FieldDescription>
                     </div>
+
+                    <input
+                        type="hidden"
+                        name="is_barber"
+                        value={isBarber ? '1' : '0'}
+                        onChange={(e) =>
+                            setData('is_barber', e.target.value === '1')
+                        }
+                    />
 
                     {/* Name */}
                     <Field>
@@ -230,7 +252,7 @@ export function SignupForm({ className, ...props }: { className?: string }) {
                     {/* Submit */}
                     <Field>
                         <Button type="submit" disabled={processing}>
-                            Sign Up
+                            {isBarber ? 'Join us' : 'Sign Up'}
                         </Button>
                     </Field>
                     <FieldSeparator>Or</FieldSeparator>

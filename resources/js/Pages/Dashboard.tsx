@@ -23,6 +23,7 @@ import {
 
 export default function Page() {
     const { auth } = usePage<PageProps>().props;
+    const isBarber = auth.user?.is_barber;
     return (
         <>
             <Head title="Dashboard" />
@@ -58,6 +59,17 @@ export default function Page() {
                         </div>
                     </header>
                     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                        {isBarber ? (
+                            <h2 className="text-xl font-semibold text-green-600">
+                                ✂️ Benvenuto, Barbiere! Accesso completo agli
+                                strumenti di gestione.
+                            </h2>
+                        ) : (
+                            <h2 className="text-xl font-semibold text-blue-600">
+                                👋 Benvenuto, Utente Standard. Visualizza le tue
+                                prenotazioni.
+                            </h2>
+                        )}
                         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                             <div className="aspect-video rounded-xl bg-muted/50" />
                             <div className="aspect-video rounded-xl bg-muted/50" />

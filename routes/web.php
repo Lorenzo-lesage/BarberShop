@@ -7,6 +7,9 @@ use Inertia\Inertia;
 use App\Models\User;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\BecomeBarberController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+
 
 // Rotte principali
 Route::get('/', function () {
@@ -81,6 +84,14 @@ Route::get('/auth/{provider}/callback', function ($provider) {
             'description' => 'Authentication error occurred'
         ]);
     }
+});
+
+Route::middleware('guest')->group(function () {
+    Route::get('become-barber', [BecomeBarberController::class, 'index'])
+        ->name('become.barber');
+
+    Route::post('become-barber', [RegisteredUserController::class, 'store'])
+        ->name('become.barber.register'); // stessa store, ma POST dalla pagina barbiere
 });
 
 require __DIR__ . '/auth.php';
