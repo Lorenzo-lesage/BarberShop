@@ -10,7 +10,6 @@ class BecomeBarberController extends Controller
     {
         return Inertia::render('Auth/BecomeBarberPage', [
             'submitRoute' => 'become.barber.register',
-            'isBarber' => true, // <- qui passi true al form
         ]);
     }
 }

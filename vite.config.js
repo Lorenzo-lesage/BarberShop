@@ -11,11 +11,8 @@ export default defineConfig({
         react(),
     ],
     server: {
-        host: '0.0.0.0',     // 🔥 fondamentale
+        host: 'localhost',
         port: 5173,
         strictPort: true,
-        hmr: {
-            host: '192.168.1.73', // 🔥 IP DEL TUO PC
-        },
     },
 });

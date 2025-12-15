@@ -1,17 +1,13 @@
 import { SignupForm } from '@/components/auth/signup-form';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { PageProps } from '@/types';
 import { Head } from '@inertiajs/react';
 
-export default function Register({
-    isBarber = false,
-    submitRoute = 'register',
-}: PageProps<{ isBarber?: boolean; submitRoute?: string }>) {
+export default function Register() {
     return (
         <GuestLayout>
             <Head title="Register" />
 
-            <SignupForm isBarber={isBarber} submitRoute={submitRoute} />
+            <SignupForm submitRoute={'register'} />
         </GuestLayout>
     );
 }

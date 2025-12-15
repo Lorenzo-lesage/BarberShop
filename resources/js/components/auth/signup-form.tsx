@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { useForm } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -19,11 +19,11 @@ import { Eye, EyeClosed, GalleryVerticalEnd } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface SignupFormProps {
-    isBarber?: boolean;
     submitRoute: string;
+    isBarber?: boolean;
 }
 
-export function SignupForm({ isBarber = false, submitRoute }: SignupFormProps) {
+export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
     /*
     |-----------------------------------------------------------
     | Data
@@ -40,16 +40,6 @@ export function SignupForm({ isBarber = false, submitRoute }: SignupFormProps) {
         password_confirmation: '',
         is_barber: isBarber,
     });
-
-    /*
-    |-----------------------------------------------------------
-    | Hooks
-    |-----------------------------------------------------------
-    */
-
-    useEffect(() => {
-        setData('is_barber', isBarber);
-    }, [isBarber, setData]);
 
     /*
     |-----------------------------------------------------------
@@ -73,7 +63,6 @@ export function SignupForm({ isBarber = false, submitRoute }: SignupFormProps) {
         }
 
         post(route(submitRoute), {
-            // <-- qui usiamo la rotta dinamica
             onSuccess: () => {
                 toast.success('Account created!', {
                     description: 'Welcome to BarberShop',
@@ -97,13 +86,21 @@ export function SignupForm({ isBarber = false, submitRoute }: SignupFormProps) {
      * @param provider
      */
     const handleOAuthRegister = (provider: string) => {
+        // Se il form è BecomeBarber, passiamo l'intent 'barber' come query param
+        const intent = isBarber ? 'barber' : undefined;
+
         toast.loading(`Redirecting to ${provider}...`);
 
+        // Costruisci la rotta con eventuale query intent
+        const url = intent
+            ? route('oauth.redirect', provider) + `?intent=${intent}`
+            : route('oauth.redirect', provider);
+
+        // Redirect
         setTimeout(() => {
-            window.location.href = route('oauth.redirect', provider);
+            window.location.href = url;
         }, 100);
     };
-
     /*
     |-----------------------------------------------------------
     | Render
@@ -122,7 +119,7 @@ export function SignupForm({ isBarber = false, submitRoute }: SignupFormProps) {
                             </div>
                         </div>
                         <h1 className="text-xl font-bold">
-                            {isBarber
+                            {submitRoute === 'become.barber.register'
                                 ? 'Collaborate with us'
                                 : 'Create your account'}
                         </h1>
@@ -132,15 +129,6 @@ export function SignupForm({ isBarber = false, submitRoute }: SignupFormProps) {
                             <a href={route('login')}>Login</a>
                         </FieldDescription>
                     </div>
-
-                    <input
-                        type="hidden"
-                        name="is_barber"
-                        value={isBarber ? '1' : '0'}
-                        onChange={(e) =>
-                            setData('is_barber', e.target.value === '1')
-                        }
-                    />
 
                     {/* Name */}
                     <Field>
@@ -252,7 +240,9 @@ export function SignupForm({ isBarber = false, submitRoute }: SignupFormProps) {
                     {/* Submit */}
                     <Field>
                         <Button type="submit" disabled={processing}>
-                            {isBarber ? 'Join us' : 'Sign Up'}
+                            {submitRoute === 'become.barber.register'
+                                ? 'Join us'
+                                : 'Sign Up'}
                         </Button>
                     </Field>
                     <FieldSeparator>Or</FieldSeparator>

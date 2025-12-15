@@ -5,7 +5,7 @@ import type { PageProps } from '@/types';
 
 // Components
 import ThemeSwitcher from '@/components/ThemeSwitcher';
-import { AppSidebar } from '@/components/dashboardComponents/app-sidebar';
+import { AppSidebar } from '@/components/dashboardClient/app-sidebar';
 import {
     Breadcrumb,
     BreadcrumbItem,
