@@ -73,7 +73,7 @@ export default function DropdownDashboard() {
     */
 
     return (
-        <NavigationMenu className="bg-transparent">
+        <NavigationMenu className="bg-transparent" delayDuration={100}>
             <NavigationMenuList className="bg-transparent">
                 <NavigationMenuItem className="bg-transparent">
                     <NavigationMenuTrigger className="flex items-center gap-2 rounded-md !bg-transparent bg-transparent px-3 py-2 text-sm font-medium underline-offset-4 hover:bg-transparent focus:bg-transparent focus:underline data-[active]:bg-transparent data-[state=open]:bg-transparent data-[state=open]:underline">
@@ -81,7 +81,7 @@ export default function DropdownDashboard() {
                     </NavigationMenuTrigger>
 
                     <NavigationMenuContent className="!bg-transparent bg-transparent data-[state=open]:bg-transparent">
-                        <div className="w-[200px] p-2 data-[state=open]:bg-transparent">
+                        <div className="w-[150px] p-2 data-[state=open]:bg-transparent">
                             <div className="flex items-center gap-2 px-3 py-2 text-sm font-medium">
                                 <CircleUserRound size={18} />
                                 My Account

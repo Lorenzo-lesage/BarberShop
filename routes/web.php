@@ -40,7 +40,21 @@ Route::middleware('guest')->group(function () {
         ->name('become.barber');
 
     Route::post('become-barber', [RegisteredUserController::class, 'store'])
-        ->name('become.barber.register'); // stessa store, ma POST dalla pagina barbiere
+        ->name('become.barber.register');
 });
+
+/**
+ * Mail routes
+ */
+
+Route::middleware('auth')->group(function () {
+    Route::post('/become-barber/request', [BecomeBarberController::class, 'request'])
+        ->name('become.barber.request');
+
+    Route::get('/become-barber/approve/{user}', [BecomeBarberController::class, 'approve'])
+        ->middleware('signed')
+        ->name('become.barber.approve');
+});
+
 
 require __DIR__ . '/auth.php';

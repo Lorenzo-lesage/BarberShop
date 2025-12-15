@@ -12,6 +12,8 @@ import { useThemeStore } from '@/stores/themeStores';
 // Components
 import { Toaster } from '@/components/ui/sonner';
 
+import { TooltipProvider } from '@/components/ui/tooltip';
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 function AppWrapper({
@@ -23,7 +25,7 @@ function AppWrapper({
 }) {
     const theme = useThemeStore((state) => state.theme);
     return (
-        <>
+        <TooltipProvider delayDuration={150}>
             <App {...props} />
             <Toaster
                 richColors
@@ -31,7 +33,7 @@ function AppWrapper({
                 closeButton
                 theme={theme}
             />
-        </>
+        </TooltipProvider>
     );
 }
 
