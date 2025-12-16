@@ -1,5 +1,11 @@
 'use client';
 
+import { usePage } from '@inertiajs/react';
+
+// Interfaces
+import type { PageProps } from '@/types';
+
+// Icons
 import {
     BookOpen,
     Bot,
@@ -11,10 +17,11 @@ import {
 } from 'lucide-react';
 import * as React from 'react';
 
-import { NavMain } from '@/components/dashboardClient/nav-main';
-import { NavProjects } from '@/components/dashboardClient/nav-projects';
-import { NavUser } from '@/components/dashboardClient/nav-user';
-import { TeamSwitcher } from '@/components/dashboardClient/team-switcher';
+// Components
+import { NavMain } from '@/components/dashboard/nav-main';
+import { NavProjects } from '@/components/dashboard/nav-projects';
+import { NavUser } from '@/components/dashboard/nav-user';
+import { TeamSwitcher } from '@/components/dashboard/team-switcher';
 import {
     Sidebar,
     SidebarContent,
@@ -22,6 +29,10 @@ import {
     SidebarHeader,
     SidebarRail,
 } from '@/components/ui/sidebar';
+
+// items
+import { barberItems } from './barberItems';
+import { clientItems } from './clientItems';
 
 // This is sample data.
 const data = {
@@ -136,13 +147,30 @@ export function AppSidebar({
 }: React.ComponentProps<typeof Sidebar> & {
     user: { name: string; email: string; avatar: string };
 }) {
+    /*
+    |-----------------------------------------------------------------------
+    | Data
+    |-----------------------------------------------------------------------
+    */
+
+    const { auth } = usePage<PageProps>().props;
+    const isBarber = auth.user.is_barber;
+
+    const items = isBarber ? barberItems : clientItems;
+
+    /*
+    |-----------------------------------------------------------------------
+    | Render
+    |-----------------------------------------------------------------------
+    */
+
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
                 <TeamSwitcher />
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={data.navMain} />
+                <NavMain items={items} />
                 <NavProjects projects={data.projects} />
             </SidebarContent>
             <SidebarFooter>

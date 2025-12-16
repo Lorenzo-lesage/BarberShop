@@ -22,7 +22,14 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $user = Auth::user(); // Ottieni l'utente corrente
+
+    $componentName = $user->is_barber
+        ? 'Dashboard/DashboardBarber'
+        : 'Dashboard/DashboardCustomer';
+
+    return Inertia::render($componentName);
+
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Rotte profilo
@@ -55,6 +62,39 @@ Route::middleware('auth')->group(function () {
         ->middleware('signed')
         ->name('become.barber.approve');
 });
+
+/**
+ * Routes Web
+ */
+Route::middleware(['auth', 'barber'])->group(function () {
+
+    Route::get('/dashboard/schedule', function () {
+        return Inertia::render('Dashboard/Barber/Schedule');
+    })->name('dashboard.barber.schedule');
+
+    Route::get('/dashboard/clients', function () {
+        return Inertia::render('Dashboard/Barber/Clients');
+    })->name('dashboard.barber.clients');
+
+    Route::get('/dashboard/appointments', function () {
+        return Inertia::render('Dashboard/Barber/Appointments');
+    })->name('dashboard.barber.appointments.barber');
+
+});
+
+
+Route::middleware(['auth'])->group(function () {
+    // Rotta 1: Saloon
+    Route::get('/dashboard/saloons', function () {
+        return Inertia::render('Dashboard/Saloons');
+    })->name('dashboard.saloons');
+
+    // Rotta 2: Barbers
+    Route::get('/dashboard/barbers', function () {
+        return Inertia::render('Dashboard/Barbers');
+    })->name('dashboard.barbers');
+});
+
 
 
 require __DIR__ . '/auth.php';
