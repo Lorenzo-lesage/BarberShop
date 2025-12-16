@@ -1,4 +1,4 @@
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
 // Interfaces
 import type { PageProps } from '@/types';
@@ -22,6 +22,7 @@ export default function DashboardBarber() {
     */
     return (
         <Dashboard>
+            <Head title="Dashboard Barber" />
             <h1>DashboarBarber</h1>
             <p>{auth.user.name}</p>
             <div className="grid auto-rows-min gap-4 md:grid-cols-3">

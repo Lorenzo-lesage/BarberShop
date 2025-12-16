@@ -42,7 +42,7 @@ export default function Footer() {
                 </div>
             )}
 
-            {!auth?.user?.is_barber && auth.user && (
+            {!auth?.user?.is_barber && auth?.user && (
                 <div className="mb-5">
                     <p>Are you a barber?</p>
                     <p className="flex items-center justify-center gap-2">

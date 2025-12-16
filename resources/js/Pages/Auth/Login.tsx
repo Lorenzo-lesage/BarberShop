@@ -1,6 +1,9 @@
-import GuestLayout from '@/Layouts/GuestLayout';
 import { Head } from '@inertiajs/react';
-// Components
+
+// Layout
+import AppShell from '@/Layouts/Appshell';
+
+// Page
 import { LoginForm } from '@/components/auth/login-form';
 
 export default function Login({
@@ -11,7 +14,7 @@ export default function Login({
     canResetPassword?: boolean;
 }) {
     return (
-        <GuestLayout>
+        <AppShell>
             <Head title="Log in" />
 
             <LoginForm className="mb-8" canResetPassword={canResetPassword} />
@@ -21,6 +24,6 @@ export default function Login({
                     {status}
                 </div>
             )}
-        </GuestLayout>
+        </AppShell>
     );
 }

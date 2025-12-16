@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->alias([
             'barber' => \App\Http\Middleware\EnsureUserIsBarber::class,
+            'client' => \App\Http\Middleware\EnsureUserIsClient::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -28,6 +29,12 @@ return Application::configure(basePath: dirname(__DIR__))
             $status = method_exists($e, 'getStatusCode')
                 ? $e->getStatusCode()
                 : 500;
+
+            if ($status === 403) {
+                return Inertia::render('Errors/Forbidden')
+                    ->toResponse($request)
+                    ->setStatusCode(403);
+            }
 
             if ($status === 404) {
                 return Inertia::render('Errors/NotFound')

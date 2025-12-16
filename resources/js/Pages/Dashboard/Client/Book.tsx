@@ -3,11 +3,11 @@ import { Head } from '@inertiajs/react';
 // Layout
 import Dashboard from '@/Layouts/Dashboard';
 
-export default function Schedule() {
+export default function Book() {
     return (
         <Dashboard>
-            <Head title="Dashboard Barber Schedule" />
-            <h1>Barber Schedule</h1>
+            <Head title="Dashboard Client Book Appointment" />
+            <h1>Book Appointment</h1>
         </Dashboard>
     );
 }

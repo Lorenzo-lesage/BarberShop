@@ -1,13 +1,17 @@
-import { SignupForm } from '@/components/auth/signup-form';
-import GuestLayout from '@/Layouts/GuestLayout';
 import { Head } from '@inertiajs/react';
+
+// Layout
+import AppShell from '@/Layouts/Appshell';
+
+// Page
+import { SignupForm } from '@/components/auth/signup-form';
 
 export default function Register() {
     return (
-        <GuestLayout>
+        <AppShell>
             <Head title="Register" />
 
             <SignupForm submitRoute={'register'} />
-        </GuestLayout>
+        </AppShell>
     );
 }

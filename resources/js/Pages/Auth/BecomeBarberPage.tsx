@@ -1,12 +1,16 @@
-import { SignupForm } from '@/components/auth/signup-form';
-import GuestLayout from '@/Layouts/GuestLayout';
 import { Head } from '@inertiajs/react';
+
+// Layout
+import AppShell from '@/Layouts/Appshell';
+
+// Page
+import { SignupForm } from '@/components/auth/signup-form';
 
 export default function BecomeBarberPage() {
     return (
-        <GuestLayout>
+        <AppShell>
             <Head title="Become a Barber" />
             <SignupForm submitRoute={'become.barber.register'} isBarber />
-        </GuestLayout>
+        </AppShell>
     );
 }

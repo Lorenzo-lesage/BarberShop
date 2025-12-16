@@ -31,8 +31,8 @@ import {
 } from '@/components/ui/sidebar';
 
 // items
-import { barberItems } from './barberItems';
-import { clientItems } from './clientItems';
+import { barberItems } from '../../Feauteres/Barbers/barberItems';
+import { clientItems } from '../../Feauteres/Barbers/clientItems';
 
 // This is sample data.
 const data = {

@@ -26,7 +26,7 @@ Route::get('/dashboard', function () {
 
     $componentName = $user->is_barber
         ? 'Dashboard/DashboardBarber'
-        : 'Dashboard/DashboardCustomer';
+        : 'Dashboard/DashboardClient';
 
     return Inertia::render($componentName);
 
@@ -66,34 +66,74 @@ Route::middleware('auth')->group(function () {
 /**
  * Routes Web
  */
+/**
+ * Routes Dashboard barber
+ */
 Route::middleware(['auth', 'barber'])->group(function () {
 
     Route::get('/dashboard/schedule', function () {
         return Inertia::render('Dashboard/Barber/Schedule');
     })->name('dashboard.barber.schedule');
 
-    Route::get('/dashboard/clients', function () {
-        return Inertia::render('Dashboard/Barber/Clients');
-    })->name('dashboard.barber.clients');
+    Route::get('/dashboard/my-clients', function () {
+        return Inertia::render('Dashboard/Barber/MyClients');
+    })->name('dashboard.barber.my.clients');
 
-    Route::get('/dashboard/appointments', function () {
+    Route::get('/dashboard/barber-appointments', function () {
         return Inertia::render('Dashboard/Barber/Appointments');
-    })->name('dashboard.barber.appointments.barber');
+    })->name('dashboard.barber.appointments');
 
 });
 
+/**
+ * Routes Dashboard client
+ */
+Route::middleware(['auth', 'client'])->group(function () {
 
+    Route::get('/dashboard/my-reservations', function () {
+        return Inertia::render('Dashboard/Client/MyReservations');
+    })->name('dashboard.client.bookings');
+
+    Route::get('/dashboard/book', function () {
+        return Inertia::render('Dashboard/Client/Book');
+    })->name('dashboard.client.book');
+
+    Route::get('/dashboard/my-barbers', function () {
+        return Inertia::render('Dashboard/Client/MyBarbers');
+    })->name('dashboard.client.barbers');
+
+});
+
+/**
+ * Routes Dashboard
+ */
 Route::middleware(['auth'])->group(function () {
-    // Rotta 1: Saloon
     Route::get('/dashboard/saloons', function () {
         return Inertia::render('Dashboard/Saloons');
     })->name('dashboard.saloons');
 
-    // Rotta 2: Barbers
     Route::get('/dashboard/barbers', function () {
         return Inertia::render('Dashboard/Barbers');
     })->name('dashboard.barbers');
+
+    Route::get('/dashboard/clients', function () {
+        return Inertia::render('Dashboard/Clients');
+    })->name('dashboard.clients');
 });
+
+/**
+ * Public routes
+ */
+Route::get('/clients', function () {
+    return Inertia::render('Public/Clients');
+})->name('clients');
+
+Route::get('/barbers', function () {
+    return Inertia::render('Public/Barbers');
+})->name('barbers');
+Route::get('/saloons', function () {
+    return Inertia::render('Public/Saloons');
+})->name('saloons');
 
 
 

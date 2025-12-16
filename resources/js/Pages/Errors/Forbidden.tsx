@@ -3,18 +3,18 @@ import { Head, Link } from '@inertiajs/react';
 // Layout
 import AppShell from '@/Layouts/Appshell';
 
-export default function NotFound() {
+export default function Forbidden() {
     return (
         <AppShell>
-            <Head title="404 — Not Found" />
+            <Head title="403 – Access denied" />
 
             <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-                <h1 className="text-6xl font-bold text-red-500"> 404</h1>
+                <h1 className="text-6xl font-bold text-red-500">403</h1>
 
                 <p className="mt-4 text-xl font-semibold">Access denied</p>
 
                 <p className="mt-2 max-w-md text-muted-foreground">
-                    The page you are looking for doesn’t exist.
+                    You don’t have permission to access this page.
                 </p>
 
                 <Link

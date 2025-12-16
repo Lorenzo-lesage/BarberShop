@@ -10,7 +10,7 @@ export default function AppShell({
     return (
         <div className="dark:bg-darkbg light:bg-lightbg min-h-screen">
             <Navbar />
-            <main className="flex-1 px-4">{children}</main>
+            <main className="min-h-screen flex-1 px-4">{children}</main>
             <Footer />
         </div>
     );
