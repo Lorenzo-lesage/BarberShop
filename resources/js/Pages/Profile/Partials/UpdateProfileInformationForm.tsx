@@ -1,10 +1,13 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
+'use client';
+
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+
+// Shadcn UI Components
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -25,64 +28,85 @@ export default function UpdateProfileInformation({
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-
         patch(route('profile.update'));
     };
 
     return (
-        <section className={className}>
+        <section className={`${className} max-w-xl`}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                <h2 className="text-lg font-medium text-foreground">
                     Profile Information
                 </h2>
-
-                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                <p className="mt-1 text-sm text-muted-foreground">
                     Update your account's profile information and email address.
                 </p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
-
-                    <TextInput
+                {/* Name Field */}
+                <div className="grid gap-2">
+                    <Label
+                        htmlFor="name"
+                        className={errors.name ? 'text-destructive' : ''}
+                    >
+                        Name
+                    </Label>
+                    <Input
                         id="name"
-                        className="mt-1 block w-full"
                         value={data.name}
                         onChange={(e) => setData('name', e.target.value)}
                         required
-                        isFocused
                         autoComplete="name"
+                        className={
+                            errors.name
+                                ? 'border-destructive focus-visible:ring-destructive'
+                                : ''
+                        }
                     />
-
-                    <InputError className="mt-2" message={errors.name} />
+                    {errors.name && (
+                        <p className="text-[0.8rem] font-medium text-destructive">
+                            {errors.name}
+                        </p>
+                    )}
                 </div>
 
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
+                {/* Email Field */}
+                <div className="grid gap-2">
+                    <Label
+                        htmlFor="email"
+                        className={errors.email ? 'text-destructive' : ''}
+                    >
+                        Email
+                    </Label>
+                    <Input
                         id="email"
                         type="email"
-                        className="mt-1 block w-full"
                         value={data.email}
                         onChange={(e) => setData('email', e.target.value)}
                         required
                         autoComplete="username"
+                        className={
+                            errors.email
+                                ? 'border-destructive focus-visible:ring-destructive'
+                                : ''
+                        }
                     />
-
-                    <InputError className="mt-2" message={errors.email} />
+                    {errors.email && (
+                        <p className="text-[0.8rem] font-medium text-destructive">
+                            {errors.email}
+                        </p>
+                    )}
                 </div>
 
                 {mustVerifyEmail && user.email_verified_at === null && (
-                    <div>
-                        <p className="mt-2 text-sm text-gray-800 dark:text-gray-200">
+                    <div className="rounded-md border border-yellow-200 bg-yellow-50 p-3 dark:border-yellow-900/30 dark:bg-yellow-900/10">
+                        <p className="text-sm text-yellow-800 dark:text-yellow-200">
                             Your email address is unverified.
                             <Link
                                 href={route('verification.send')}
                                 method="post"
                                 as="button"
-                                className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                                className="ml-1 font-medium underline transition-colors hover:text-yellow-900 dark:hover:text-yellow-100"
                             >
                                 Click here to re-send the verification email.
                             </Link>
@@ -98,18 +122,18 @@ export default function UpdateProfileInformation({
                 )}
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <Button type="submit" disabled={processing} size="sm">
+                        {processing ? 'Saving...' : 'Save'}
+                    </Button>
 
                     <Transition
                         show={recentlySuccessful}
-                        enter="transition ease-in-out"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out"
+                        enter="transition ease-in-out duration-300"
+                        enterFrom="opacity-0 translate-y-1"
+                        leave="transition ease-in-out duration-300"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Saved.
-                        </p>
+                        <p className="text-sm text-muted-foreground">Saved.</p>
                     </Transition>
                 </div>
             </form>

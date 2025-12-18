@@ -8,7 +8,7 @@ import { SignupForm } from '@/components/auth/signup-form';
 
 export default function BecomeBarberPage() {
     return (
-        <AppShell>
+        <AppShell className="px-4">
             <Head title="Become a Barber" />
             <SignupForm submitRoute={'become.barber.register'} isBarber />
         </AppShell>

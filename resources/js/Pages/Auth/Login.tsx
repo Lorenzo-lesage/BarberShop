@@ -14,7 +14,7 @@ export default function Login({
     canResetPassword?: boolean;
 }) {
     return (
-        <AppShell>
+        <AppShell className="px-4">
             <Head title="Log in" />
 
             <LoginForm className="mb-8" canResetPassword={canResetPassword} />

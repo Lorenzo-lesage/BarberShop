@@ -21,6 +21,7 @@ class ProfileController extends Controller
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'isOAuth' => $request->user()->provider !== null,
         ]);
     }
 
@@ -45,11 +46,14 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
-
         $user = $request->user();
+
+        // Se l'utente ha un provider OAuth, salta la richiesta di password
+        if (!$user->provider) {
+            $request->validate([
+                'password' => ['required', 'current_password'],
+            ]);
+        }
 
         Auth::logout();
 

@@ -8,7 +8,7 @@ import { SignupForm } from '@/components/auth/signup-form';
 
 export default function Register() {
     return (
-        <AppShell>
+        <AppShell className="px-4">
             <Head title="Register" />
 
             <SignupForm submitRoute={'register'} />

@@ -1,6 +1,5 @@
 import { Head } from '@inertiajs/react';
 
-
 // Layout
 import Dashboard from '@/Layouts/Dashboard';
 
@@ -9,7 +8,12 @@ import BarbersComponent from '@/components/publicPagesComponents/BarbersComponen
 
 export default function Barbers() {
     return (
-        <Dashboard>
+        <Dashboard
+            breadcrumbs={[
+                { label: 'Dashboard', href: '/dashboard' },
+                { label: 'Barbers' },
+            ]}
+        >
             <Head title="Dashboard Barbers" />
             <BarbersComponent />
         </Dashboard>

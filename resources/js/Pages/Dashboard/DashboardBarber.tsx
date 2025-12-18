@@ -21,7 +21,7 @@ export default function DashboardBarber() {
     |----------------------------------------------------------------------
     */
     return (
-        <Dashboard>
+        <Dashboard breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }]}>
             <Head title="Dashboard Barber" />
             <h1>DashboarBarber</h1>
             <p>{auth.user.name}</p>

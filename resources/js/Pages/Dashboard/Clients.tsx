@@ -8,7 +8,12 @@ import ClientsComponent from '@/components/publicPagesComponents/ClientsComponen
 
 export default function Clients() {
     return (
-        <Dashboard>
+        <Dashboard
+            breadcrumbs={[
+                { label: 'Dashboard', href: '/dashboard' },
+                { label: 'Clients' },
+            ]}
+        >
             <Head title="Dashboard Clients" />
             <ClientsComponent />
         </Dashboard>

@@ -8,7 +8,12 @@ import SaloonsComponent from '@/components/publicPagesComponents/SaloonsComponen
 
 export default function Saloon() {
     return (
-        <Dashboard>
+        <Dashboard
+            breadcrumbs={[
+                { label: 'Dashboard', href: '/dashboard' },
+                { label: 'Saloons' },
+            ]}
+        >
             <Head title="Dashboard Saloons" />
             <SaloonsComponent />
         </Dashboard>

@@ -5,7 +5,12 @@ import Dashboard from '@/Layouts/Dashboard';
 
 export default function Appointments() {
     return (
-        <Dashboard>
+        <Dashboard
+            breadcrumbs={[
+                { label: 'Dashboard', href: '/dashboard' },
+                { label: 'Appointments' },
+            ]}
+        >
             <Head title="Dashboard Barber Appointments" />
             <h1>Barber Appointments</h1>
         </Dashboard>

@@ -1,10 +1,13 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
+'use client';
+
 import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef } from 'react';
+
+// Shadcn UI Components
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function UpdatePasswordForm({
     className = '',
@@ -49,26 +52,29 @@ export default function UpdatePasswordForm({
     };
 
     return (
-        <section className={className}>
+        <section className={`${className} max-w-xl`}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                <h2 className="text-lg font-medium text-foreground">
                     Update Password
                 </h2>
-
-                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                <p className="mt-1 text-sm text-muted-foreground">
                     Ensure your account is using a long, random password to stay
                     secure.
                 </p>
             </header>
 
             <form onSubmit={updatePassword} className="mt-6 space-y-6">
-                <div>
-                    <InputLabel
+                {/* Current Password */}
+                <div className="grid gap-2">
+                    <Label
                         htmlFor="current_password"
-                        value="Current Password"
-                    />
-
-                    <TextInput
+                        className={
+                            errors.current_password ? 'text-destructive' : ''
+                        }
+                    >
+                        Current Password
+                    </Label>
+                    <Input
                         id="current_password"
                         ref={currentPasswordInput}
                         value={data.current_password}
@@ -76,68 +82,94 @@ export default function UpdatePasswordForm({
                             setData('current_password', e.target.value)
                         }
                         type="password"
-                        className="mt-1 block w-full"
                         autoComplete="current-password"
+                        className={
+                            errors.current_password
+                                ? 'border-destructive focus-visible:ring-destructive'
+                                : ''
+                        }
                     />
-
-                    <InputError
-                        message={errors.current_password}
-                        className="mt-2"
-                    />
+                    {errors.current_password && (
+                        <p className="text-[0.8rem] font-medium text-destructive">
+                            {errors.current_password}
+                        </p>
+                    )}
                 </div>
 
-                <div>
-                    <InputLabel htmlFor="password" value="New Password" />
-
-                    <TextInput
+                {/* New Password */}
+                <div className="grid gap-2">
+                    <Label
+                        htmlFor="password"
+                        className={errors.password ? 'text-destructive' : ''}
+                    >
+                        New Password
+                    </Label>
+                    <Input
                         id="password"
                         ref={passwordInput}
                         value={data.password}
                         onChange={(e) => setData('password', e.target.value)}
                         type="password"
-                        className="mt-1 block w-full"
                         autoComplete="new-password"
+                        className={
+                            errors.password
+                                ? 'border-destructive focus-visible:ring-destructive'
+                                : ''
+                        }
                     />
-
-                    <InputError message={errors.password} className="mt-2" />
+                    {errors.password && (
+                        <p className="text-[0.8rem] font-medium text-destructive">
+                            {errors.password}
+                        </p>
+                    )}
                 </div>
 
-                <div>
-                    <InputLabel
+                {/* Confirm Password */}
+                <div className="grid gap-2">
+                    <Label
                         htmlFor="password_confirmation"
-                        value="Confirm Password"
-                    />
-
-                    <TextInput
+                        className={
+                            errors.password_confirmation
+                                ? 'text-destructive'
+                                : ''
+                        }
+                    >
+                        Confirm Password
+                    </Label>
+                    <Input
                         id="password_confirmation"
                         value={data.password_confirmation}
                         onChange={(e) =>
                             setData('password_confirmation', e.target.value)
                         }
                         type="password"
-                        className="mt-1 block w-full"
                         autoComplete="new-password"
+                        className={
+                            errors.password_confirmation
+                                ? 'border-destructive focus-visible:ring-destructive'
+                                : ''
+                        }
                     />
-
-                    <InputError
-                        message={errors.password_confirmation}
-                        className="mt-2"
-                    />
+                    {errors.password_confirmation && (
+                        <p className="text-[0.8rem] font-medium text-destructive">
+                            {errors.password_confirmation}
+                        </p>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <Button type="submit" disabled={processing}>
+                        {processing ? 'Saving...' : 'Save'}
+                    </Button>
 
                     <Transition
                         show={recentlySuccessful}
-                        enter="transition ease-in-out"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out"
+                        enter="transition ease-in-out duration-300"
+                        enterFrom="opacity-0 translate-y-1"
+                        leave="transition ease-in-out duration-300"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Saved.
-                        </p>
+                        <p className="text-sm text-muted-foreground">Saved.</p>
                     </Transition>
                 </div>
             </form>

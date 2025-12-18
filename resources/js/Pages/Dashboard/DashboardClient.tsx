@@ -21,7 +21,7 @@ export default function DashboardClient() {
     |----------------------------------------------------------------------
     */
     return (
-        <Dashboard>
+        <Dashboard breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }]}>
             <Head title="Dashboard Client" />
             <h1>DashboardCLient</h1>
             <p>{auth.user.name}</p>
