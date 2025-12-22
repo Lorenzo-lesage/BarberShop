@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SaloonController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -71,9 +72,9 @@ Route::middleware('auth')->group(function () {
  */
 Route::middleware(['auth', 'barber'])->group(function () {
 
-    Route::get('/dashboard/schedule', function () {
-        return Inertia::render('Dashboard/Barber/Schedule');
-    })->name('dashboard.barber.schedule');
+    // Sostituiamo la vecchia rotta schedule con queste:
+    Route::get('/dashboard/my-saloon', [SaloonController::class, 'edit'])->name('dashboard.barber.saloon');
+    Route::post('/dashboard/my-saloon', [SaloonController::class, 'store'])->name('dashboard.barber.saloon.store');
 
     Route::get('/dashboard/my-clients', function () {
         return Inertia::render('Dashboard/Barber/MyClients');

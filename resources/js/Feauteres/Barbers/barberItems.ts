@@ -1,7 +1,7 @@
 import { Calendar, Clock, Scissors, Store, Users } from 'lucide-react';
 
 export const barberItems = [
-    { label: 'Schedule', href: '/dashboard/schedule', icon: Calendar },
+    { label: 'My Saloon', href: '/dashboard/my-saloon', icon: Calendar },
     {
         label: 'Appointments',
         href: '/dashboard/barber-appointments',
