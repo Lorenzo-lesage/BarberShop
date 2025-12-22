@@ -72,9 +72,12 @@ Route::middleware('auth')->group(function () {
  */
 Route::middleware(['auth', 'barber'])->group(function () {
 
-    // Sostituiamo la vecchia rotta schedule con queste:
     Route::get('/dashboard/my-saloon', [SaloonController::class, 'edit'])->name('dashboard.barber.saloon');
     Route::post('/dashboard/my-saloon', [SaloonController::class, 'store'])->name('dashboard.barber.saloon.store');
+
+    // Nuove rotte per le ferie
+    Route::post('/dashboard/my-saloon/exceptions', [SaloonController::class, 'storeException'])->name('dashboard.barber.saloon.exceptions.store');
+    Route::delete('/dashboard/my-saloon/exceptions/{exception}', [SaloonController::class, 'destroyException'])->name('dashboard.barber.saloon.exceptions.destroy');
 
     Route::get('/dashboard/my-clients', function () {
         return Inertia::render('Dashboard/Barber/MyClients');
@@ -109,9 +112,8 @@ Route::middleware(['auth', 'client'])->group(function () {
  * Routes Dashboard
  */
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard/saloons', function () {
-        return Inertia::render('Dashboard/Saloons');
-    })->name('dashboard.saloons');
+    Route::get('dashboard/saloons', [SaloonController::class, 'index'])->name('saloons.index');
+    Route::get('dashboard/saloons/{saloon}', [SaloonController::class, 'show'])->name('saloons.show');
 
     Route::get('/dashboard/barbers', function () {
         return Inertia::render('Dashboard/Barbers');
@@ -132,10 +134,8 @@ Route::get('/clients', function () {
 Route::get('/barbers', function () {
     return Inertia::render('Public/Barbers');
 })->name('barbers');
-Route::get('/saloons', function () {
-    return Inertia::render('Public/Saloons');
-})->name('saloons');
-
+Route::get('/saloons', [SaloonController::class, 'index'])->name('saloons.index');
+Route::get('/saloons/{saloon}', [SaloonController::class, 'show'])->name('saloons.show');
 
 
 require __DIR__ . '/auth.php';

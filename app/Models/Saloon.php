@@ -38,4 +38,12 @@ class Saloon extends Model
     {
         return $this->hasMany(Appointment::class);
     }
+
+    /**
+     * Get the exceptions for the saloon.
+     */
+    public function exceptions()
+    {
+        return $this->hasMany(SaloonException::class);
+    }
 }

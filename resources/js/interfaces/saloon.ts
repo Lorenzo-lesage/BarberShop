@@ -9,8 +9,15 @@ export interface Saloon {
     name: string;
     address: string;
     opening_hours: Record<string, OpeningHour>; // es: { 'monday': {open: '09:00', ...} }
+    exceptions: number[];
 }
 
 export interface SaloonProps {
     saloon: Saloon | null;
+}
+
+export interface Exception {
+    id: number;
+    start: string;
+    end: string;
 }
