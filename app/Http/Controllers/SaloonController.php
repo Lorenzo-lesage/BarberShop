@@ -3,28 +3,92 @@
 namespace App\Http\Controllers;
 
 use App\Models\Saloon;
-use App\Models\SaloonException; // <--- AGGIUNGI QUESTO IMPORT
+use App\Models\SaloonException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Illuminate\Http\RedirectResponse;
+use Inertia\Response;
 
 class SaloonController extends Controller
 {
+    /**
+     * Show public page for saloons
+     * @return \Inertia\Response
+     */
     public function index()
     {
         return Inertia::render('Public/Saloons/Index', [
             // Usiamo 'barber' invece di 'user'
             'saloons' => Saloon::with('barber:id,name')->get(),
+
         ]);
     }
 
-    public function show(Saloon $saloon)
+    /**
+     * Show Dashboard page for saloons
+     * @return \Inertia\Response
+     */
+    public function dashboardIndex()
     {
+        return Inertia::render('Dashboard/Saloons/DashboardIndex', [
+            'saloons' => Saloon::with('barber:id,name')->get(),
+            'breadcrumbs' => [
+                ['label' => 'Dashboard', 'href' => route('dashboard')],
+                ['label' => 'Saloons', 'href' => null],
+            ],
+        ]);
+    }
+
+    /**
+     * Show Detail saloon in public route
+     * @param Saloon $saloon
+     * @return \Inertia\Response
+     */
+    public function show(Saloon $saloon): Response|RedirectResponse
+    {
+
+        if (Auth::id() === $saloon->user_id) {
+            return redirect()->route('saloons.index', $saloon->id) // Assicurati che il nome rotta sia corretto
+                ->with('toast', [
+                    'type' => 'warning',
+                    'message' => 'Area Gestione',
+                    'description' => 'Sei il proprietario, ti abbiamo portato nell\'anteprima gestionale.',
+                ]);
+        }
+
         // Anche qui, carichiamo 'barber'
         $saloon->load(['barber:id,name', 'exceptions']);
 
         return Inertia::render('Public/Saloons/Show', [
             'saloon' => $saloon,
+        ]);
+    }
+    /**
+     * Show Detail page in dashboard routes
+     * @param Saloon $saloon
+     * @return \Inertia\Response
+     */
+    public function dashboardShow(Saloon $saloon): Response|RedirectResponse
+    {
+        if (Auth::id() === $saloon->user_id) {
+            return redirect()->route('saloons.dashboard.index', $saloon->id) // Assicurati che il nome rotta sia corretto
+                ->with('toast', [
+                    'type' => 'warning',
+                    'message' => 'Area Gestione',
+                    'description' => 'Sei il proprietario, ti abbiamo portato nell\'anteprima gestionale.',
+                ]);
+        }
+        // Carichiamo le relazioni necessarie per il singolo salone
+        $saloon->load(['barber:id,name', 'exceptions']);
+
+        return Inertia::render('Dashboard/Saloons/DashboardShow', [
+            'saloon' => $saloon,
+            'breadcrumbs' => [
+                ['label' => 'Dashboard', 'href' => route('dashboard')],
+                ['label' => 'Saloons', 'href' => route('saloons.dashboard.index')],
+                ['label' => $saloon->name, 'href' => null],
+            ],
         ]);
     }
 

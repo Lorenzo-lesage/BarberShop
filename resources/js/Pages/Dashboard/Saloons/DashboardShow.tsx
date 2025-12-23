@@ -1,13 +1,20 @@
 import { Head } from '@inertiajs/react';
 
 // Layout
-import AppShell from '@/Layouts/Appshell';
+import Dashboard from '@/Layouts/Dashboard';
 import BookingComponent from '@/components/publicPagesComponents/BookingComponent';
 
 // Interfaces
+import BreadcrumbItemType from '@/interfaces/breadcrumbs';
 import type { SaloonProps } from '@/interfaces/saloon';
 
-export default function Show({ saloon }: SaloonProps) {
+export default function DashboardShow({
+    saloon,
+    breadcrumbs,
+}: {
+    saloon: SaloonProps['saloon'];
+    breadcrumbs: BreadcrumbItemType[];
+}) {
     /*
     |-------------------------------------------------------------------
     | Render
@@ -15,9 +22,9 @@ export default function Show({ saloon }: SaloonProps) {
     */
 
     return (
-        <AppShell className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
+        <Dashboard breadcrumbs={breadcrumbs} className="px-4 py-8 sm:py-12">
             <Head title={`${saloon.name} - Booking`} />
             <BookingComponent saloon={saloon} />
-        </AppShell>
+        </Dashboard>
     );
 }

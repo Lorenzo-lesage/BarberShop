@@ -34,12 +34,14 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
+// Interfaces
 interface Props {
     saloon: SaloonProps['saloon'];
     breadcrumbs: BreadcrumbItemType[];
     auth_user: string;
 }
 
+// Constants
 const DAYS = [
     'monday',
     'tuesday',
@@ -50,11 +52,12 @@ const DAYS = [
     'sunday',
 ];
 
-export default function SaloonConfig({
-    saloon,
-    breadcrumbs,
-    auth_user,
-}: Props) {
+export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
+    /*
+    |-------------------------------------------------------------------
+    | Data
+    |-------------------------------------------------------------------
+    */
     const [dateRange, setDateRange] = useState<DateRange | undefined>({
         from: undefined,
         to: undefined,
@@ -64,14 +67,10 @@ export default function SaloonConfig({
     );
     const [isMobile, setIsMobile] = useState(false);
 
-    // Monitor screen size for Calendar months
-    useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
-
+    /**
+     * Get initial hours
+     * @returns
+     */
     const getInitialHours = () => {
         const baseHours = saloon?.opening_hours || {};
         return DAYS.reduce(
@@ -104,6 +103,30 @@ export default function SaloonConfig({
         reason: '',
     });
 
+    /*
+    |-------------------------------------------------------------------
+    | Hooks
+    |-------------------------------------------------------------------
+    */
+
+    // Monitor screen size for Calendar months
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    /*
+    |-------------------------------------------------------------------
+    | Methods
+    |-------------------------------------------------------------------
+    */
+
+    /**
+     * Handle date select
+     * @param range
+     */
     const handleDateSelect = (range: DateRange | undefined) => {
         setDateRange(range);
         setExceptionData({
@@ -117,6 +140,12 @@ export default function SaloonConfig({
         });
     };
 
+    /**
+     * Handle hour change
+     * @param day
+     * @param field
+     * @param value
+     */
     const handleHourChange = (
         day: string,
         field: keyof OpeningHour,
@@ -128,11 +157,19 @@ export default function SaloonConfig({
         });
     };
 
+    /**
+     * Submit Saloon
+     * @param e ù
+     */
     const submitSaloon = (e: React.FormEvent) => {
         e.preventDefault();
         post(route('dashboard.barber.saloon.store'));
     };
 
+    /**
+     * Submit Exception
+     * @param e
+     */
     const addException = (e: React.FormEvent) => {
         e.preventDefault();
         postException(route('dashboard.barber.saloon.exceptions.store'), {
@@ -143,6 +180,9 @@ export default function SaloonConfig({
         });
     };
 
+    /**
+     * Confirm Delete
+     */
     const confirmDelete = () => {
         if (exceptionToDelete) {
             router.delete(
@@ -157,11 +197,15 @@ export default function SaloonConfig({
         }
     };
 
+    /*
+    |-------------------------------------------------------------------
+    | Render
+    |-------------------------------------------------------------------
+    */
+
     return (
         <Dashboard breadcrumbs={breadcrumbs}>
             <Head title="Salon Configuration" />
-
-            <h1>{auth_user}</h1>
 
             <div className="xs:px-0 mx-auto max-w-4xl space-y-6 px-0 pb-10 sm:px-4">
                 {/* General Settings Card */}
@@ -401,7 +445,7 @@ export default function SaloonConfig({
                             Upcoming Closures
                         </h4>
                         <div className="grid grid-cols-1 gap-3">
-                            {saloon?.exceptions?.map((ex: any) => (
+                            {saloon?.exceptions?.map((ex) => (
                                 <div
                                     key={ex.id}
                                     className="flex items-center justify-between rounded-lg border bg-muted/20 p-4"

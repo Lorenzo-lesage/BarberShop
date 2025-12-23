@@ -112,8 +112,8 @@ Route::middleware(['auth', 'client'])->group(function () {
  * Routes Dashboard
  */
 Route::middleware(['auth'])->group(function () {
-    Route::get('dashboard/saloons', [SaloonController::class, 'index'])->name('saloons.index');
-    Route::get('dashboard/saloons/{saloon}', [SaloonController::class, 'show'])->name('saloons.show');
+    Route::get('dashboard/saloons', [SaloonController::class, 'dashboardIndex'])->name('saloons.dashboard.index');
+    Route::get('dashboard/saloons/{saloon}', [SaloonController::class, 'dashboardShow'])->name('saloons.dashboard.show');
 
     Route::get('/dashboard/barbers', function () {
         return Inertia::render('Dashboard/Barbers');

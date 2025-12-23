@@ -1,23 +1,33 @@
-// In @/interfaces/saloon.ts
 export interface OpeningHour {
     open: string;
     close: string;
     is_closed: boolean;
 }
 
+export interface Exception {
+    id: number;
+    start_date: string;
+    end_date: string;
+    reason?: string;
+}
+
 export interface Saloon {
+    id: number;
     name: string;
     address: string;
-    opening_hours: Record<string, OpeningHour>; // es: { 'monday': {open: '09:00', ...} }
-    exceptions: number[];
+    opening_hours: Record<string, OpeningHour>;
+    exceptions: Exception[]; // ✅ QUI
+    barber?: {
+        id: number;
+        name: string;
+    };
+    user_id: number;
 }
 
 export interface SaloonProps {
-    saloon: Saloon | null;
+    saloon: Saloon;
 }
 
-export interface Exception {
-    id: number;
-    start: string;
-    end: string;
+export interface Saloons {
+    saloons: Saloon[];
 }

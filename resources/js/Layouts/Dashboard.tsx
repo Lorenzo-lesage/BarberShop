@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 
@@ -19,9 +20,11 @@ import {
 export default function Page({
     children,
     breadcrumbs = [],
+    className,
 }: {
     children: React.ReactNode;
     breadcrumbs?: BreadcrumbItemType[];
+    className?: string;
 }) {
     /*
     |----------------------------------------------------------------------
@@ -57,7 +60,12 @@ export default function Page({
                             <ThemeSwitcher />
                         </div>
                     </header>
-                    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                    <div
+                        className={cn(
+                            'flex flex-1 flex-col gap-4 p-4 pt-0',
+                            className,
+                        )}
+                    >
                         {children}
                     </div>
                 </SidebarInset>
