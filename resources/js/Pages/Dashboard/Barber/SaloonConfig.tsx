@@ -62,9 +62,10 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
         from: undefined,
         to: undefined,
     });
-    const [exceptionToDelete, setExceptionToDelete] = useState<number | null>(
-        null,
-    );
+    const [deleteTarget, setDeleteTarget] = useState<{
+        id: number;
+        type: 'exception' | 'saloon';
+    } | null>(null);
     const [isMobile, setIsMobile] = useState(false);
 
     /**
@@ -159,7 +160,7 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
 
     /**
      * Submit Saloon
-     * @param e ù
+     * @param e
      */
     const submitSaloon = (e: React.FormEvent) => {
         e.preventDefault();
@@ -173,6 +174,7 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
     const addException = (e: React.FormEvent) => {
         e.preventDefault();
         postException(route('dashboard.barber.saloon.exceptions.store'), {
+            preserveScroll: true,
             onSuccess: () => {
                 resetException();
                 setDateRange(undefined);
@@ -183,18 +185,41 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
     /**
      * Confirm Delete
      */
-    const confirmDelete = () => {
-        if (exceptionToDelete) {
-            router.delete(
-                route(
-                    'dashboard.barber.saloon.exceptions.destroy',
-                    exceptionToDelete,
-                ),
-                {
-                    onSuccess: () => setExceptionToDelete(null),
-                },
-            );
-        }
+    const confirmGlobalDelete = () => {
+        if (!deleteTarget) return;
+
+        const routes = {
+            exception: route(
+                'dashboard.barber.saloon.exceptions.destroy',
+                deleteTarget.id,
+            ),
+            saloon: route('saloon.destroy'),
+        };
+
+        router.delete(routes[deleteTarget.type], {
+            preserveScroll: true,
+            onSuccess: () => setDeleteTarget(null),
+            onFinish: () => setDeleteTarget(null),
+        });
+    };
+
+    /**
+     * Resetta il form del Salone e degli Orari ai valori iniziali
+     */
+    const clearSaloonForm = () => {
+        setData({
+            name: saloon?.name || '',
+            address: saloon?.address || '',
+            opening_hours: getInitialHours(),
+        });
+    };
+
+    /**
+     * Resetta il form delle Ferie/Eccezioni e il calendario
+     */
+    const clearExceptionForm = () => {
+        resetException(); // Resetta start_date, end_date, reason
+        setDateRange(undefined); // Pulisce la selezione sul calendario
     };
 
     /*
@@ -205,15 +230,35 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
 
     return (
         <Dashboard breadcrumbs={breadcrumbs}>
-            <Head title="Salon Configuration" />
+            <Head title="Saloon Configuration" />
 
             <div className="xs:px-0 mx-auto max-w-4xl space-y-6 px-0 pb-10 sm:px-4">
                 {/* General Settings Card */}
                 <div className="shadow-sm">
-                    <CardTitle className="text-2xl">Salon Settings</CardTitle>
-                    <CardDescription>
-                        Update your salon's basic info and weekly schedule.
-                    </CardDescription>
+                    <div className="flex w-full flex-row items-center justify-between">
+                        <div>
+                            <CardTitle className="text-2xl">
+                                Salon Settings
+                            </CardTitle>
+                            <CardDescription>
+                                Update your salon's basic info and weekly
+                                schedule.
+                            </CardDescription>
+                        </div>
+
+                        <Button
+                            variant="destructive"
+                            size="sm" // Opzionale, per renderlo più discreto
+                            onClick={() =>
+                                setDeleteTarget({
+                                    id: saloon.id,
+                                    type: 'saloon',
+                                })
+                            }
+                        >
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete Saloon
+                        </Button>
+                    </div>
                     <form onSubmit={submitSaloon} className="space-y-6">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div className="space-y-2">
@@ -350,13 +395,23 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                             </div>
                         </div>
 
-                        <Button
-                            type="submit"
-                            disabled={processing}
-                            className="w-full sm:w-auto"
-                        >
-                            <Save className="mr-2 h-4 w-4" /> Save Schedule
-                        </Button>
+                        <div className="flex flex-col gap-2 sm:flex-row">
+                            <Button
+                                type="submit"
+                                disabled={processing}
+                                className="flex-1 sm:flex-none"
+                            >
+                                <Save className="mr-2 h-4 w-4" /> Save Schedule
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={clearSaloonForm}
+                                className="flex-1 sm:flex-none"
+                            >
+                                Reset Form
+                            </Button>
+                        </div>
                     </form>
                 </div>
 
@@ -429,13 +484,22 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                 }
                             />
                         </div>
-                        <div className="md:col-span-3">
+                        <div className="flex gap-1 md:col-span-3">
                             <Button
                                 type="submit"
                                 variant="destructive"
-                                className="w-full"
+                                className="w-full p-2"
+                                disabled={!dateRange}
                             >
-                                <Plus className="mr-2 h-4 w-4" /> Add
+                                <Plus className="mr-1" /> Add
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                className="w-full p-2"
+                                onClick={clearExceptionForm} // Collega la funzione qui
+                            >
+                                <Trash2 className="mr-1" /> Reset
                             </Button>
                         </div>
                     </form>
@@ -472,7 +536,10 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                         variant="ghost"
                                         size="icon"
                                         onClick={() =>
-                                            setExceptionToDelete(ex.id)
+                                            setDeleteTarget({
+                                                id: ex.id,
+                                                type: 'exception',
+                                            })
                                         }
                                         className="text-destructive"
                                     >
@@ -492,15 +559,18 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
 
             {/* Delete Confirmation */}
             <AlertDialog
-                open={exceptionToDelete !== null}
-                onOpenChange={(o) => !o && setExceptionToDelete(null)}
+                open={deleteTarget !== null}
+                onOpenChange={(o) => !o && setDeleteTarget(null)}
             >
                 <AlertDialogContent className="max-w-[90vw] rounded-lg sm:max-w-lg">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogTitle>
+                            Are you absolutely sure?
+                        </AlertDialogTitle>
                         <AlertDialogDescription>
-                            This will reopen these dates for customer bookings
-                            immediately.
+                            {deleteTarget?.type === 'exception'
+                                ? 'This action will immediately reopen these dates for customer bookings.'
+                                : 'This will permanently delete your salon and all associated data. This action cannot be undone.'}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="flex-col gap-2 sm:flex-row">
@@ -508,10 +578,13 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                             Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction
-                            onClick={confirmDelete}
-                            className="w-full bg-destructive text-white sm:w-auto"
+                            onClick={confirmGlobalDelete}
+                            className="w-full bg-destructive text-white hover:bg-destructive/90 sm:w-auto"
                         >
-                            Delete
+                            Delete{' '}
+                            {deleteTarget?.type === 'saloon'
+                                ? 'Salon'
+                                : 'Closure'}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

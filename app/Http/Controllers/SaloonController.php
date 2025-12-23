@@ -19,7 +19,6 @@ class SaloonController extends Controller
     public function index()
     {
         return Inertia::render('Public/Saloons/Index', [
-            // Usiamo 'barber' invece di 'user'
             'saloons' => Saloon::with('barber:id,name')->get(),
 
         ]);
@@ -49,11 +48,11 @@ class SaloonController extends Controller
     {
 
         if (Auth::id() === $saloon->user_id) {
-            return redirect()->route('saloons.index', $saloon->id) // Assicurati che il nome rotta sia corretto
+            return back() // Assicurati che il nome rotta sia corretto
                 ->with('toast', [
-                    'type' => 'warning',
-                    'message' => 'Area Gestione',
-                    'description' => 'Sei il proprietario, ti abbiamo portato nell\'anteprima gestionale.',
+                    'type' => 'error',
+                    'message' => 'Management Area',
+                    'description' => 'You are the owner, we have taken you to the management preview.',
                 ]);
         }
 
@@ -72,11 +71,11 @@ class SaloonController extends Controller
     public function dashboardShow(Saloon $saloon): Response|RedirectResponse
     {
         if (Auth::id() === $saloon->user_id) {
-            return redirect()->route('saloons.dashboard.index', $saloon->id) // Assicurati che il nome rotta sia corretto
+            return back() // Assicurati che il nome rotta sia corretto
                 ->with('toast', [
-                    'type' => 'warning',
-                    'message' => 'Area Gestione',
-                    'description' => 'Sei il proprietario, ti abbiamo portato nell\'anteprima gestionale.',
+                    'type' => 'error',
+                    'message' => 'Management Area',
+                    'description' => 'You are the owner, we have taken you to the management preview.',
                 ]);
         }
         // Carichiamo le relazioni necessarie per il singolo salone
@@ -92,6 +91,10 @@ class SaloonController extends Controller
         ]);
     }
 
+    /**
+     * View to create or edit saloon
+     * @return \Inertia\Response
+     */
     public function edit()
     {
         // Usiamo firstOrCreate per assicurarci che l'utente abbia sempre un oggetto Saloon
@@ -108,6 +111,61 @@ class SaloonController extends Controller
         ]);
     }
 
+    /**
+     * Function to create or update saloon
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'opening_hours' => 'nullable|array',
+        ]);
+
+        Auth::user()->saloon()->updateOrCreate(
+            ['user_id' => Auth::id()],
+            $validated
+        );
+
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Saved!',
+            'description' => 'Configuration saved.',
+        ]);
+    }
+
+    public function destroy()
+    {
+        // Recuperiamo il salone dell'utente autenticato
+        $saloon = Auth::user()->saloon;
+
+        if (!$saloon) {
+            return back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Error!',
+                'description' => 'No saloon found to delete.',
+            ]);
+        }
+
+        // Eliminiamo il salone
+        // (Nota: se hai impostato le chiavi esterne con 'onDelete cascade' nel DB,
+        // verranno eliminate automaticamente anche le eccezioni e gli orari)
+        $saloon->delete();
+
+        return redirect()->route('dashboard')->with('toast', [
+            'type' => 'success',
+            'message' => 'Saloon Deleted',
+            'description' => 'Your saloon and all its data have been removed.',
+        ]);
+    }
+
+    /**
+     * Summary of storeException
+     * @param Request $request
+     * @return RedirectResponse
+     */
     public function storeException(Request $request)
     {
         $saloon = Auth::user()->saloon;
@@ -164,23 +222,4 @@ class SaloonController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'opening_hours' => 'nullable|array',
-        ]);
-
-        Auth::user()->saloon()->updateOrCreate(
-            ['user_id' => Auth::id()],
-            $validated
-        );
-
-        return back()->with('toast', [
-            'type' => 'success',
-            'message' => 'Saved!',
-            'description' => 'Configuration saved.',
-        ]);
-    }
 }
