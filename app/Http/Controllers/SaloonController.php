@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreSaloonRequest;
 use App\Models\Saloon;
 use App\Models\SaloonException;
 use Illuminate\Http\Request;
@@ -116,17 +117,12 @@ class SaloonController extends Controller
      * @param Request $request
      * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreSaloonRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'opening_hours' => 'nullable|array',
-        ]);
-
+        // Utilizziamo direttamente la relazione per garantire che l'ID utente sia gestito correttamente
         Auth::user()->saloon()->updateOrCreate(
-            ['user_id' => Auth::id()],
-            $validated
+            ['user_id' => Auth::id()], // Condizione di ricerca
+            $request->validated()      // Dati da aggiornare o inserire
         );
 
         return back()->with('toast', [
@@ -135,7 +131,6 @@ class SaloonController extends Controller
             'description' => 'Configuration saved.',
         ]);
     }
-
     public function destroy()
     {
         // Recuperiamo il salone dell'utente autenticato

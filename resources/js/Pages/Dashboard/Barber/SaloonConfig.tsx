@@ -87,7 +87,7 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
         );
     };
 
-    const { data, setData, post, processing } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         name: saloon?.name || '',
         address: saloon?.address || '',
         opening_hours: getInitialHours(),
@@ -98,6 +98,8 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
         setData: setExceptionData,
         post: postException,
         reset: resetException,
+        errors: exceptionErrors,
+        processing: exceptionProcessing,
     } = useForm({
         start_date: '',
         end_date: '',
@@ -269,7 +271,16 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                     onChange={(e) =>
                                         setData('name', e.target.value)
                                     }
+                                    className={cn(
+                                        errors.name &&
+                                            'border-destructive focus-visible:ring-destructive',
+                                    )}
                                 />
+                                {errors.name && (
+                                    <p className="text-sm font-medium text-destructive">
+                                        {errors.name}
+                                    </p>
+                                )}
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="address">Address</Label>
@@ -279,7 +290,16 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                     onChange={(e) =>
                                         setData('address', e.target.value)
                                     }
+                                    className={cn(
+                                        errors.address &&
+                                            'border-destructive focus-visible:ring-destructive',
+                                    )}
                                 />
+                                {errors.address && (
+                                    <p className="text-sm font-medium text-destructive">
+                                        {errors.address}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -289,6 +309,11 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                             <h3 className="text-sm font-bold uppercase tracking-tight text-muted-foreground">
                                 Weekly Schedule
                             </h3>
+                            {errors.opening_hours && (
+                                <span className="text-xs font-bold text-destructive">
+                                    {errors.opening_hours}
+                                </span>
+                            )}
                             <div className="divide-y overflow-hidden rounded-md border">
                                 {DAYS.map((day) => (
                                     <div
@@ -472,6 +497,13 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                     />
                                 </PopoverContent>
                             </Popover>
+                            {(exceptionErrors.start_date ||
+                                exceptionErrors.end_date) && (
+                                <p className="text-sm font-medium text-destructive">
+                                    {exceptionErrors.start_date ||
+                                        exceptionErrors.end_date}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2 md:col-span-4">
                             <Label htmlFor="reason">Reason</Label>
@@ -483,13 +515,18 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                     setExceptionData('reason', e.target.value)
                                 }
                             />
+                            {exceptionErrors.reason && (
+                                <p className="text-sm font-medium text-destructive">
+                                    {exceptionErrors.reason}
+                                </p>
+                            )}
                         </div>
                         <div className="flex gap-1 md:col-span-3">
                             <Button
                                 type="submit"
                                 variant="destructive"
                                 className="w-full p-2"
-                                disabled={!dateRange}
+                                disabled={!dateRange || exceptionProcessing}
                             >
                                 <Plus className="mr-1" /> Add
                             </Button>
