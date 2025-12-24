@@ -318,40 +318,15 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                 {DAYS.map((day) => (
                                     <div
                                         key={day}
-                                        className="flex flex-col justify-between gap-4 p-3 hover:bg-muted/30 sm:flex-row sm:items-center md:h-16"
+                                        className="flex h-28 flex-col justify-between gap-4 p-3 hover:bg-muted/30 sm:flex-row sm:items-center md:h-16"
                                     >
-                                        {/* Mobile: Top Row (Day + Closed Switch) */}
-                                        <div className="flex items-center justify-between sm:w-32">
-                                            <span className="font-bold capitalize">
+                                        {/* Sinistra: Giorno + Checkbox (Desktop & Mobile) */}
+                                        <div className="flex items-center justify-between sm:w-64 sm:justify-start sm:gap-6">
+                                            <span className="w-20 font-bold capitalize">
                                                 {day}
                                             </span>
-                                            <div className="flex items-center space-x-2 sm:hidden">
-                                                <Checkbox
-                                                    id={`closed-m-${day}`}
-                                                    checked={
-                                                        data.opening_hours[day]
-                                                            .is_closed
-                                                    }
-                                                    onCheckedChange={(c) =>
-                                                        handleHourChange(
-                                                            day,
-                                                            'is_closed',
-                                                            !!c,
-                                                        )
-                                                    }
-                                                />
-                                                <Label
-                                                    htmlFor={`closed-m-${day}`}
-                                                    className="text-xs uppercase"
-                                                >
-                                                    Closed
-                                                </Label>
-                                            </div>
-                                        </div>
 
-                                        {/* Desktop Closed Switch + Time Pickers */}
-                                        <div className="flex flex-1 items-center gap-4">
-                                            <div className="hidden w-24 items-center space-x-2 sm:flex">
+                                            <div className="flex items-center space-x-2">
                                                 <Checkbox
                                                     id={`closed-${day}`}
                                                     checked={
@@ -368,18 +343,26 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                                 />
                                                 <Label
                                                     htmlFor={`closed-${day}`}
-                                                    className="text-xs uppercase"
+                                                    className="text-xs font-semibold uppercase text-muted-foreground"
                                                 >
                                                     Closed
                                                 </Label>
                                             </div>
+                                        </div>
 
+                                        {/* Destra: Solo Input Ore */}
+                                        <div className="flex flex-1 items-center justify-end">
                                             {!data.opening_hours[day]
                                                 .is_closed && (
-                                                <div className="flex flex-1 items-center gap-2 duration-300 animate-in fade-in slide-in-from-left-2">
+                                                <div className="flex items-center gap-2 duration-300 animate-in fade-in slide-in-from-right-2">
                                                     <Input
                                                         type="time"
-                                                        className="h-9 w-full sm:w-32"
+                                                        className={cn(
+                                                            'h-9 w-[100px] bg-background text-center font-mono',
+                                                            'dark:[&::-webkit-calendar-picker-indicator]:invert',
+                                                            errors.opening_hours &&
+                                                                'border-destructive',
+                                                        )}
                                                         value={
                                                             data.opening_hours[
                                                                 day
@@ -393,26 +376,37 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                                             )
                                                         }
                                                     />
-                                                    <span className="text-muted-foreground">
-                                                        to
+                                                    <span className="text-xs font-bold text-muted-foreground">
+                                                        TO
                                                     </span>
                                                     <Input
                                                         type="time"
-                                                        className="h-9 w-full sm:w-32"
+                                                        className={cn(
+                                                            'h-9 w-[100px] bg-background text-center font-mono',
+                                                            'dark:[&::-webkit-calendar-picker-indicator]:invert',
+                                                            errors.opening_hours &&
+                                                                'border-destructive',
+                                                        )}
                                                         value={
                                                             data.opening_hours[
                                                                 day
-                                                            ].close
+                                                            ].open
                                                         }
                                                         onChange={(e) =>
                                                             handleHourChange(
                                                                 day,
-                                                                'close',
+                                                                'open',
                                                                 e.target.value,
                                                             )
                                                         }
                                                     />
                                                 </div>
+                                            )}
+                                            {data.opening_hours[day]
+                                                .is_closed && (
+                                                <span className="pr-4 text-sm italic text-muted-foreground">
+                                                    No working hours
+                                                </span>
                                             )}
                                         </div>
                                     </div>

@@ -26,7 +26,7 @@ export default function ProfileEdit({
             <div className="py-12">
                 <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                     {/* Update Profile Info */}
-                    <div className="bg-white p-4 shadow dark:bg-[#242720] sm:rounded-lg sm:p-8">
+                    <div className="bg-white p-4 shadow dark:bg-[#18181B] sm:rounded-lg sm:p-8">
                         <UpdateProfileInformationForm
                             mustVerifyEmail={mustVerifyEmail}
                             status={status}
@@ -36,13 +36,13 @@ export default function ProfileEdit({
 
                     {/* Update Password - Only for non-OAuth users */}
                     {!isOAuth && (
-                        <div className="bg-white p-4 shadow dark:bg-[#242720] sm:rounded-lg sm:p-8">
+                        <div className="bg-white p-4 shadow dark:bg-[#18181B] sm:rounded-lg sm:p-8">
                             <UpdatePasswordForm className="max-w-xl" />
                         </div>
                     )}
 
                     {/* Delete Account */}
-                    <div className="bg-white p-4 shadow dark:bg-[#242720] sm:rounded-lg sm:p-8">
+                    <div className="bg-white p-4 shadow dark:bg-[#18181B] sm:rounded-lg sm:p-8">
                         <DeleteUserForm
                             className="max-w-xl"
                             isOAuth={isOAuth}
