@@ -46,4 +46,22 @@ class Saloon extends Model
     {
         return $this->hasMany(SaloonException::class);
     }
+
+    /**
+     * Function to don't overlap data
+     * @param array $data
+     * @return bool
+     */
+    public function hasExceptionOverlap(array $data): bool
+    {
+        return $this->exceptions()
+            ->where(function ($query) use ($data) {
+                $query->whereBetween('start_date', [$data['start_date'], $data['end_date']])
+                    ->orWhereBetween('end_date', [$data['start_date'], $data['end_date']])
+                    ->orWhere(function ($q) use ($data) {
+                        $q->where('start_date', '<=', $data['start_date'])
+                            ->where('end_date', '>=', $data['end_date']);
+                    });
+            })->exists();
+    }
 }

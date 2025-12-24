@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreSaloonExceptionRequest;
 use App\Http\Requests\StoreSaloonRequest;
 use App\Models\Saloon;
 use App\Models\SaloonException;
@@ -131,6 +132,11 @@ class SaloonController extends Controller
             'description' => 'Configuration saved.',
         ]);
     }
+
+    /**
+     * Function to delete saloon
+     * @return RedirectResponse
+     */
     public function destroy()
     {
         // Recuperiamo il salone dell'utente autenticato
@@ -157,21 +163,16 @@ class SaloonController extends Controller
     }
 
     /**
-     * Summary of storeException
+     * Function to create or update Exception
      * @param Request $request
      * @return RedirectResponse
      */
-    public function storeException(Request $request)
+    public function storeException(StoreSaloonExceptionRequest $request)
     {
+        // L'autorizzazione e la validazione base sono già state fatte!
         $saloon = Auth::user()->saloon;
+        $validated = $request->validated();
 
-        $validated = $request->validate([
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'reason' => 'nullable|string|max:255',
-        ]);
-
-        // CONTROLLO SOVRAPPOSIZIONE
         $overlap = $saloon->exceptions()
             ->where(function ($query) use ($validated) {
                 $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
@@ -199,15 +200,21 @@ class SaloonController extends Controller
         ]);
     }
 
-    public function destroyException($id) // <--- Cambiato da SaloonException a $id
+
+    /**
+     * Function to delete Exception
+     * @param mixed $id
+     * @return RedirectResponse
+     */
+    public function destroyException($id)
     {
-        $exception = SaloonException::findOrFail($id);
+        // Recuperiamo il salone dell'utente loggato
+        $saloon = Auth::user()->saloon;
 
-        // Controllo di sicurezza
-        if ($exception->saloon->user_id !== Auth::id()) {
-            abort(403);
-        }
+        // Cerchiamo l'eccezione SOLO tra quelle collegate a questo specifico salone
+        $exception = $saloon->exceptions()->findOrFail($id);
 
+        // Se arriviamo qui, l'eccezione esiste ED è dell'utente. Possiamo eliminare.
         $exception->delete();
 
         return back()->with('toast', [
@@ -218,3 +225,5 @@ class SaloonController extends Controller
     }
 
 }
+
+

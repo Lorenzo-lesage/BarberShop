@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreSaloonRequest extends FormRequest
 {
@@ -14,11 +15,20 @@ class StoreSaloonRequest extends FormRequest
         return auth()->check() && auth()->user()->is_barber;
     }
 
+    /**
+     * Se l'autorizzazione fallisce, invece di una pagina 403 grigia,
+     * reindirizziamo l'utente con un messaggio Toast.
+     */
     protected function failedAuthorization()
     {
-        abort(403, 'Only barbers can manage a saloon.');
+        throw new HttpResponseException(
+            back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Access Denied',
+                'description' => 'You are not authorized to perform this action.',
+            ])
+        );
     }
-
 
     /**
      * Get the validation rules that apply to the request.
@@ -36,7 +46,7 @@ class StoreSaloonRequest extends FormRequest
 
     public function messages()
     {
-       return [
+        return [
             'name.required' => 'The saloon name is required.',
             'name.max' => 'The saloon name is too long (max 255 chars).',
             'address.required' => 'Please provide the saloon address.',
