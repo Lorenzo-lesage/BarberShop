@@ -10,11 +10,12 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\BecomeBarberController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-
+use App\Models\Saloon;
 
 // Rotte principali
 Route::get('/', function () {
     return Inertia::render('Welcome', [
+        'saloons' => Saloon::latest()->take(10)->get(),
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,

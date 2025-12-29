@@ -13,7 +13,9 @@ export default function AppShell({
 }): React.ReactNode {
     return (
         <div className="dark:bg-darkbg light:bg-lightbg min-h-screen">
-            <Navbar />
+            <div className="sticky top-0 z-40">
+                <Navbar />
+            </div>
             <main className={cn('min-h-screen flex-1 py-6', className)}>
                 {children}
             </main>

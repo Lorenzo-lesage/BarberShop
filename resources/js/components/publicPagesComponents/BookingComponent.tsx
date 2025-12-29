@@ -1,4 +1,4 @@
-import { useForm, usePage } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import { addMinutes, format, isBefore, parse, startOfDay } from 'date-fns';
 import { it } from 'date-fns/locale';
 import { useCallback, useMemo, useState } from 'react';
@@ -8,7 +8,7 @@ import { CalendarIcon, CheckCircle2, Clock, MapPin, User } from 'lucide-react';
 
 // Shadcn UI
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
     Card,
@@ -32,6 +32,8 @@ export default function BookingComponent({ saloon }: SaloonProps) {
     */
     const { auth } = usePage().props;
     const isAuthenticated = !!auth.user;
+    const authId = auth.user?.id;
+    const isOwner = authId === saloon?.user_id;
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(
         new Date(),
@@ -117,26 +119,36 @@ export default function BookingComponent({ saloon }: SaloonProps) {
         <div className="grid grid-cols-1 gap-8">
             {/* LEFT COLUMN: Saloon Info & Hours */}
             <div className="space-y-6 lg:col-span-1">
-                <header className="space-y-4">
-                    <Badge
-                        variant="outline"
-                        className="border-primary text-primary"
-                    >
-                        Official Partner
-                    </Badge>
-                    <h1 className="text-4xl font-extrabold tracking-tight">
-                        {saloon.name}
-                    </h1>
-                    <div className="space-y-2 text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                            <User className="h-4 w-4" />
-                            <span>Barber: {saloon?.barber?.name}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4" />
-                            <span>{saloon.address}</span>
+                <header className="flex justify-between space-y-4">
+                    <div>
+                        <Badge
+                            variant="outline"
+                            className="border-primary text-primary"
+                        >
+                            Official Partner
+                        </Badge>
+                        <h1 className="mt-2 text-4xl font-extrabold tracking-tight">
+                            {saloon.name}
+                        </h1>
+                        <div className="space-y-2 text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                                <User className="h-4 w-4" />
+                                <span>Barber: {saloon?.barber?.name}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" />
+                                <span>{saloon.address}</span>
+                            </div>
                         </div>
                     </div>
+                    {isOwner && (
+                        <Link
+                            href={route('dashboard.barber.saloon', saloon.id)}
+                            className={buttonVariants({ variant: 'outline' })}
+                        >
+                            Edit
+                        </Link>
+                    )}
                 </header>
 
                 <Card>
@@ -213,130 +225,153 @@ export default function BookingComponent({ saloon }: SaloonProps) {
                 </Card>
             )}
 
-            {/* RIGHT COLUMN: Booking System */}
-            {!auth.user.is_barber && (
-                <div className="space-y-6 lg:col-span-2">
-                    <Card className="border-2 border-primary/10 shadow-md">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Clock className="h-5 w-5 text-primary" />
-                                Select Date & Time
-                            </CardTitle>
-                            <CardDescription>
-                                Pick a day to see available slots for your
-                                appointment.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                            {/* Calendar Section */}
-                            <div className="space-y-4">
-                                <Label className="text-base">
-                                    1. Choose the date
-                                </Label>
-                                <Calendar
-                                    mode="single"
-                                    selected={selectedDate}
-                                    onSelect={(date) => {
-                                        setSelectedDate(date);
-                                        setSelectedTime(null); // Reset time when date changes
-                                    }}
-                                    disabled={(date) =>
-                                        isBefore(
-                                            date,
-                                            startOfDay(new Date()),
-                                        ) || isHoliday(date)
-                                    }
-                                    className="w-full rounded-md border shadow-sm"
-                                />
-                                {isHoliday(selectedDate!) && (
-                                    <p className="text-xs font-medium italic text-destructive">
-                                        * The shop is closed for holidays on
-                                        this date.
-                                    </p>
-                                )}
-                            </div>
-
-                            {/* Time Slots Section */}
-                            <div className="space-y-4">
-                                <Label className="text-base">
-                                    2. Choose the time
-                                </Label>
-                                <div className="grid grid-cols-3 gap-2">
-                                    {availableSlots.length > 0 ? (
-                                        availableSlots.map((slot) => (
-                                            <Button
-                                                key={slot}
-                                                variant={
-                                                    selectedTime === slot
-                                                        ? 'default'
-                                                        : 'outline'
-                                                }
-                                                className={cn(
-                                                    'w-full transition-all',
-                                                    selectedTime === slot &&
-                                                        'ring-2 ring-primary ring-offset-2',
-                                                )}
-                                                onClick={() =>
-                                                    setSelectedTime(slot)
-                                                }
-                                            >
-                                                {slot}
-                                            </Button>
-                                        ))
-                                    ) : (
-                                        <div className="col-span-3 rounded-lg border bg-muted/20 py-10 text-center">
-                                            <p className="text-sm italic text-muted-foreground">
-                                                No availability for the selected
-                                                date.
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {selectedTime && (
-                                    <div className="pt-6 animate-in fade-in slide-in-from-top-4">
-                                        <Separator className="mb-6" />
-                                        <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
-                                            <div className="flex items-start gap-3">
-                                                <CheckCircle2 className="mt-0.5 h-5 w-5 text-primary" />
-                                                <div>
-                                                    <p className="text-sm font-bold">
-                                                        Summary
-                                                    </p>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        {format(
-                                                            selectedDate!,
-                                                            'PPPP',
-                                                            { locale: it },
-                                                        )}{' '}
-                                                        at {selectedTime}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <Button
-                                            className="h-12 w-full text-lg shadow-lg hover:shadow-primary/20"
-                                            size="lg"
-                                            onClick={handleBooking}
-                                            disabled={
-                                                processing || !isAuthenticated
+            {auth?.user ? (
+                <>
+                    {/* RIGHT COLUMN: Booking System */}
+                    {!auth?.user?.is_barber && (
+                        <div className="space-y-6 lg:col-span-2">
+                            <Card className="border-2 border-primary/10 shadow-md">
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2">
+                                        <Clock className="h-5 w-5 text-primary" />
+                                        Select Date & Time
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Pick a day to see available slots for
+                                        your appointment.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                                    {/* Calendar Section */}
+                                    <div className="space-y-4">
+                                        <Label className="text-base">
+                                            1. Choose the date
+                                        </Label>
+                                        <Calendar
+                                            mode="single"
+                                            selected={selectedDate}
+                                            onSelect={(date) => {
+                                                setSelectedDate(date);
+                                                setSelectedTime(null); // Reset time when date changes
+                                            }}
+                                            disabled={(date) =>
+                                                isBefore(
+                                                    date,
+                                                    startOfDay(new Date()),
+                                                ) || isHoliday(date)
                                             }
-                                        >
-                                            {!isAuthenticated
-                                                ? 'Sign in to book'
-                                                : 'Confirm Appointment'}
-                                        </Button>
-                                        {!isAuthenticated && (
-                                            <p className="mt-2 text-center text-xs text-muted-foreground">
-                                                You need to sign in to book an
-                                                appointment
+                                            className="w-full rounded-md border shadow-sm"
+                                        />
+                                        {isHoliday(selectedDate!) && (
+                                            <p className="text-xs font-medium italic text-destructive">
+                                                * The shop is closed for
+                                                holidays on this date.
                                             </p>
                                         )}
                                     </div>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
+
+                                    {/* Time Slots Section */}
+                                    <div className="space-y-4">
+                                        <Label className="text-base">
+                                            2. Choose the time
+                                        </Label>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {availableSlots.length > 0 ? (
+                                                availableSlots.map((slot) => (
+                                                    <Button
+                                                        key={slot}
+                                                        variant={
+                                                            selectedTime ===
+                                                            slot
+                                                                ? 'default'
+                                                                : 'outline'
+                                                        }
+                                                        className={cn(
+                                                            'w-full transition-all',
+                                                            selectedTime ===
+                                                                slot &&
+                                                                'ring-2 ring-primary ring-offset-2',
+                                                        )}
+                                                        onClick={() =>
+                                                            setSelectedTime(
+                                                                slot,
+                                                            )
+                                                        }
+                                                    >
+                                                        {slot}
+                                                    </Button>
+                                                ))
+                                            ) : (
+                                                <div className="col-span-3 rounded-lg border bg-muted/20 py-10 text-center">
+                                                    <p className="text-sm italic text-muted-foreground">
+                                                        No availability for the
+                                                        selected date.
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {selectedTime && (
+                                            <div className="pt-6 animate-in fade-in slide-in-from-top-4">
+                                                <Separator className="mb-6" />
+                                                <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
+                                                    <div className="flex items-start gap-3">
+                                                        <CheckCircle2 className="mt-0.5 h-5 w-5 text-primary" />
+                                                        <div>
+                                                            <p className="text-sm font-bold">
+                                                                Summary
+                                                            </p>
+                                                            <p className="text-sm text-muted-foreground">
+                                                                {format(
+                                                                    selectedDate!,
+                                                                    'PPPP',
+                                                                    {
+                                                                        locale: it,
+                                                                    },
+                                                                )}{' '}
+                                                                at{' '}
+                                                                {selectedTime}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <Button
+                                                    className="h-12 w-full text-lg shadow-lg hover:shadow-primary/20"
+                                                    size="lg"
+                                                    onClick={handleBooking}
+                                                    disabled={
+                                                        processing ||
+                                                        !isAuthenticated
+                                                    }
+                                                >
+                                                    {!isAuthenticated
+                                                        ? 'Sign in to book'
+                                                        : 'Confirm Appointment'}
+                                                </Button>
+                                                {!isAuthenticated && (
+                                                    <p className="mt-2 text-center text-xs text-muted-foreground">
+                                                        You need to sign in to
+                                                        book an appointment
+                                                    </p>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
+                </>
+            ) : (
+                <div className="text-center">
+                    <p>You need to sign in to book an appointment</p>
+
+                    <Link
+                        href={route('login')}
+                        className={buttonVariants({ variant: 'outline' })}
+                    >
+                        Sign in
+                    </Link>
                 </div>
             )}
         </div>

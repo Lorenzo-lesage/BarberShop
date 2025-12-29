@@ -48,16 +48,6 @@ class SaloonController extends Controller
      */
     public function show(Saloon $saloon): Response|RedirectResponse
     {
-
-        if (Auth::id() === $saloon->user_id) {
-            return back() // Assicurati che il nome rotta sia corretto
-                ->with('toast', [
-                    'type' => 'error',
-                    'message' => 'Management Area',
-                    'description' => 'You are the owner, we have taken you to the management preview.',
-                ]);
-        }
-
         // Anche qui, carichiamo 'barber'
         $saloon->load(['barber:id,name', 'exceptions']);
 
@@ -72,14 +62,6 @@ class SaloonController extends Controller
      */
     public function dashboardShow(Saloon $saloon): Response|RedirectResponse
     {
-        if (Auth::id() === $saloon->user_id) {
-            return back() // Assicurati che il nome rotta sia corretto
-                ->with('toast', [
-                    'type' => 'error',
-                    'message' => 'Management Area',
-                    'description' => 'You are the owner, we have taken you to the management preview.',
-                ]);
-        }
         // Carichiamo le relazioni necessarie per il singolo salone
         $saloon->load(['barber:id,name', 'exceptions']);
 

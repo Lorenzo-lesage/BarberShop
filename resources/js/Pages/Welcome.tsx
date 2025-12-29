@@ -7,10 +7,21 @@ import hero from '@/assets/hero.jpg';
 // Main Layout
 import AppShell from '@/Layouts/Appshell';
 
+// Interfaces
+import type { Saloon } from '@/interfaces/saloon';
+
+// Components
+import { SaloonCarousel } from '@/components/publicPagesComponents/welcome/SaloonCarousel';
+
 export default function Welcome({
     laravelVersion,
     phpVersion,
-}: PageProps<{ laravelVersion: string; phpVersion: string }>) {
+    saloons,
+}: PageProps<{
+    laravelVersion: string;
+    phpVersion: string;
+    saloons: Saloon[];
+}>) {
     return (
         <AppShell>
             <Head title="Welcome" />
@@ -35,24 +46,35 @@ export default function Welcome({
                     }}
                 />
                 <div className="relative flex min-h-screen flex-col items-center justify-center">
-                    <div className="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                        <main className="mt-6">
-                            <h1 className="text-4xl font-bold text-black dark:text-white sm:text-5xl lg:text-6xl">
-                                Welcome to BarberShop
-                            </h1>
-                            <p className="mt-6 text-lg leading-8">
-                                Your one-stop solution for managing barber
-                                appointments, clients, and services with ease
-                                and efficiency.
-                            </p>
-                            <div>
-                                <p className="mt-6 text-sm">
-                                    Laravel v{laravelVersion} (PHP v{phpVersion}
-                                    )
+                    <div className="w-full max-w-2xl px-6 lg:max-w-7xl">
+                        {/* Header */}
+                        <header className="relative h-screen">
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2">
+                                <h1 className="text-4xl font-bold text-black dark:text-white sm:text-5xl lg:text-6xl">
+                                    Welcome to BarberShop
+                                </h1>
+                                <p className="mt-6 text-lg leading-8">
+                                    Your one-stop solution for managing barber
+                                    appointments, clients, and services with
+                                    ease and efficiency.
                                 </p>
+                                <div>
+                                    <p className="mt-6 text-sm">
+                                        Laravel v{laravelVersion} (PHP v
+                                        {phpVersion})
+                                    </p>
+                                </div>
                             </div>
-                        </main>
+                        </header>
+
+                        {/* Main Content */}
                         <main className="mt-6">
+                            <div className="bg-background py-12">
+                                <div className="container mx-auto">
+                                    {/* Inserimento del Carosello */}
+                                    <SaloonCarousel saloons={saloons} />
+                                </div>
+                            </div>
                             <h1 className="text-4xl font-bold text-black dark:text-white sm:text-5xl lg:text-6xl">
                                 Features
                             </h1>

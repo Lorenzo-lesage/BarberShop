@@ -1,11 +1,17 @@
+import { Link, usePage } from '@inertiajs/react';
+
 // Interfaces
 import type { Saloons } from '@/interfaces/saloon';
+
+// Utils
+import { cn } from '@/lib/utils';
 
 interface Props extends Saloons {
     routeName?: string;
 }
 
 // Components
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -14,7 +20,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Link, usePage } from '@inertiajs/react';
 
 export default function SaloonsComponent({
     saloons,
@@ -34,17 +39,28 @@ export default function SaloonsComponent({
     |--------------------------------------------------------------------------
     */
     return (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
             {saloons.map((saloon) => {
                 const isOwner = authId === saloon.user_id;
-
-                if (isOwner) return null;
 
                 return (
                     <Card
                         key={saloon.id}
-                        className="transition-shadow hover:shadow-lg"
+                        className={cn(
+                            'transition-shadow hover:shadow-lg',
+                            isOwner
+                                ? 'relative bg-amber-50 dark:bg-amber-950/20'
+                                : 'bg-card',
+                        )}
                     >
+                        {isOwner && (
+                            <Badge
+                                className="absolute right-2 top-2"
+                                variant="secondary"
+                            >
+                                Your saloon
+                            </Badge>
+                        )}
                         <CardHeader>
                             <CardTitle>{saloon.name}</CardTitle>
                             <CardDescription>{saloon.address}</CardDescription>
@@ -54,9 +70,18 @@ export default function SaloonsComponent({
                                 Barber: {saloon.barber?.name}
                             </p>
                             <Link href={route(routeName, saloon.id)}>
-                                <Button className="w-full">
-                                    {auth.user?.is_barber ? 'See saloon' : 'Book now'}
-                                </Button>
+                                {isOwner && (
+                                    <Button className="w-full">
+                                        Look your saloon
+                                    </Button>
+                                )}
+                                {!isOwner && (
+                                    <Button className="w-full">
+                                        {auth.user?.is_barber
+                                            ? 'See saloon'
+                                            : 'Book now'}
+                                    </Button>
+                                )}
                             </Link>
                         </CardContent>
                     </Card>
