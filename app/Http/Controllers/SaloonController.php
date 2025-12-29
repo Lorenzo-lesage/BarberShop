@@ -21,7 +21,10 @@ class SaloonController extends Controller
     public function index()
     {
         return Inertia::render('Public/Saloons/Index', [
-            'saloons' => Saloon::with('barber:id,name')->get(),
+            'saloons' => Saloon::with('barber:id,name')
+                ->latest() // Opzionale: mostra i più recenti per primi
+                ->paginate(12)
+                ->withQueryString(),
 
         ]);
     }
@@ -33,7 +36,10 @@ class SaloonController extends Controller
     public function dashboardIndex()
     {
         return Inertia::render('Dashboard/Saloons/DashboardIndex', [
-            'saloons' => Saloon::with('barber:id,name')->get(),
+            'saloons' => Saloon::with('barber:id,name')
+                ->latest() // Opzionale: mostra i più recenti per primi
+                ->paginate(12)
+                ->withQueryString(),
             'breadcrumbs' => [
                 ['label' => 'Dashboard', 'href' => route('dashboard')],
                 ['label' => 'Saloons', 'href' => null],

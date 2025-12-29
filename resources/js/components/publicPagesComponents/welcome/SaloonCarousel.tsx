@@ -43,7 +43,7 @@ export function SaloonCarousel({ saloons }: { saloons: Saloon[] }) {
     }
 
     return (
-        <div className="mx-auto w-full max-w-5xl py-10">
+        <div className="mx-auto w-full py-10">
             <div className="flex items-center justify-between">
                 <h2 className="mb-6 text-center text-2xl font-bold">
                     Our Saloons
@@ -60,7 +60,7 @@ export function SaloonCarousel({ saloons }: { saloons: Saloon[] }) {
                         return (
                             <CarouselItem
                                 key={saloon.id}
-                                className="basis-[75%] pl-1 md:basis-[50%] lg:basis-[33%]"
+                                className="basis-[65%] pl-1 md:basis-[50%] lg:basis-[25%]"
                             >
                                 <div className="p-0">
                                     <Card

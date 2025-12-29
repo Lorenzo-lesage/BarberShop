@@ -5,18 +5,36 @@ import AppShell from '@/Layouts/Appshell';
 import SaloonsComponent from '@/components/publicPagesComponents/SaloonsComponents';
 
 // Interfaces
-import type { Saloons } from '@/interfaces/saloon';
+import type { Saloon } from '@/interfaces/saloon';
 
-export default function Index({ saloons }: Saloons) {
-    /*
-    |--------------------------------------------------------------------------
-    | Render
-    |--------------------------------------------------------------------------
-    */
+// Components
+import { MyPagination } from '@/components/publicPagesComponents/DataTablePagination';
+
+// Definiamo l'interfaccia per la prop saloons paginata
+interface PaginatedSaloons {
+    saloons: {
+        data: Saloon[];
+        links: {
+            url: string | null;
+            label: string;
+            active: boolean;
+        }[];
+    };
+}
+
+export default function Index({ saloons }: PaginatedSaloons) {
     return (
-        <AppShell className="mx-auto max-w-7xl px-4 py-12">
+        <AppShell className="mx-auto flex max-w-7xl flex-col px-4">
             <Head title="Saloons" />
-            <SaloonsComponent saloons={saloons} routeName="saloons.show" />
+
+            <div className="h-[80vh]">
+                <SaloonsComponent
+                    saloons={saloons.data}
+                    routeName="saloons.show"
+                />
+            </div>
+
+            <MyPagination links={saloons.links} />
         </AppShell>
     );
 }
