@@ -54,7 +54,9 @@ export default function SaloonsComponent({
                                 Barber: {saloon.barber?.name}
                             </p>
                             <Link href={route(routeName, saloon.id)}>
-                                <Button className="w-full">Book now</Button>
+                                <Button className="w-full">
+                                    {auth.user?.is_barber ? 'See saloon' : 'Book now'}
+                                </Button>
                             </Link>
                         </CardContent>
                     </Card>
