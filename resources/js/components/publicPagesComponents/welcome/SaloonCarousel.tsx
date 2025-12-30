@@ -48,7 +48,7 @@ export function SaloonCarousel({ saloons }: { saloons: Saloon[] }) {
                 <h2 className="mb-6 text-center text-2xl font-bold">
                     Our Saloons
                 </h2>
-                <Link href={route('saloons.index')}>
+                <Link href={route('saloons.index')} prefetch>
                     <Badge variant="outline">View all Saloons</Badge>
                 </Link>
             </div>
@@ -89,6 +89,7 @@ export function SaloonCarousel({ saloons }: { saloons: Saloon[] }) {
                                                     'saloons.show',
                                                     saloon.id,
                                                 )}
+                                                prefetch
                                             >
                                                 <Badge
                                                     className="mt-2"

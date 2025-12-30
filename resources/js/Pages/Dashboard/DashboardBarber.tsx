@@ -1,8 +1,5 @@
 import { Head, usePage } from '@inertiajs/react';
 
-// Interfaces
-import type { PageProps } from '@/types';
-
 // Layout
 import Dashboard from '@/Layouts/Dashboard';
 
@@ -13,7 +10,7 @@ export default function DashboardBarber() {
     |----------------------------------------------------------------------
     */
 
-    const { auth } = usePage<PageProps>().props;
+    const { auth } = usePage().props;
 
     /*
     |----------------------------------------------------------------------

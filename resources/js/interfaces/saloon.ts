@@ -16,18 +16,7 @@ export interface Saloon {
     name: string;
     address: string;
     opening_hours: Record<string, OpeningHour>;
-    exceptions: Exception[]; // ✅ QUI
-    barber?: {
-        id: number;
-        name: string;
-    };
+    exceptions: Exception[];
+    barber?: { id: number; name: string };
     user_id: number;
-}
-
-export interface SaloonProps {
-    saloon: Saloon;
-}
-
-export interface Saloons {
-    saloons: Saloon[];
 }

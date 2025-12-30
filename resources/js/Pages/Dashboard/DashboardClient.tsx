@@ -3,9 +3,6 @@ import { Head, usePage } from '@inertiajs/react';
 // Layout
 import Dashboard from '@/Layouts/Dashboard';
 
-// Interfaces
-import type { PageProps } from '@/types';
-
 export default function DashboardClient() {
     /*
     |----------------------------------------------------------------------
@@ -13,7 +10,7 @@ export default function DashboardClient() {
     |----------------------------------------------------------------------
     */
 
-    const { auth } = usePage<PageProps>().props;
+    const { auth } = usePage().props;
 
     /*
     |----------------------------------------------------------------------

@@ -11,21 +11,57 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Response;
+use Illuminate\Support\Facades\Cache;
 
 class SaloonController extends Controller
 {
+
+    /**
+     * Get Saloons data and cache it for 1 hour
+     * @param mixed $page
+     */
+    private function getSaloonsData($page)
+    {
+        return Cache::remember("saloons_shared_list_page_{$page}", now()->addHours(1), function () {
+            return Saloon::with('barber:id,name')
+                ->latest()
+                ->paginate(8)
+                ->withQueryString();
+        });
+    }
+
+    /**
+     * Get single saloon data and cache it for 24 hours
+     */
+    private function getSingleSaloonData(Saloon $saloon)
+    {
+        return Cache::remember("saloon_shared_detail_{$saloon->id}", now()->addHours(24), function () use ($saloon) {
+            return $saloon->load(['barber:id,name', 'exceptions']);
+        });
+    }
+
+    /**
+     * Clear Saloon cache
+     */
+    private function clearSaloonCache($saloonId = null)
+    {
+        // Svuotiamo la lista (almeno la prima pagina)
+        Cache::forget("saloons_shared_list_page_1");
+
+        // Se abbiamo un ID, svuotiamo il dettaglio specifico
+        if ($saloonId) {
+            Cache::forget("saloon_shared_detail_{$saloonId}");
+        }
+    }
+
     /**
      * Show public page for saloons
      * @return \Inertia\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         return Inertia::render('Public/Saloons/Index', [
-            'saloons' => Saloon::with('barber:id,name')
-                ->latest() // Opzionale: mostra i più recenti per primi
-                ->paginate(12)
-                ->withQueryString(),
-
+            'saloons' => $this->getSaloonsData($request->get('page', 1)),
         ]);
     }
 
@@ -33,13 +69,10 @@ class SaloonController extends Controller
      * Show Dashboard page for saloons
      * @return \Inertia\Response
      */
-    public function dashboardIndex()
+    public function dashboardIndex(Request $request)
     {
         return Inertia::render('Dashboard/Saloons/DashboardIndex', [
-            'saloons' => Saloon::with('barber:id,name')
-                ->latest() // Opzionale: mostra i più recenti per primi
-                ->paginate(12)
-                ->withQueryString(),
+            'saloons' => $this->getSaloonsData($request->get('page', 1)),
             'breadcrumbs' => [
                 ['label' => 'Dashboard', 'href' => route('dashboard')],
                 ['label' => 'Saloons', 'href' => null],
@@ -47,32 +80,28 @@ class SaloonController extends Controller
         ]);
     }
 
+
     /**
-     * Show Detail saloon in public route
+     * Show single saloon
      * @param Saloon $saloon
      * @return \Inertia\Response
      */
     public function show(Saloon $saloon): Response|RedirectResponse
     {
-        // Anche qui, carichiamo 'barber'
-        $saloon->load(['barber:id,name', 'exceptions']);
-
         return Inertia::render('Public/Saloons/Show', [
-            'saloon' => $saloon,
+            'saloon' => $this->getSingleSaloonData($saloon),
         ]);
     }
+
     /**
-     * Show Detail page in dashboard routes
+     * Show Dashboard single saloon
      * @param Saloon $saloon
      * @return \Inertia\Response
      */
     public function dashboardShow(Saloon $saloon): Response|RedirectResponse
     {
-        // Carichiamo le relazioni necessarie per il singolo salone
-        $saloon->load(['barber:id,name', 'exceptions']);
-
         return Inertia::render('Dashboard/Saloons/DashboardShow', [
-            'saloon' => $saloon,
+            'saloon' => $this->getSingleSaloonData($saloon),
             'breadcrumbs' => [
                 ['label' => 'Dashboard', 'href' => route('dashboard')],
                 ['label' => 'Saloons', 'href' => route('saloons.dashboard.index')],
@@ -108,11 +137,13 @@ class SaloonController extends Controller
      */
     public function store(StoreSaloonRequest $request)
     {
-        // Utilizziamo direttamente la relazione per garantire che l'ID utente sia gestito correttamente
-        Auth::user()->saloon()->updateOrCreate(
-            ['user_id' => Auth::id()], // Condizione di ricerca
-            $request->validated()      // Dati da aggiornare o inserire
+        $saloon = Auth::user()->saloon()->updateOrCreate(
+            ['user_id' => Auth::id()],
+            $request->validated()
         );
+
+        // SVUOTA CACHE: Dati aggiornati!
+        $this->clearSaloonCache($saloon->id);
 
         return back()->with('toast', [
             'type' => 'success',
@@ -142,6 +173,9 @@ class SaloonController extends Controller
         // (Nota: se hai impostato le chiavi esterne con 'onDelete cascade' nel DB,
         // verranno eliminate automaticamente anche le eccezioni e gli orari)
         $saloon->delete();
+
+        // SVUOTA CACHE: Dati aggiornati!
+        $this->clearSaloonCache($saloon->id);
 
         return redirect()->route('dashboard')->with('toast', [
             'type' => 'success',
@@ -181,6 +215,9 @@ class SaloonController extends Controller
 
         $saloon->exceptions()->create($validated);
 
+        // SVUOTA CACHE: Le eccezioni sono cambiate!
+        $this->clearSaloonCache($saloon->id);
+
         return back()->with('toast', [
             'type' => 'success',
             'message' => 'Saved!',
@@ -196,14 +233,12 @@ class SaloonController extends Controller
      */
     public function destroyException($id)
     {
-        // Recuperiamo il salone dell'utente loggato
         $saloon = Auth::user()->saloon;
-
-        // Cerchiamo l'eccezione SOLO tra quelle collegate a questo specifico salone
         $exception = $saloon->exceptions()->findOrFail($id);
-
-        // Se arriviamo qui, l'eccezione esiste ED è dell'utente. Possiamo eliminare.
         $exception->delete();
+
+        // SVUOTA CACHE
+        $this->clearSaloonCache($saloon->id);
 
         return back()->with('toast', [
             'type' => 'success',

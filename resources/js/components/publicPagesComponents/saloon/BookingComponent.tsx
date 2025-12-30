@@ -1,10 +1,18 @@
+import { cn } from '@/lib/utils';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { addMinutes, format, isBefore, parse, startOfDay } from 'date-fns';
 import { it } from 'date-fns/locale';
 import { useCallback, useMemo, useState } from 'react';
 
 // Icons
-import { CalendarIcon, CheckCircle2, Clock, MapPin, User } from 'lucide-react';
+import {
+    CalendarIcon,
+    CheckCircle2,
+    Clock,
+    Loader2,
+    MapPin,
+    User,
+} from 'lucide-react';
 
 // Shadcn UI
 import { Badge } from '@/components/ui/badge';
@@ -19,12 +27,25 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Interfaces
-import type { OpeningHour, SaloonProps } from '@/interfaces/saloon';
+import type { Saloon } from '@/interfaces/saloon';
 
-export default function BookingComponent({ saloon }: SaloonProps) {
+interface Props {
+    saloon: Saloon;
+}
+const DAYS = [
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+    'sunday',
+];
+
+export default function BookingComponent({ saloon }: Props) {
     /*
     |-------------------------------------------------------------------
     | Data
@@ -39,6 +60,7 @@ export default function BookingComponent({ saloon }: SaloonProps) {
         new Date(),
     );
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [isCalculating, setIsCalculating] = useState(false);
 
     // 1. Check if the selected date is a holiday (exception)
     /**
@@ -91,11 +113,65 @@ export default function BookingComponent({ saloon }: SaloonProps) {
         time: '',
     });
 
+    /**
+     * Determine if a day is closed
+     * @param date
+     * @returns
+     */
+    const isWeeklyClosed = useCallback(
+        (date: Date) => {
+            if (!saloon.opening_hours) return true;
+
+            const dayIndex = date.getDay(); // 0 = sunday
+            const dayKey = DAYS[(dayIndex + 6) % 7];
+            // 👆 converte JS (sunday=0) in monday-first
+
+            const schedule = saloon.opening_hours[dayKey];
+
+            return !schedule || schedule.is_closed;
+        },
+        [saloon.opening_hours],
+    );
+
+    /**
+     * Determine if a date is disabled
+     */
+    const isDateDisabled = useCallback(
+        (date: Date) => {
+            // Giorni passati
+            if (isBefore(date, startOfDay(new Date()))) return true;
+
+            // Ferie
+            if (isHoliday(date)) return true;
+
+            // Giorni settimanali chiusi
+            if (isWeeklyClosed(date)) return true;
+
+            return false;
+        },
+        [isHoliday, isWeeklyClosed],
+    );
+
     /*
     |-------------------------------------------------------------------
     | Handlers
     |-------------------------------------------------------------------
     */
+
+    /**
+     * Handles date change
+     * @param date
+     */
+    const handleDateChange = (date: Date | undefined) => {
+        setIsCalculating(true); // Inizia il caricamento
+        setSelectedDate(date);
+        setSelectedTime(null); // Resetta l'ora
+
+        // Simuliamo il calcolo/richiesta al database
+        setTimeout(() => {
+            setIsCalculating(false); // Fine caricamento
+        }, 300);
+    };
 
     /**
      * Handles the booking process
@@ -145,6 +221,7 @@ export default function BookingComponent({ saloon }: SaloonProps) {
                         <Link
                             href={route('dashboard.barber.saloon', saloon.id)}
                             className={buttonVariants({ variant: 'outline' })}
+                            prefetch
                         >
                             Edit
                         </Link>
@@ -156,21 +233,32 @@ export default function BookingComponent({ saloon }: SaloonProps) {
                         <CardTitle className="text-lg">Opening Hours</CardTitle>
                     </CardHeader>
                     <CardContent className="divide-y text-sm">
-                        {Object.entries(saloon.opening_hours).map(
-                            ([day, hours]: [string, OpeningHour]) => (
+                        {DAYS.map((day) => {
+                            const hours = saloon.opening_hours[day];
+                            if (!hours) return null;
+
+                            // Controlla se il giorno è oggi (per evidenziarlo)
+                            const isToday =
+                                format(new Date(), 'eeee').toLowerCase() ===
+                                format(
+                                    parse(day, 'eeee', new Date()),
+                                    'eeee',
+                                ).toLowerCase();
+
+                            return (
                                 <div
                                     key={day}
                                     className="flex justify-between py-2 capitalize"
                                 >
                                     <span
                                         className={cn(
-                                            format(new Date(), 'eeee', {
-                                                locale: it,
-                                            }).toLowerCase() === day &&
-                                                'font-bold text-primary',
+                                            isToday && 'font-bold text-primary',
                                         )}
                                     >
-                                        {day}
+                                        {format(
+                                            parse(day, 'eeee', new Date()),
+                                            'eeee',
+                                        )}
                                     </span>
                                     <span className="font-mono text-muted-foreground">
                                         {hours.is_closed ? (
@@ -178,15 +266,15 @@ export default function BookingComponent({ saloon }: SaloonProps) {
                                                 variant="secondary"
                                                 className="text-[10px]"
                                             >
-                                                CLOSED
+                                                Closed
                                             </Badge>
                                         ) : (
                                             `${hours.open} - ${hours.close}`
                                         )}
                                     </span>
                                 </div>
-                            ),
-                        )}
+                            );
+                        })}
                     </CardContent>
                 </Card>
             </div>
@@ -250,16 +338,8 @@ export default function BookingComponent({ saloon }: SaloonProps) {
                                         <Calendar
                                             mode="single"
                                             selected={selectedDate}
-                                            onSelect={(date) => {
-                                                setSelectedDate(date);
-                                                setSelectedTime(null); // Reset time when date changes
-                                            }}
-                                            disabled={(date) =>
-                                                isBefore(
-                                                    date,
-                                                    startOfDay(new Date()),
-                                                ) || isHoliday(date)
-                                            }
+                                            onSelect={handleDateChange}
+                                            disabled={isDateDisabled}
                                             className="w-full rounded-md border shadow-sm"
                                         />
                                         {isHoliday(selectedDate!) && (
@@ -271,12 +351,19 @@ export default function BookingComponent({ saloon }: SaloonProps) {
                                     </div>
 
                                     {/* Time Slots Section */}
-                                    <div className="space-y-4">
+                                    <div className="h-100 flex-1 space-y-4">
                                         <Label className="text-base">
                                             2. Choose the time
                                         </Label>
                                         <div className="grid grid-cols-3 gap-2">
-                                            {availableSlots.length > 0 ? (
+                                            {isCalculating ? (
+                                                [...Array(18)].map((_, i) => (
+                                                    <Skeleton
+                                                        key={i}
+                                                        className="h-9 w-full rounded-md"
+                                                    />
+                                                ))
+                                            ) : availableSlots.length > 0 ? (
                                                 availableSlots.map((slot) => (
                                                     <Button
                                                         key={slot}
@@ -311,8 +398,9 @@ export default function BookingComponent({ saloon }: SaloonProps) {
                                             )}
                                         </div>
 
-                                        {selectedTime && (
-                                            <div className="pt-6 animate-in fade-in slide-in-from-top-4">
+                                        {/* Summary & Confirm Button */}
+                                        {selectedTime && !isCalculating && (
+                                            <div className="h-100 pt-6 animate-in fade-in slide-in-from-top-4">
                                                 <Separator className="mb-6" />
                                                 <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
                                                     <div className="flex items-start gap-3">
@@ -344,16 +432,17 @@ export default function BookingComponent({ saloon }: SaloonProps) {
                                                         !isAuthenticated
                                                     }
                                                 >
-                                                    {!isAuthenticated
-                                                        ? 'Sign in to book'
-                                                        : 'Confirm Appointment'}
+                                                    {processing ? (
+                                                        <>
+                                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                            Confirming...
+                                                        </>
+                                                    ) : !isAuthenticated ? (
+                                                        'Sign in to book'
+                                                    ) : (
+                                                        'Confirm Appointment'
+                                                    )}
                                                 </Button>
-                                                {!isAuthenticated && (
-                                                    <p className="mt-2 text-center text-xs text-muted-foreground">
-                                                        You need to sign in to
-                                                        book an appointment
-                                                    </p>
-                                                )}
                                             </div>
                                         )}
                                     </div>
@@ -369,6 +458,7 @@ export default function BookingComponent({ saloon }: SaloonProps) {
                     <Link
                         href={route('login')}
                         className={buttonVariants({ variant: 'outline' })}
+                        prefetch
                     >
                         Sign in
                     </Link>

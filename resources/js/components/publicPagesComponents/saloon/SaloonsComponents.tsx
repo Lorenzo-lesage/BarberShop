@@ -1,12 +1,13 @@
 import { Link, usePage } from '@inertiajs/react';
 
 // Interfaces
-import type { Saloons } from '@/interfaces/saloon';
+import type { Saloon } from '@/interfaces/saloon';
 
 // Utils
 import { cn } from '@/lib/utils';
 
-interface Props extends Saloons {
+interface Props {
+    saloons: Saloon[];
     routeName?: string;
 }
 
@@ -69,7 +70,7 @@ export default function SaloonsComponent({
                             <p className="mb-4 text-sm text-muted-foreground">
                                 Barber: {saloon.barber?.name}
                             </p>
-                            <Link href={route(routeName, saloon.id)}>
+                            <Link href={route(routeName, saloon.id)} prefetch>
                                 {isOwner && (
                                     <Button className="w-full">
                                         Look your saloon

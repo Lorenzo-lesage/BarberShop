@@ -1,38 +1,28 @@
 import { Head } from '@inertiajs/react';
 
 // Layouts
+import SaloonsComponent from '@/components/publicPagesComponents/saloon/SaloonsComponents';
 import Dashboard from '@/Layouts/Dashboard';
-import SaloonsComponent from '@/components/publicPagesComponents/SaloonsComponents';
 
 // Componetns
-import { MyPagination } from '@/components/publicPagesComponents/DataTablePagination';
+import { MyPagination } from '@/components/publicPagesComponents/pagination/DataTablePagination';
 
 // Interfaces
 import type BreadcrumbItemType from '@/interfaces/breadcrumbs';
-import type { Saloon } from '@/interfaces/saloon';
+import { PaginationData } from '@/interfaces/pagination';
+import { Saloon } from '@/interfaces/saloon';
 
-interface PaginatedData<T> {
-    data: T[];
-    links: {
-        url: string | null;
-        label: string;
-        active: boolean;
-    }[];
-    // Aggiungi altri campi se ti servono (current_page, last_page, etc.)
-}
-
-export default function Index({
-    saloons,
-    breadcrumbs,
-}: {
-    saloons: PaginatedData<Saloon>;
+interface Props {
+    saloons: PaginationData<Saloon>;
     breadcrumbs: BreadcrumbItemType[];
-}) {
+}
+export default function Index({ saloons, breadcrumbs }: Props) {
     /*
     |--------------------------------------------------------------------------
     | Render
     |--------------------------------------------------------------------------
     */
+
     return (
         <Dashboard
             breadcrumbs={breadcrumbs}
@@ -44,7 +34,8 @@ export default function Index({
                 saloons={saloons.data}
                 routeName="saloons.dashboard.show"
             />
-            {/* Barra della Paginazione */}
+
+            {/* Pagination */}
             <MyPagination links={saloons.links} />
         </Dashboard>
     );

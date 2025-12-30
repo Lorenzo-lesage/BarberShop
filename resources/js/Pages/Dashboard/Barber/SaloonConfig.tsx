@@ -1,13 +1,23 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Plus, Save, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+
+// Icons
+import {
+    Calendar as CalendarIcon,
+    Loader2,
+    Plus,
+    Save,
+    Trash2,
+} from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 
-// Layout & Interfaces
+// Layout
 import Dashboard from '@/Layouts/Dashboard';
+
+// Interfaces
 import type BreadcrumbItemType from '@/interfaces/breadcrumbs';
-import { OpeningHour, SaloonProps } from '@/interfaces/saloon';
+import { OpeningHour, Saloon } from '@/interfaces/saloon';
 
 // Shadcn UI Components
 import {
@@ -36,7 +46,7 @@ import { cn } from '@/lib/utils';
 
 // Interfaces
 interface Props {
-    saloon: SaloonProps['saloon'];
+    saloon: Saloon;
     breadcrumbs: BreadcrumbItemType[];
 }
 
@@ -66,6 +76,7 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
         type: 'exception' | 'saloon';
     } | null>(null);
     const [isMobile, setIsMobile] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     /**
      * Get initial hours
@@ -201,11 +212,13 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
 
         router.delete(routes[deleteTarget.type], {
             preserveScroll: true,
-            onSuccess: () => setDeleteTarget(null),
-            onFinish: () => setDeleteTarget(null),
+            onStart: () => setIsDeleting(true), // Attiva il loading
+            onSuccess: () => {
+                setDeleteTarget(null);
+            },
+            onFinish: () => setIsDeleting(false),
         });
     };
-
 
     /**
      * Resetta il form delle Ferie/Eccezioni e il calendario
@@ -402,8 +415,22 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                     </div>
 
                     <div className="flex flex-col gap-2 sm:flex-row">
-                        <Button type="submit" disabled={processing}>
-                            <Save className="mr-2 h-4 w-4" /> Save Schedule
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="min-w-[140px]"
+                        >
+                            {processing ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                <>
+                                    <Save className="mr-2 h-4 w-4" /> Save
+                                    Schedule
+                                </>
+                            )}
                         </Button>
                         <Button
                             type="button"
@@ -519,7 +546,13 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                             !exceptionData.start_date
                                         }
                                     >
-                                        <Plus className="mr-1" /> Add
+                                        {exceptionProcessing ? (
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <>
+                                                <Plus className="mr-1" /> Add
+                                            </>
+                                        )}
                                     </Button>
                                     <Button
                                         type="button"
@@ -612,13 +645,22 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                             Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction
-                            onClick={confirmGlobalDelete}
-                            className="w-full bg-destructive text-white hover:bg-destructive/90 sm:w-auto"
+                            onClick={(e) => {
+                                e.preventDefault(); // Evita che il dialog si chiuda prima della fine della richiesta
+                                confirmGlobalDelete();
+                            }}
+                            // Usiamo la proprietà nativa dell'oggetto router
+                            disabled={isDeleting}
+                            className="w-full min-w-[110px] bg-destructive text-white hover:bg-destructive/90 sm:w-auto"
                         >
-                            Delete{' '}
-                            {deleteTarget?.type === 'saloon'
-                                ? 'Salon'
-                                : 'Closure'}
+                            {isDeleting ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Deleting...
+                                </>
+                            ) : (
+                                `Delete ${deleteTarget?.type === 'saloon' ? 'Salon' : 'Closure'}`
+                            )}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

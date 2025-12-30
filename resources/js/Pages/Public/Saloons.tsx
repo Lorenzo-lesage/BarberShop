@@ -4,7 +4,7 @@ import { Head } from '@inertiajs/react';
 import AppShell from '@/Layouts/Appshell';
 
 // Page
-import SaloonsComponent from '@/components/publicPagesComponents/SaloonsComponents';
+import SaloonsComponent from '@/components/publicPagesComponents/saloon/SaloonsComponents';
 
 export default function Saloons() {
     return (

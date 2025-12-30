@@ -1,3 +1,6 @@
+import { router } from '@inertiajs/react';
+
+// Components
 import {
     Pagination,
     PaginationContent,
@@ -7,28 +10,22 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
-import { router } from '@inertiajs/react';
+
+// Interfaces
+import { LaravelPaginationLink } from '@/interfaces/pagination';
 
 interface Props {
-    links: {
-        url: string | null;
-        label: string;
-        active: boolean;
-    }[];
+    links: LaravelPaginationLink[];
 }
-
 export function MyPagination({ links }: Props) {
-    // Troviamo l'indice del link attivo e i link prec/succ
     const previousLink = links[0];
     const nextLink = links[links.length - 1];
-
-    // I link centrali (escludendo il primo e l'ultimo che sono "Prec" e "Succ")
     const centralLinks = links.slice(1, -1);
 
     return (
         <Pagination>
             <PaginationContent>
-                {/* Bottone Precedente */}
+                {/* Bottone Precedente (Già gestito col pointer-events-none) */}
                 <PaginationItem>
                     <PaginationPrevious
                         href={previousLink.url || '#'}
@@ -51,7 +48,6 @@ export function MyPagination({ links }: Props) {
 
                 {/* Numeri di pagina */}
                 {centralLinks.map((link, idx) => {
-                    // Gestione Ellipsis (se Laravel invia "...")
                     if (link.label === '...') {
                         return (
                             <PaginationItem key={idx}>
@@ -65,18 +61,25 @@ export function MyPagination({ links }: Props) {
                             <PaginationLink
                                 href={link.url || '#'}
                                 isActive={link.active}
+                                // AGGIUNGIAMO QUESTE CLASSI
+                                className={
+                                    link.active
+                                        ? 'pointer-events-none cursor-default'
+                                        : 'cursor-pointer'
+                                }
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    if (link.url)
+                                    // AGGIUNGIAMO IL CONTROLLO !link.active
+                                    if (link.url && !link.active) {
                                         router.get(
                                             link.url,
                                             {},
                                             { preserveScroll: true },
                                         );
+                                    }
                                 }}
-                            >
-                                {link.label}
-                            </PaginationLink>
+                                dangerouslySetInnerHTML={{ __html: link.label }}
+                            />
                         </PaginationItem>
                     );
                 })}

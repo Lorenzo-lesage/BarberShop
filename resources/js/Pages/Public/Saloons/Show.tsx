@@ -2,12 +2,16 @@ import { Head } from '@inertiajs/react';
 
 // Layout
 import AppShell from '@/Layouts/Appshell';
-import BookingComponent from '@/components/publicPagesComponents/BookingComponent';
+import BookingComponent from '@/components/publicPagesComponents/saloon/BookingComponent';
 
 // Interfaces
-import type { SaloonProps } from '@/interfaces/saloon';
+import type { Saloon } from '@/interfaces/saloon';
 
-export default function Show({ saloon }: SaloonProps) {
+interface Props {
+    saloon: Saloon; // Descriviamo che dentro le props c'è un oggetto saloon
+}
+
+export default function Show({ saloon }: Props) {
     /*
     |-------------------------------------------------------------------
     | Render

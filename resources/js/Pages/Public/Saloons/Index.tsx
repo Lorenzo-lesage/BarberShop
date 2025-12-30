@@ -1,28 +1,26 @@
 import { Head } from '@inertiajs/react';
 
 // Layouts
+import SaloonsComponent from '@/components/publicPagesComponents/saloon/SaloonsComponents';
 import AppShell from '@/Layouts/Appshell';
-import SaloonsComponent from '@/components/publicPagesComponents/SaloonsComponents';
-
-// Interfaces
-import type { Saloon } from '@/interfaces/saloon';
 
 // Components
-import { MyPagination } from '@/components/publicPagesComponents/DataTablePagination';
+import { MyPagination } from '@/components/publicPagesComponents/pagination/DataTablePagination';
 
-// Definiamo l'interfaccia per la prop saloons paginata
-interface PaginatedSaloons {
-    saloons: {
-        data: Saloon[];
-        links: {
-            url: string | null;
-            label: string;
-            active: boolean;
-        }[];
-    };
+// Interfaces
+import { PaginationData } from '@/interfaces/pagination';
+import { Saloon } from '@/interfaces/saloon';
+
+interface Props {
+    // Stai usando lo stampo (PaginationData) con il tuo ingrediente (Saloon)
+    saloons: PaginationData<Saloon>;
 }
-
-export default function Index({ saloons }: PaginatedSaloons) {
+export default function Index({ saloons }: Props) {
+    /*
+    |--------------------------------------------------------------------------
+    | Render
+    |--------------------------------------------------------------------------
+    */
     return (
         <AppShell className="mx-auto flex max-w-7xl flex-col px-4">
             <Head title="Saloons" />
