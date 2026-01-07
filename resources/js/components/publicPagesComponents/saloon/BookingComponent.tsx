@@ -1,7 +1,6 @@
 import { cn } from '@/lib/utils';
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { addMinutes, format, isBefore, parse, startOfDay } from 'date-fns';
-import { it } from 'date-fns/locale';
 import { useCallback, useMemo, useState } from 'react';
 
 // Icons
@@ -87,18 +86,28 @@ export default function BookingComponent({ saloon }: Props) {
     const availableSlots = useMemo(() => {
         if (!selectedDate || isHoliday(selectedDate)) return [];
 
-        const dayName = format(selectedDate, 'eeee', {
-            locale: it,
-        }).toLowerCase();
+        const dayName = format(selectedDate, 'eeee').toLowerCase();
         const schedule = saloon.opening_hours[dayName];
 
-        if (!schedule || schedule.is_closed) return [];
+        if (
+            !schedule ||
+            schedule.is_closed ||
+            !schedule.open ||
+            !schedule.close
+        )
+            return [];
 
         const slots: string[] = [];
         let current = parse(schedule.open, 'HH:mm', selectedDate);
         const end = parse(schedule.close, 'HH:mm', selectedDate);
 
-        while (isBefore(current, end)) {
+        let adjustedEnd = end;
+        if (isBefore(end, current)) {
+            adjustedEnd = addMinutes(end, 24 * 60);
+        }
+
+        while (isBefore(current, adjustedEnd)) {
+            // Ora pushiamo SEMPRE lo slot, senza filtrare qui
             slots.push(format(current, 'HH:mm'));
             current = addMinutes(current, 30);
         }
@@ -179,12 +188,26 @@ export default function BookingComponent({ saloon }: Props) {
      */
     const handleBooking = () => {
         if (!selectedDate || !selectedTime) return;
-        // Logic for booking will go here
-        alert(
-            `Booking requested for ${format(selectedDate, 'PPP', { locale: it })} at ${selectedTime}`,
+
+        const appointmentDate = format(selectedDate, 'yyyy-MM-dd');
+        const fullDateTime = `${appointmentDate} ${selectedTime}:00`;
+
+        // Opzione A: Passare i dati manualmente (bypassando lo stato del form)
+        // Usiamo il metodo router.post invece di post del form se non vogliamo sincronizzare lo stato
+
+        router.post(
+            route('appointments.store'),
+            {
+                saloon_id: saloon.id,
+                barber_id: saloon.user_id,
+                appointment_time: fullDateTime,
+            },
+            {
+                onSuccess: () => setSelectedTime(null),
+                preserveScroll: true,
+            },
         );
     };
-
     /*
     |-------------------------------------------------------------------
     | Render
@@ -364,30 +387,85 @@ export default function BookingComponent({ saloon }: Props) {
                                                     />
                                                 ))
                                             ) : availableSlots.length > 0 ? (
-                                                availableSlots.map((slot) => (
-                                                    <Button
-                                                        key={slot}
-                                                        variant={
-                                                            selectedTime ===
-                                                            slot
-                                                                ? 'default'
-                                                                : 'outline'
-                                                        }
-                                                        className={cn(
-                                                            'w-full transition-all',
-                                                            selectedTime ===
-                                                                slot &&
-                                                                'ring-2 ring-primary ring-offset-2',
-                                                        )}
-                                                        onClick={() =>
-                                                            setSelectedTime(
-                                                                slot,
-                                                            )
-                                                        }
-                                                    >
-                                                        {slot}
-                                                    </Button>
-                                                ))
+                                                availableSlots.map((slot) => {
+                                                    // 1. Logica di controllo occupazione (usando la stringa come abbiamo visto prima)
+                                                    const isOccupied =
+                                                        saloon.appointments?.some(
+                                                            (app) => {
+                                                                const dbTimeRaw =
+                                                                    app.appointment_time;
+                                                                const dbHourMinute =
+                                                                    dbTimeRaw.substring(
+                                                                        11,
+                                                                        16,
+                                                                    );
+                                                                const dbDateOnly =
+                                                                    dbTimeRaw.substring(
+                                                                        0,
+                                                                        10,
+                                                                    );
+                                                                const selectedDayString =
+                                                                    format(
+                                                                        selectedDate!,
+                                                                        'yyyy-MM-dd',
+                                                                    );
+
+                                                                return (
+                                                                    dbDateOnly ===
+                                                                        selectedDayString &&
+                                                                    dbHourMinute ===
+                                                                        slot &&
+                                                                    app.status !==
+                                                                        'cancelled'
+                                                                );
+                                                            },
+                                                        );
+
+                                                    // 2. Controllo se l'orario è già passato (per oggi)
+                                                    const slotDateTime = parse(
+                                                        slot,
+                                                        'HH:mm',
+                                                        selectedDate!,
+                                                    );
+                                                    const isPast = isBefore(
+                                                        slotDateTime,
+                                                        new Date(),
+                                                    );
+
+                                                    const isDisabled =
+                                                        isOccupied || isPast;
+
+                                                    return (
+                                                        <Button
+                                                            key={slot}
+                                                            variant={
+                                                                selectedTime ===
+                                                                slot
+                                                                    ? 'default'
+                                                                    : 'outline'
+                                                            }
+                                                            disabled={
+                                                                isDisabled
+                                                            }
+                                                            className={cn(
+                                                                'w-full transition-all',
+                                                                selectedTime ===
+                                                                    slot &&
+                                                                    'ring-2 ring-primary ring-offset-2',
+                                                                isOccupied &&
+                                                                    'cursor-not-allowed border-destructive/20 bg-destructive/10 text-destructive opacity-100 hover:bg-destructive/10',
+                                                                // ^ Styling opzionale per far capire che è occupato (rosso tenue)
+                                                            )}
+                                                            onClick={() =>
+                                                                setSelectedTime(
+                                                                    slot,
+                                                                )
+                                                            }
+                                                        >
+                                                            {slot}
+                                                        </Button>
+                                                    );
+                                                })
                                             ) : (
                                                 <div className="col-span-3 rounded-lg border bg-muted/20 py-10 text-center">
                                                     <p className="text-sm italic text-muted-foreground">
@@ -413,9 +491,6 @@ export default function BookingComponent({ saloon }: Props) {
                                                                 {format(
                                                                     selectedDate!,
                                                                     'PPPP',
-                                                                    {
-                                                                        locale: it,
-                                                                    },
                                                                 )}{' '}
                                                                 at{' '}
                                                                 {selectedTime}

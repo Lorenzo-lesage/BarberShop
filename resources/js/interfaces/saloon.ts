@@ -1,3 +1,9 @@
+export interface Appointment {
+    id: number;
+    appointment_time: string; // ISO string dal server
+    status: 'confirmed' | 'cancelled' | 'pending';
+}
+
 export interface OpeningHour {
     open: string;
     close: string;
@@ -17,6 +23,7 @@ export interface Saloon {
     address: string;
     opening_hours: Record<string, OpeningHour>;
     exceptions: Exception[];
+    appointments?: Appointment[];
     barber?: { id: number; name: string };
     user_id: number;
 }

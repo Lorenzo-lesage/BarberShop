@@ -36,7 +36,15 @@ class SaloonController extends Controller
     private function getSingleSaloonData(Saloon $saloon)
     {
         return Cache::remember("saloon_shared_detail_{$saloon->id}", now()->addHours(24), function () use ($saloon) {
-            return $saloon->load(['barber:id,name', 'exceptions']);
+            return $saloon->load([
+                'barber:id,name',
+                'exceptions',
+                'appointments' => function ($query) {
+                    // Carichiamo solo gli appuntamenti da oggi in poi che non sono cancellati
+                    $query->where('appointment_time', '>=', now()->startOfDay())
+                        ->where('status', '!=', 'cancelled');
+                }
+            ]);
         });
     }
 

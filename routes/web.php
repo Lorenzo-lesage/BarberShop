@@ -11,6 +11,7 @@ use Illuminate\Foundation\Application;
 use App\Http\Controllers\BecomeBarberController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Models\Saloon;
+use App\Http\Controllers\AppointmentController;
 
 // Rotte principali
 Route::get('/', function () {
@@ -124,6 +125,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/clients', function () {
         return Inertia::render('Dashboard/Clients');
     })->name('dashboard.clients');
+});
+
+/**
+ * Routes for appointments
+ */
+Route::middleware('auth')->group(function () {
+    Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
 });
 
 /**

@@ -10,7 +10,7 @@ class Appointment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'client:id',
+        'client_id',
         'barber_id',
         'saloon_id',
         'appointment_time',
