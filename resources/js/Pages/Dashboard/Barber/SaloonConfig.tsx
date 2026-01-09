@@ -1,5 +1,5 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { format } from 'date-fns';
+import { format, isBefore } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 
 // Icons
@@ -227,6 +227,35 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
         resetException(); // Resetta start_date, end_date, reason
         setDateRange(undefined); // Pulisce la selezione sul calendario
     };
+
+    /**
+     * Filtra le eccezioni future
+     */
+    const upcomingExceptions =
+        saloon?.exceptions?.filter((ex) => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Reset orario per includere le chiusure di oggi
+            const endDate = new Date(ex.end_date);
+            return !isBefore(endDate, today);
+        }) || [];
+
+    /**
+     * Filtra le eccezioni passate
+     */
+    const previousExceptions =
+        saloon?.exceptions
+            ?.filter((ex) => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const endDate = new Date(ex.end_date);
+                return isBefore(endDate, today);
+            })
+            .sort((a, b) => {
+                return (
+                    new Date(b.start_date).getTime() -
+                    new Date(a.start_date).getTime()
+                );
+            }) || [];
 
     /*
     |-------------------------------------------------------------------
@@ -574,7 +603,7 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                     Upcoming Closures
                                 </h4>
                                 <div className="grid grid-cols-1 gap-3">
-                                    {saloon?.exceptions?.map((ex) => (
+                                    {upcomingExceptions.map((ex) => (
                                         <div
                                             key={ex.id}
                                             className="flex items-center justify-between rounded-lg border bg-muted/20 p-4"
@@ -612,13 +641,77 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                             </Button>
                                         </div>
                                     ))}
-                                    {saloon?.exceptions?.length === 0 && (
-                                        <p className="py-4 text-center text-sm text-muted-foreground">
-                                            No closures planned.
-                                        </p>
-                                    )}
+                                    {saloon?.exceptions?.length === 0 ||
+                                        (upcomingExceptions.length === 0 && (
+                                            <p className="py-4 text-center text-sm text-muted-foreground">
+                                                No closures planned.
+                                            </p>
+                                        ))}
                                 </div>
                             </div>
+
+                            {previousExceptions.length > 0 ? (
+                                <div className="mt-5 space-y-3">
+                                    <h4 className="text-sm font-semibold uppercase text-muted-foreground">
+                                        Previous Closures
+                                    </h4>
+                                    <div className="grid grid-cols-1 gap-3">
+                                        {previousExceptions.map((ex) => (
+                                            <div
+                                                key={ex.id}
+                                                className="flex items-center justify-between rounded-lg border bg-muted/20 p-4"
+                                            >
+                                                <div className="space-y-1">
+                                                    <p className="text-sm font-bold leading-none">
+                                                        {format(
+                                                            new Date(
+                                                                ex.start_date,
+                                                            ),
+                                                            'PP',
+                                                        )}{' '}
+                                                        —{' '}
+                                                        {format(
+                                                            new Date(
+                                                                ex.end_date,
+                                                            ),
+                                                            'PP',
+                                                        )}
+                                                    </p>
+                                                    {ex.reason && (
+                                                        <p className="text-xs italic text-muted-foreground">
+                                                            {ex.reason}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() =>
+                                                        setDeleteTarget({
+                                                            id: ex.id,
+                                                            type: 'exception',
+                                                        })
+                                                    }
+                                                    className="text-destructive"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="mt-5 space-y-3">
+                                        <h4 className="text-sm font-semibold uppercase text-muted-foreground">
+                                            Previous Closures
+                                        </h4>
+                                        <p className="py-4 text-center text-sm text-muted-foreground">
+                                            No closures found.
+                                        </p>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </>
                 )}
