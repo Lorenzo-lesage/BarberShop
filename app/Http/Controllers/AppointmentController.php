@@ -8,6 +8,7 @@ use App\Models\Saloon;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Requests\StoreAppointmentRequest;
 
 
 class AppointmentController extends Controller
@@ -31,39 +32,23 @@ class AppointmentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreAppointmentRequest $request)
     {
-        $validated = $request->validate([
-            'saloon_id' => 'required|exists:saloons,id',
-            'barber_id' => 'required|exists:users,id',
-            'appointment_time' => 'required|date|after:now',
-        ]);
+        // Se arrivi qui, i dati sono già validati e il barbiere è libero
+        $validated = $request->validated();
 
-        $time = Carbon::parse($request->appointment_time)->format('Y-m-d H:i:s');
-
-        // Controllo veloce: il barbiere ha già un impegno a quell'ora nel salone?
-        $exists = Appointment::where('barber_id', $request->barber_id)
-            ->where('appointment_time', $time)
-            ->where('status', '!=', 'cancelled')
-            ->exists();
-
-        if ($exists) {
-            return back()->with('toast', [
-                'type' => 'error',
-                'message' => 'Error!',
-                'description' => 'The barber is already busy at that time.',
-            ]);
-        }
+        // Carbon parse per sicurezza se vuoi il formato DB
+        $time = Carbon::parse($validated['appointment_time'])->format('Y-m-d H:i:s');
 
         Appointment::create([
             'client_id' => auth()->id(),
-            'barber_id' => $request->barber_id,
-            'saloon_id' => $request->saloon_id,
+            'barber_id' => $validated['barber_id'],
+            'saloon_id' => $validated['saloon_id'],
             'appointment_time' => $time,
             'status' => 'confirmed',
         ]);
 
-        Cache::forget("saloon_shared_detail_{$request->saloon_id}");
+        Cache::forget("saloon_shared_detail_{$validated['saloon_id']}");
 
         return redirect()->back()->with('toast', [
             'type' => 'success',

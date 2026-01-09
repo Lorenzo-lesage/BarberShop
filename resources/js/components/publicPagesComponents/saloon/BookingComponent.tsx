@@ -123,6 +123,20 @@ export default function BookingComponent({ saloon }: Props) {
     });
 
     /**
+     * Upcoming Exceptions
+     */
+    const upcomingExceptions = useMemo(() => {
+        const today = startOfDay(new Date());
+        return (
+            saloon.exceptions?.filter((ex) => {
+                const endDate = new Date(ex.end_date);
+                // Teniamo l'eccezione se la data di fine è oggi o nel futuro
+                return !isBefore(endDate, today);
+            }) || []
+        );
+    }, [saloon.exceptions]);
+
+    /**
      * Determine if a day is closed
      * @param date
      * @returns
@@ -311,27 +325,33 @@ export default function BookingComponent({ saloon }: Props) {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <ul className="space-y-2">
-                            {saloon.exceptions.map((ex) => (
-                                <li
-                                    key={ex.id}
-                                    className="text-xs text-muted-foreground"
-                                >
-                                    <span className="font-semibold text-foreground">
-                                        {format(
-                                            new Date(ex.start_date),
-                                            'dd MMM',
-                                        )}{' '}
-                                        -{' '}
-                                        {format(
-                                            new Date(ex.end_date),
-                                            'dd MMM',
-                                        )}
-                                    </span>
-                                    {ex.reason && `: ${ex.reason}`}
-                                </li>
-                            ))}
-                        </ul>
+                        {upcomingExceptions.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">
+                                There are no upcoming closing days.
+                            </p>
+                        ) : (
+                            <ul className="space-y-2">
+                                {upcomingExceptions.map((ex) => (
+                                    <li
+                                        key={ex.id}
+                                        className="text-xs text-muted-foreground"
+                                    >
+                                        <span className="font-semibold text-foreground">
+                                            {format(
+                                                new Date(ex.start_date),
+                                                'dd MMM',
+                                            )}{' '}
+                                            -{' '}
+                                            {format(
+                                                new Date(ex.end_date),
+                                                'dd MMM',
+                                            )}
+                                        </span>
+                                        {ex.reason && `: ${ex.reason}`}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
                     </CardContent>
                 </Card>
             )}
