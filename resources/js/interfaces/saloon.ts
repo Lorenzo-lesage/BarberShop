@@ -1,7 +1,10 @@
 export interface Appointment {
     id: number;
-    appointment_time: string; // ISO string dal server
+    appointment_time: string;
     status: 'confirmed' | 'cancelled' | 'pending';
+    client?: { id: number; name: string, email: string };
+    saloon?: { id: number; name: string };
+    barber?: { id: number; name: string, email: string };
 }
 
 export interface OpeningHour {

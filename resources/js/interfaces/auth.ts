@@ -1,9 +1,12 @@
+import { Appointment } from './saloon';
+
 export interface User {
     id: number;
     name: string;
     email: string;
     is_barber: boolean;
     avatar: string;
+    appointments?: Appointment[];
 }
 
 export interface ToastFlash {

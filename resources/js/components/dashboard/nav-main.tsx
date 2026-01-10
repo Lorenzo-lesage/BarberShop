@@ -1,5 +1,7 @@
 'use client';
 
+import { Link } from '@inertiajs/react';
+
 // Icons
 import { type LucideIcon } from 'lucide-react';
 
@@ -46,27 +48,28 @@ export function NavMain({
 
                     return (
                         <SidebarMenuItem key={item.label}>
-                            <SidebarMenuButton
-                                tooltip={item.label}
-                                onClick={() => HandleRoute(item.href)}
-                            >
-                                {item.icon && (
-                                    <item.icon
-                                        className={`transition-all duration-300 ease-in-out ${
+                            <Link href={item.href} prefetch>
+                                <SidebarMenuButton tooltip={item.label}>
+                                    {item.icon && (
+                                        <item.icon
+                                            className={`transition-all duration-300 ease-in-out ${
+                                                isActive
+                                                    ? 'scale-125 text-primary'
+                                                    : 'scale-100 opacity-70'
+                                            }`}
+                                        />
+                                    )}
+                                    <span
+                                        className={
                                             isActive
-                                                ? 'scale-125 text-primary'
-                                                : 'scale-100 opacity-70'
-                                        }`}
-                                    />
-                                )}
-                                <span
-                                    className={
-                                        isActive ? 'font-black' : 'opacity-70'
-                                    }
-                                >
-                                    {item.label}
-                                </span>
-                            </SidebarMenuButton>
+                                                ? 'font-black'
+                                                : 'opacity-70'
+                                        }
+                                    >
+                                        {item.label}
+                                    </span>
+                                </SidebarMenuButton>
+                            </Link>
                         </SidebarMenuItem>
                     );
                 })}

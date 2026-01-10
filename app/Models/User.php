@@ -77,4 +77,14 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'barber_client', 'client_id', 'barber_id')
             ->withTimestamps();
     }
+
+    /**
+     * If the user is a Client, gets its Appointments
+     */
+    public function appointments()
+    {
+        // Un utente (cliente) ha molti appuntamenti
+        // Assicurati che la colonna nella tabella appointments si chiami client_id
+        return $this->hasMany(Appointment::class, 'client_id');
+    }
 }

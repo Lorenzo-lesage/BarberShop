@@ -1,11 +1,11 @@
-import { CalendarCheck, CalendarPlus, Scissors, Store } from 'lucide-react';
+import { CalendarPlus, Clock, Scissors, Store } from 'lucide-react';
 
 export const clientItems = [
     {
-        label: 'My Reservations',
-        href: '/dashboard/my-reservations',
-        icon: CalendarCheck,
-    }, // Per visualizzare le prenotazioni esistenti
+        label: 'My Appointments',
+        href: '/dashboard/appointments',
+        icon: Clock,
+    },
     {
         label: 'Book appointment',
         href: '/dashboard/book',

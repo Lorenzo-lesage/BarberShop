@@ -131,7 +131,10 @@ Route::middleware(['auth'])->group(function () {
  * Routes for appointments
  */
 Route::middleware('auth')->group(function () {
-    Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::post('/dasboard/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::get('/dashboard/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    Route::put('/dashboard/appointments/{appointment}', [AppointmentController::class, 'update'])->name('appointments.update');
+    Route::delete('/dashboard/appointments/{appointment}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
 });
 
 /**

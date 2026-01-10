@@ -1,32 +1,33 @@
 'use client';
 
-import { Folder, MoreHorizontal, Trash2, type LucideIcon } from 'lucide-react';
+import { Link } from '@inertiajs/react';
 
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+// Interfaces
+interface NavAppointment {
+    id: number;
+    name: string;
+    url: string;
+    icon: LucideIcon;
+}
+
+// Icons
+import { MoreHorizontal } from 'lucide-react';
+
+// Components
+import { Badge } from '@/components/ui/badge';
 import {
     SidebarGroup,
     SidebarGroupLabel,
     SidebarMenu,
-    SidebarMenuAction,
     SidebarMenuButton,
     SidebarMenuItem,
     useSidebar,
 } from '@/components/ui/sidebar';
 
 export function NavProjects({
-    projects,
+    appointments,
 }: {
-    projects: {
-        name: string;
-        url: string;
-        icon: LucideIcon;
-    }[];
+    appointments: NavAppointment[];
 }) {
     const { isMobile } = useSidebar();
 
@@ -34,39 +35,33 @@ export function NavProjects({
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
             <SidebarGroupLabel>Appointments</SidebarGroupLabel>
             <SidebarMenu>
-                {projects.map((item) => (
+                {appointments.length === 0 && (
+                    <SidebarMenuItem>
+                        <span className="text-sm text-muted-foreground">
+                            No Appointments
+                        </span>
+                    </SidebarMenuItem>
+                )}
+                {appointments.map((item) => (
                     <SidebarMenuItem key={item.name}>
                         <SidebarMenuButton asChild>
-                            <a href={item.url}>
-                                <item.icon />
+                            <Link href={item.url} prefetch>
+                                <item.icon className="h-4 w-4" />
                                 <span>{item.name}</span>
-                            </a>
+                            </Link>
                         </SidebarMenuButton>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <SidebarMenuAction showOnHover>
-                                    <MoreHorizontal />
-                                    <span className="sr-only">More</span>
-                                </SidebarMenuAction>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                                className="w-48 rounded-lg"
-                                side={isMobile ? 'bottom' : 'right'}
-                                align={isMobile ? 'end' : 'start'}
-                            >
-                                <DropdownMenuItem>
-                                    <Folder className="text-muted-foreground" />
-                                    <span>View Appointment</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                    <Trash2 className="text-muted-foreground" />
-                                    <span>Delete Appointement</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
                     </SidebarMenuItem>
                 ))}
+                <SidebarMenuItem>
+                    <Link href={route('appointments.index')} prefetch>
+                        <Badge variant="outline">
+                            <MoreHorizontal className="mr-2 h-4 w-4" />
+                            <span className="text-xs font-medium uppercase tracking-wider">
+                                Show All Appointments
+                            </span>
+                        </Badge>
+                    </Link>
+                </SidebarMenuItem>
             </SidebarMenu>
         </SidebarGroup>
     );

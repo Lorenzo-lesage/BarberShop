@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\Appointment;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -31,9 +32,40 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            'auth' => function () {
+            'auth' => function () use ($request) {
+                $user = $request->user();
+
+                // 1. Se l'utente non esiste, restituiamo subito null per 'user'
+                if (!$user) {
+                    return [
+                        'user' => null,
+                    ];
+                }
+
+                // 2. Se l'utente esiste, carichiamo gli appuntamenti
+                $appointments = $user->is_barber
+                    ? Appointment::where('barber_id', $user->id)
+                        ->with('client')
+                        ->where('appointment_time', '>=', now())
+                        ->orderBy('appointment_time', 'asc')
+                        ->take(5)
+                        ->get()
+                    : $user->appointments()
+                        ->with('saloon')
+                        ->where('appointment_time', '>=', now())
+                        ->orderBy('appointment_time', 'asc')
+                        ->take(5)
+                        ->get();
+
+                // 3. Restituiamo i dati dell'utente
                 return [
-                    'user' => auth()->user(),
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'is_barber' => $user->is_barber,
+                        'appointments' => $appointments,
+                    ],
                 ];
             },
             'flash' => [

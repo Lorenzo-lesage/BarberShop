@@ -16,9 +16,35 @@ class AppointmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $user = $request->user();
+
+        // Recuperiamo i dati paginati
+        $appointments = $this->getAppointmentsData($user, $request->get('page', 1));
+
+        return Inertia::render('Dashboard/Appointments/Index', [
+            'appointments' => $appointments,
+            'breadcrumbs' => [
+                ['label' => 'Dashboard', 'href' => route('dashboard')],
+                ['label' => $user->is_barber ? 'Appointments Received' : 'My Appointments', 'href' => null],
+
+            ],
+        ]);
+    }
+
+    private function getAppointmentsData($user, $page)
+    {
+        // Query base: se è barbiere vede quelli ricevuti, altrimenti quelli fatti
+        $query = $user->is_barber
+            ? Appointment::where('barber_id', $user->id)->with('client')
+            : $user->appointments()->with('saloon');
+
+        $query->where('appointment_time', '>=', now());
+
+        return $query->orderBy('appointment_time', 'asc')
+            ->paginate(8)
+            ->withQueryString();
     }
 
     /**
@@ -86,6 +112,23 @@ class AppointmentController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $appointment = Appointment::findOrFail($id);
+
+        // Se è già cancellato, non facciamo nulla
+        if ($appointment->status === 'cancelled') {
+            return redirect()->back();
+        }
+
+        $appointment->status = 'cancelled';
+        $appointment->save();
+
+        // Puliamo la cache del salone se necessario
+        Cache::forget("saloon_shared_detail_{$appointment->saloon_id}");
+
+        return redirect()->back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Cancelled!',
+            'description' => 'Your appointment has been cancelled.',
+        ]);
     }
 }
