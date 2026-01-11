@@ -255,6 +255,35 @@ class SaloonController extends Controller
         ]);
     }
 
+    /**
+     * Show saloons where the current client has made appointments
+     */
+    public function mySaloons(Request $request)
+    {
+        $userId = Auth::id();
+
+        $saloons = Saloon::whereHas('appointments', function ($query) use ($userId) {
+            $query->where('client_id', $userId);
+        })
+            ->with(['barber:id,name'])
+            ->withCount([
+                'appointments' => function ($query) use ($userId) {
+                    $query->where('client_id', $userId);
+                }
+            ])
+            ->latest()
+            ->paginate(8)
+            ->withQueryString();
+
+        return Inertia::render('Dashboard/Clients/MySaloons', [
+            'saloons' => $saloons,
+            'breadcrumbs' => [
+                ['label' => 'Dashboard', 'href' => route('dashboard')],
+                ['label' => 'My Saloons', 'href' => null],
+            ],
+        ]);
+    }
+
 }
 
 

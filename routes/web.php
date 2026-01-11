@@ -12,6 +12,7 @@ use App\Http\Controllers\BecomeBarberController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Models\Saloon;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\ClientController;
 
 // Rotte principali
 Route::get('/', function () {
@@ -89,6 +90,11 @@ Route::middleware(['auth', 'barber'])->group(function () {
         return Inertia::render('Dashboard/Barber/Appointments');
     })->name('dashboard.barber.appointments');
 
+    // My Clients route
+    Route::get('/dashboard/clients', [ClientController::class, 'index'])->name('clients.index');
+
+    Route::get('/dashboard/clients/{user}', [ClientController::class, 'show'])->name('clients.show');
+
 });
 
 /**
@@ -104,9 +110,8 @@ Route::middleware(['auth', 'client'])->group(function () {
         return Inertia::render('Dashboard/Client/Book');
     })->name('dashboard.client.book');
 
-    Route::get('/dashboard/my-barbers', function () {
-        return Inertia::render('Dashboard/Client/MyBarbers');
-    })->name('dashboard.client.barbers');
+    Route::get('/dashboard/my-saloons', [SaloonController::class, 'mySaloons'])
+        ->name('saloons.my-saloons');
 
 });
 
@@ -122,9 +127,6 @@ Route::middleware(['auth'])->group(function () {
         return Inertia::render('Dashboard/Barbers');
     })->name('dashboard.barbers');
 
-    Route::get('/dashboard/clients', function () {
-        return Inertia::render('Dashboard/Clients');
-    })->name('dashboard.clients');
 });
 
 /**
@@ -137,12 +139,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/dashboard/appointments/{appointment}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
 });
 
-/**
- * Public routes
- */
-Route::get('/clients', function () {
-    return Inertia::render('Public/Clients');
-})->name('clients');
+
+
+
 
 Route::get('/barbers', function () {
     return Inertia::render('Public/Barbers');

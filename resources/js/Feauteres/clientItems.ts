@@ -1,4 +1,4 @@
-import { CalendarPlus, Clock, Scissors, Store } from 'lucide-react';
+import { Clock, Store } from 'lucide-react';
 
 export const clientItems = [
     {
@@ -6,17 +6,8 @@ export const clientItems = [
         href: '/dashboard/appointments',
         icon: Clock,
     },
-    {
-        label: 'Book appointment',
-        href: '/dashboard/book',
-        icon: CalendarPlus,
-    }, // Per crearne una nuova
-    { label: 'My Barbers', href: '/dashboard/my-barbers', icon: Scissors },
-    { label: 'Barbers', href: '/dashboard/barbers', icon: Scissors }, // Per visualizzare i Barbieri
+
+    //  { label: 'Barbers', href: '/dashboard/barbers', icon: Scissors }, // Per visualizzare i Barbieri
     { label: 'Saloons', href: '/dashboard/saloons', icon: Store }, // Per visualizzare i Saloni
-    {
-        label: 'Clients',
-        href: '/dashboard/clients',
-        icon: CalendarPlus,
-    },
+    { label: 'My Saloons', href: '/dashboard/my-saloons', icon: Store },
 ];

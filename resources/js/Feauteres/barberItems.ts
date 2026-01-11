@@ -7,7 +7,7 @@ export const barberItems = [
         href: '/dashboard/appointments',
         icon: Clock,
     },
-    { label: 'My Clients', href: '/dashboard/my-clients', icon: Users },
+    { label: 'My Clients', href: '/dashboard/clients', icon: Users },
     { label: 'Barbers', href: '/dashboard/barbers', icon: Scissors },
     { label: 'Saloons', href: '/dashboard/saloons', icon: Store },
     { label: 'Clients', href: '/dashboard/clients', icon: Users },

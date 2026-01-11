@@ -75,14 +75,18 @@ const Index = ({ appointments, breadcrumbs }: Props) => {
                     </TableCaption>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[100px]">#</TableHead>
+                            <TableHead className="hidden w-[100px] sm:table-cell">
+                                #
+                            </TableHead>
                             <TableHead>
                                 {isBarber ? 'Client' : 'Saloon'}
                             </TableHead>
                             <TableHead>Data</TableHead>
                             <TableHead>Hour</TableHead>
-                            <TableHead className="text-right">Status</TableHead>
-                            <TableHead className="text-right">
+                            <TableHead className="hidden sm:table-cell">
+                                Status
+                            </TableHead>
+                            <TableHead className="text-center">
                                 Actions
                             </TableHead>
                         </TableRow>
@@ -90,22 +94,44 @@ const Index = ({ appointments, breadcrumbs }: Props) => {
                     <TableBody>
                         {appointments.data.map((app, key) => (
                             <TableRow key={app.id}>
-                                <TableCell className="font-medium">
+                                <TableCell className="hidden font-medium sm:table-cell">
                                     {(appointments.current_page - 1) *
                                         appointments.per_page +
                                         (key + 1)}
                                 </TableCell>
                                 <TableCell>
-                                    {' '}
-                                    {isBarber && (
-                                        <p className="mt-2 text-xs text-muted-foreground">
-                                            {app.client?.name} -{' '}
-                                            {app.client?.email}
-                                        </p>
-                                    )}{' '}
-                                    <p className="mt-2 text-xs text-muted-foreground">
-                                        {app.saloon?.name}
-                                    </p>
+                                    {isBarber ? (
+                                        // Se è Barbiere, link al Profilo Cliente
+                                        <div className="flex flex-col">
+                                            <Link
+                                                href={route(
+                                                    'clients.show',
+                                                    app.client?.id,
+                                                )}
+                                                className="font-bold text-primary hover:underline"
+                                            >
+                                                {app.client?.name}
+                                            </Link>
+                                            <p className="truncate text-[10px] text-muted-foreground">
+                                                {app.client?.email}
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        // Se è Cliente, link al Salone
+                                        <div className="flex flex-col">
+                                            <Link
+                                                href={route(
+                                                    'saloons.show',
+                                                    app.saloon?.id,
+                                                )}
+                                                className="font-bold text-primary hover:underline"
+                                            >
+                                                <Badge variant="outline">
+                                                    {app.saloon?.name}
+                                                </Badge>
+                                            </Link>
+                                        </div>
+                                    )}
                                 </TableCell>
                                 <TableCell>
                                     {' '}
@@ -125,7 +151,7 @@ const Index = ({ appointments, breadcrumbs }: Props) => {
                                         )}
                                     </div>
                                 </TableCell>
-                                <TableCell className="text-right">
+                                <TableCell className="hidden sm:table-cell">
                                     <Badge
                                         variant={
                                             app.status === 'confirmed'
@@ -136,7 +162,7 @@ const Index = ({ appointments, breadcrumbs }: Props) => {
                                         {app.status}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="text-right">
+                                <TableCell className="text-center">
                                     {app.status === 'confirmed' ? (
                                         <Dialog>
                                             <DialogTrigger asChild>
@@ -202,7 +228,7 @@ const Index = ({ appointments, breadcrumbs }: Props) => {
                                         </Dialog>
                                     ) : (
                                         <span className="text-xs italic text-muted-foreground">
-                                            No Actions Available
+                                            This appointment is cancelled.
                                         </span>
                                     )}
                                 </TableCell>
