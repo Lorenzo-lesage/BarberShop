@@ -14,9 +14,19 @@ import {
     TableRow,
 } from '@/components/ui/table';
 
+// Interfaces
+import { User } from '@/interfaces/auth';
+import type BreadcrumbItemType from '@/interfaces/breadcrumbs';
+import { PaginationData } from '@/interfaces/pagination';
+
+interface Props {
+    clients: PaginationData<User>;
+    breadcrumbs: BreadcrumbItemType[];
+}
+
 import { Head, Link } from '@inertiajs/react';
 
-export default function Index({ clients, breadcrumbs }: any) {
+export default function Index({ clients, breadcrumbs }: Props) {
     return (
         <Dashboard
             breadcrumbs={breadcrumbs}
@@ -40,7 +50,7 @@ export default function Index({ clients, breadcrumbs }: any) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {clients.data.map((client: any) => (
+                        {clients.data.map((client: User) => (
                             <TableRow key={client.id}>
                                 <TableCell className="font-medium">
                                     {client.name}

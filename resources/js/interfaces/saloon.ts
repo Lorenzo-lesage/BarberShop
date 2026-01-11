@@ -2,11 +2,17 @@ export interface Appointment {
     id: number;
     appointment_time: string;
     status: 'confirmed' | 'cancelled' | 'pending';
-    client?: { id: number; name: string, email: string };
-    saloon?: { id: number; name: string };
-    barber?: { id: number; name: string, email: string };
-}
 
+    // Foreign Keys (Sempre presenti nel DB, aggiungile qui)
+    client_id: number;
+    saloon_id: number;
+    barber_id: number;
+
+    // Relazioni (Opzionali, caricate tramite .with() in Laravel)
+    client?: { id: number; name: string; email: string };
+    saloon?: { id: number; name: string };
+    barber?: { id: number; name: string; email: string };
+}
 export interface OpeningHour {
     open: string;
     close: string;

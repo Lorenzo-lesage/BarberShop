@@ -40,7 +40,6 @@ class SaloonController extends Controller
                 'barber:id,name',
                 'exceptions',
                 'appointments' => function ($query) {
-                    // Carichiamo solo gli appuntamenti da oggi in poi che non sono cancellati
                     $query->where('appointment_time', '>=', now()->startOfDay())
                         ->where('status', '!=', 'cancelled');
                 }

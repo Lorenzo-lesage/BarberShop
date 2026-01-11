@@ -34,6 +34,7 @@ import type { Saloon } from '@/interfaces/saloon';
 interface Props {
     saloon: Saloon;
 }
+
 const DAYS = [
     'monday',
     'tuesday',
@@ -176,6 +177,75 @@ export default function BookingComponent({ saloon }: Props) {
     );
 
     /*
+|-------------------------------------------------------------------
+| Statistics Logic
+|-------------------------------------------------------------------
+*/
+
+    const stats = useMemo(() => {
+        const now = new Date();
+
+        // 1. Ripristiniamo il filtro: Solo appuntamenti PASSATI
+        const pastAppointments =
+            saloon.appointments?.filter((app) =>
+                isBefore(new Date(app.appointment_time), now),
+            ) || [];
+
+        // Ordiniamo per data decrescente (il più recente per primo)
+        // per essere sicuri che lastApp sia l'ultima visita effettiva
+        const sortedPast = [...pastAppointments].sort(
+            (a, b) =>
+                new Date(b.appointment_time).getTime() -
+                new Date(a.appointment_time).getTime(),
+        );
+
+        // --- LATO BARBIERE (Proprietario) ---
+        if (isOwner) {
+            const confirmed = sortedPast.filter(
+                (a) => a.status === 'confirmed',
+            ).length;
+            const cancelled = sortedPast.filter(
+                (a) => a.status === 'cancelled',
+            ).length;
+            const lastApp = sortedPast.length > 0 ? sortedPast[0] : null;
+
+            return {
+                type: 'barber',
+                total: sortedPast.length,
+                confirmed,
+                cancelled,
+                lastDate: lastApp ? new Date(lastApp.appointment_time) : null,
+            };
+        }
+
+        // --- LATO CLIENTE (Utente loggato) ---
+        if (isAuthenticated && !auth.user.is_barber) {
+            // Usiamo client_id per massima sicurezza
+            const myPast = sortedPast.filter(
+                (a) => Number(a.client_id) === Number(authId),
+            );
+
+            const confirmed = myPast.filter(
+                (a) => a.status === 'confirmed',
+            ).length;
+            const cancelled = myPast.filter(
+                (a) => a.status === 'cancelled',
+            ).length;
+            const lastApp = myPast.length > 0 ? myPast[0] : null;
+
+            return {
+                type: 'client',
+                total: myPast.length,
+                confirmed,
+                cancelled,
+                lastDate: lastApp ? new Date(lastApp.appointment_time) : null,
+            };
+        }
+
+        return null;
+    }, [saloon.appointments, isOwner, isAuthenticated, authId, auth.user]);
+
+    /*
     |-------------------------------------------------------------------
     | Handlers
     |-------------------------------------------------------------------
@@ -264,6 +334,69 @@ export default function BookingComponent({ saloon }: Props) {
                         </Link>
                     )}
                 </header>
+
+                {stats && (
+                    <Card
+                        className={cn(
+                            'border-l-4',
+                            isOwner
+                                ? 'border-l-blue-500'
+                                : 'border-l-green-500',
+                        )}
+                    >
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                                {isOwner
+                                    ? 'Business Overview (Past)'
+                                    : 'Your History here'}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="mb-4 grid grid-cols-3 gap-2">
+                                <div className="text-center">
+                                    <p className="text-xl font-bold">
+                                        {stats.total}
+                                    </p>
+                                    <p className="text-[10px] uppercase text-muted-foreground">
+                                        Total
+                                    </p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-xl font-bold text-green-600">
+                                        {stats.confirmed}
+                                    </p>
+                                    <p className="text-[10px] uppercase text-muted-foreground">
+                                        Done
+                                    </p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-xl font-bold text-destructive">
+                                        {stats.cancelled}
+                                    </p>
+                                    <p className="text-[10px] uppercase text-muted-foreground">
+                                        Cancelled
+                                    </p>
+                                </div>
+                            </div>
+
+                            <Separator className="my-2" />
+
+                            <div className="flex items-center justify-between pt-2">
+                                <span className="text-xs font-medium text-muted-foreground">
+                                    Last visit:{' '}
+                                    <span className="text-xs font-bold">
+                                        {stats.lastDate
+                                            ? format(
+                                                  stats.lastDate,
+                                                  'dd MMM yyyy',
+                                              )
+                                            : 'No history yet'}
+                                    </span>
+                                </span>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 <Card>
                     <CardHeader>

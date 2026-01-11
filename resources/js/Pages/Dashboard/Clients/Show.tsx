@@ -1,18 +1,44 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { User } from '@/interfaces/auth';
-import Dashboard from '@/Layouts/Dashboard';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
+import { useMemo } from 'react';
+
+// Components
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+// Layout
+import Dashboard from '@/Layouts/Dashboard';
+
+// Interfaces
+import { User } from '@/interfaces/auth';
+import type BreadcrumbItemType from '@/interfaces/breadcrumbs';
 
 interface Props {
-    client: User & {
-        appointments?: any[]; // Iniziamo a tipizzare lo storico se lo passi dal controller
-    };
-    breadcrumbs: any[];
+    client: User;
+    breadcrumbs: BreadcrumbItemType[];
 }
 
 export default function Show({ client, breadcrumbs }: Props) {
+    /*
+    |--------------------------------------------------------------------------
+    | Data
+    |--------------------------------------------------------------------------
+    */
+
+    const previousAppointments = useMemo(() => {
+        if (!client.appointments) return [];
+
+        return client.appointments.filter(
+            (a) => new Date(a.appointment_time) < new Date(),
+        );
+    }, [client.appointments]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Render
+    |--------------------------------------------------------------------------
+    */
+
     return (
         <Dashboard breadcrumbs={breadcrumbs}>
             <Head title={`Client: ${client?.name}`} />
@@ -92,11 +118,42 @@ export default function Show({ client, breadcrumbs }: Props) {
                         <CardTitle>Recent Activity</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        {client.appointments &&
-                        client.appointments.length > 0 ? (
-                            <p className="text-sm italic text-muted-foreground">
-                                List of past appointments will go here...
-                            </p>
+                        {previousAppointments?.length > 0 ? (
+                            <>
+                                {previousAppointments?.map((appointment) => (
+                                    <div
+                                        key={appointment.id}
+                                        className="border-b py-2 last:border-0"
+                                    >
+                                        <p>
+                                            - Date:{' '}
+                                            <span className="font-medium">
+                                                {format(
+                                                    new Date(
+                                                        appointment.appointment_time,
+                                                    ),
+                                                    'dd/MM/yyyy',
+                                                )}{' '}
+                                            </span>
+                                            <span>
+                                                at{' '}
+                                                {format(
+                                                    new Date(
+                                                        appointment.appointment_time,
+                                                    ),
+                                                    'HH:mm',
+                                                )}
+                                            </span>
+                                        </p>
+                                        <p>
+                                            - Status:{' '}
+                                            <span className="font-medium">
+                                                {appointment.status}
+                                            </span>
+                                        </p>
+                                    </div>
+                                ))}
+                            </>
                         ) : (
                             <p className="text-sm text-muted-foreground">
                                 No past activity recorded.

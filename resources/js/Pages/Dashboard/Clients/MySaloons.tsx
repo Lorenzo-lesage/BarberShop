@@ -42,76 +42,70 @@ export default function MySaloons({ saloons, breadcrumbs }: Props) {
                     </h1>
                 </div>
 
-                <div className="overflow-x-auto rounded-md border">
-                    <Table>
-                        <TableCaption>
-                            You have visited {saloons.total} different saloons.
-                        </TableCaption>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Saloon</TableHead>
-                                <TableHead className="hidden md:table-cell">
-                                    Barber
-                                </TableHead>
-                                <TableHead className="text-center">
-                                    Total Visits
-                                </TableHead>
-                                <TableHead className="text-right">
-                                    Actions
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {saloons.data.length > 0 ? (
-                                saloons.data.map((saloon) => (
-                                    <TableRow key={saloon.id}>
-                                        <TableCell>
-                                            <div className="font-bold">
-                                                {saloon.name}
-                                            </div>
-                                            <div className="text-xs text-muted-foreground md:hidden">
-                                                By {saloon.barber?.name}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="hidden md:table-cell">
-                                            {saloon.barber?.name}
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            <Badge variant="secondary">
-                                                {saloon.appointments_count}{' '}
-                                                visits
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <Link
-                                                href={route(
-                                                    'saloons.show',
-                                                    saloon.id,
-                                                )}
-                                            >
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                >
-                                                    View & Book
-                                                </Button>
-                                            </Link>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell
-                                        colSpan={4}
-                                        className="h-24 text-center"
-                                    >
-                                        No saloons visited yet.
+                <Table>
+                    <TableCaption>
+                        You have visited {saloons.total} different saloons.
+                    </TableCaption>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Saloon</TableHead>
+                            <TableHead className="hidden md:table-cell">
+                                Barber
+                            </TableHead>
+                            <TableHead className="text-center">
+                                Total Visits
+                            </TableHead>
+                            <TableHead className="text-right">
+                                Actions
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {saloons.data.length > 0 ? (
+                            saloons.data.map((saloon) => (
+                                <TableRow key={saloon.id}>
+                                    <TableCell>
+                                        <div className="font-bold">
+                                            {saloon.name}
+                                        </div>
+                                        <div className="text-xs text-muted-foreground md:hidden">
+                                            By {saloon.barber?.name}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="hidden md:table-cell">
+                                        {saloon.barber?.name}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Badge variant="secondary">
+                                            {saloon.appointments_count} visits
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <Link
+                                            href={route(
+                                                'saloons.dashboard.show',
+                                                saloon.id,
+                                            )}
+                                        >
+                                            <Button size="sm" variant="outline">
+                                                View & Book
+                                            </Button>
+                                        </Link>
                                     </TableCell>
                                 </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={4}
+                                    className="h-24 text-center"
+                                >
+                                    No saloons visited yet.
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
 
                 <div className="mt-4">
                     <MyPagination links={saloons.links} />
