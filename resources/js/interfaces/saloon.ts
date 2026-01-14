@@ -35,4 +35,11 @@ export interface Saloon {
     appointments?: Appointment[];
     barber?: { id: number; name: string };
     user_id: number;
+    city: string;
+    province: string;
+    region: string;
+    cap: string;
+    main_photo?: { id: number; url: string; is_main: boolean; path: string };
+    gallery?: string[];
+    photos?: { id: number; url: string; is_main: boolean; path: string }[];
 }

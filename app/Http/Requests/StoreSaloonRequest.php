@@ -40,7 +40,19 @@ class StoreSaloonRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
+            // Nuovi campi indirizzo
+            'city' => 'required|string|max:255',
+            'province' => 'required|string|size:2', // Sigla (MI, RM, ecc.)
+            'region' => 'required|string|max:255',
+            'cap' => 'required|string|size:5',
             'opening_hours' => 'nullable|array',
+
+            // Gestione Immagini
+            // main_photo è la cover principale
+            'main_photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            // gallery è un array di file
+            'gallery' => 'nullable|array',
+            'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }
 
@@ -52,6 +64,13 @@ class StoreSaloonRequest extends FormRequest
             'address.required' => 'Please provide the saloon address.',
             'address.max' => 'The address is too long (max 255 chars).',
             'opening_hours.array' => 'Opening hours format is invalid.',
+            'city.required' => 'City is required.',
+            'province.required' => 'Province (2 letters) is required.',
+            'province.size' => 'The province must be exactly 2 letters.',
+            'cap.size' => 'The CAP must be 5 digits.',
+            'main_photo.image' => 'The cover must be an image file.',
+            'main_photo.max' => 'The cover image cannot be larger than 2MB.',
+            'gallery.*.image' => 'Each file in the gallery must be an image.',
         ];
     }
 }

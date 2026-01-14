@@ -12,6 +12,8 @@ use Inertia\Inertia;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Response;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class SaloonController extends Controller
 {
@@ -23,7 +25,7 @@ class SaloonController extends Controller
     private function getSaloonsData($page)
     {
         return Cache::remember("saloons_shared_list_page_{$page}", now()->addHours(1), function () {
-            return Saloon::with('barber:id,name')
+            return Saloon::with('barber:id,name', 'mainPhoto')
                 ->latest()
                 ->paginate(8)
                 ->withQueryString();
@@ -36,14 +38,18 @@ class SaloonController extends Controller
     private function getSingleSaloonData(Saloon $saloon)
     {
         return Cache::remember("saloon_shared_detail_{$saloon->id}", now()->addHours(24), function () use ($saloon) {
-            return $saloon->load([
+            // Ricarichiamo il modello dalla query per assicurarci che
+            // l'array salvato in cache contenga tutte le relazioni
+            return Saloon::with([
                 'barber:id,name',
                 'exceptions',
+                'photos',
+                'mainPhoto',
                 'appointments' => function ($query) {
                     $query->where('appointment_time', '>=', now()->startOfDay())
                         ->where('status', '!=', 'cancelled');
                 }
-            ]);
+            ])->find($saloon->id);
         });
     }
 
@@ -123,9 +129,10 @@ class SaloonController extends Controller
      */
     public function edit()
     {
-        // Usiamo firstOrCreate per assicurarci che l'utente abbia sempre un oggetto Saloon
-        // associato, così il frontend non crasha cercando di leggere proprietà di 'null'
-        $saloon = Auth::user()->saloon()->with('exceptions')->first();
+        // Carichiamo il salone dell'utente con tutte le relazioni necessarie
+        $saloon = Auth::user()->saloon()
+            ->with(['exceptions', 'photos', 'mainPhoto'])
+            ->first() ?? new Saloon; // Se non esiste, crea un'istanza vuota in memoria
 
         return Inertia::render('Dashboard/Barber/SaloonConfig', [
             'saloon' => $saloon,
@@ -144,19 +151,61 @@ class SaloonController extends Controller
      */
     public function store(StoreSaloonRequest $request)
     {
-        $saloon = Auth::user()->saloon()->updateOrCreate(
-            ['user_id' => Auth::id()],
-            $request->validated()
-        );
+        // 1. Recuperiamo i dati validati (inclusi city, province, ecc.)
+        $validated = $request->validated();
 
-        // SVUOTA CACHE: Dati aggiornati!
-        $this->clearSaloonCache($saloon->id);
+        if (isset($validated['opening_hours'])) {
+            foreach ($validated['opening_hours'] as $day => $hours) {
+                // Questa riga trasforma "0", "1", "true", "false" in veri booleani PHP
+                $validated['opening_hours'][$day]['is_closed'] = filter_var($hours['is_closed'], FILTER_VALIDATE_BOOLEAN);
+            }
+        }
+        // Usiamo una transazione: se il caricamento dei file fallisce, il DB non viene sporcato
+        return DB::transaction(function () use ($request, $validated) {
 
-        return back()->with('toast', [
-            'type' => 'success',
-            'message' => 'Saved!',
-            'description' => 'Configuration saved.',
-        ]);
+            // 2. Aggiorna o crea il salone
+            $saloon = Auth::user()->saloon()->updateOrCreate(
+                ['user_id' => Auth::id()],
+                $validated
+            );
+
+            // 3. Gestione Foto Principale (Cover)
+            if ($request->hasFile('main_photo')) {
+                // Eliminiamo la vecchia cover se esiste
+                $oldMain = $saloon->mainPhoto;
+                if ($oldMain) {
+                    Storage::disk('public')->delete($oldMain->path);
+                    $oldMain->delete();
+                }
+
+                // Salviamo la nuova
+                $path = $request->file('main_photo')->store('saloons/covers', 'public');
+                $saloon->photos()->create([
+                    'path' => $path,
+                    'is_main' => true
+                ]);
+            }
+
+            // 4. Gestione Galleria (Multiple)
+            if ($request->hasFile('gallery')) {
+                foreach ($request->file('gallery') as $file) {
+                    $path = $file->store('saloons/gallery', 'public');
+                    $saloon->photos()->create([
+                        'path' => $path,
+                        'is_main' => false
+                    ]);
+                }
+            }
+
+            // 5. Pulizia Cache
+            $this->clearSaloonCache($saloon->id);
+
+            return back()->with('toast', [
+                'type' => 'success',
+                'message' => 'Success!',
+                'description' => 'Your saloon information has been saved.',
+            ]);
+        });
     }
 
     /**
@@ -266,10 +315,10 @@ class SaloonController extends Controller
         })
             ->with(['barber:id,name'])
             ->withCount([
-                'appointments' => function ($query) use ($userId) {
-                    $query->where('client_id', $userId);
-                }
-            ])
+                    'appointments' => function ($query) use ($userId) {
+                        $query->where('client_id', $userId);
+                    }
+                ])
             ->latest()
             ->paginate(8)
             ->withQueryString();
@@ -280,6 +329,41 @@ class SaloonController extends Controller
                 ['label' => 'Dashboard', 'href' => route('dashboard')],
                 ['label' => 'My Saloons', 'href' => null],
             ],
+        ]);
+    }
+
+    /**
+     * Function to delete a specific gallery photo
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function destroyPhoto($id)
+    {
+        // 1. Recupera il salone dell'utente autenticato
+        $saloon = Auth::user()->saloon;
+
+        if (!$saloon) {
+            return back()->with('toast', ['type' => 'error', 'message' => 'Saloon not found.']);
+        }
+
+        // 2. Cerca la foto solo tra quelle che appartengono a QUESTO salone
+        $photo = $saloon->photos()->findOrFail($id);
+
+        // 3. Elimina il file fisico dal disco
+        if (\Storage::disk('public')->exists($photo->path)) {
+            \Storage::disk('public')->delete($photo->path);
+        }
+
+        // 4. Elimina il record dal DB
+        $photo->delete();
+
+        // 5. Svuota la cache (perché i dati del salone sono cambiati)
+        $this->clearSaloonCache($saloon->id);
+
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Removed!',
+            'description' => 'The photo has been removed from your gallery.',
         ]);
     }
 

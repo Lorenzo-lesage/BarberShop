@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\SaloonPhoto;
 
 class Saloon extends Model
 {
@@ -14,6 +15,10 @@ class Saloon extends Model
         'name',
         'address',
         'opening_hours',
+        'city',
+        'province',
+        'region',
+        'cap',
     ];
 
     /**
@@ -63,5 +68,17 @@ class Saloon extends Model
                             ->where('end_date', '>=', $data['end_date']);
                     });
             })->exists();
+    }
+
+    // Tutte le foto (galleria + principale)
+    public function photos()
+    {
+        return $this->hasMany(SaloonPhoto::class);
+    }
+
+    // Accesso rapido alla foto di copertina
+    public function mainPhoto()
+    {
+        return $this->hasOne(SaloonPhoto::class)->where('is_main', true);
     }
 }

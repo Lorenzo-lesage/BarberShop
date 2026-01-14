@@ -90,9 +90,12 @@ Route::middleware(['auth', 'barber'])->group(function () {
         return Inertia::render('Dashboard/Barber/Appointments');
     })->name('dashboard.barber.appointments');
 
+    //Photos
+    Route::delete('/dashboard/barber/saloon/photos/{id}', [SaloonController::class, 'destroyPhoto'])
+        ->name('dashboard.barber.saloon.photos.destroy');
+
     // My Clients route
     Route::get('/dashboard/clients', [ClientController::class, 'index'])->name('clients.index');
-
     Route::get('/dashboard/clients/{user}', [ClientController::class, 'show'])->name('clients.show');
 
 });

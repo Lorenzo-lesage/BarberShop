@@ -73,7 +73,7 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
     });
     const [deleteTarget, setDeleteTarget] = useState<{
         id: number;
-        type: 'exception' | 'saloon';
+        type: 'exception' | 'saloon' | 'photo';
     } | null>(null);
     const [isMobile, setIsMobile] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -84,14 +84,25 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
      */
     const getInitialHours = () => {
         return DAYS.reduce(
-            (acc, day) => ({
-                ...acc,
-                [day]: saloon?.opening_hours[day] || {
-                    open: '09:00',
-                    close: '18:00',
-                    is_closed: false,
-                },
-            }),
+            (acc, day) => {
+                const rawHour = saloon?.opening_hours?.[day];
+
+                // Creiamo una variabile booleana sicura
+                // Se è "1" (stringa), 1 (numero) o true (booleano), diventa true.
+                const isClosedSafe = rawHour
+                    ? String(rawHour.is_closed) === '1' ||
+                      rawHour.is_closed === true
+                    : false;
+
+                return {
+                    ...acc,
+                    [day]: {
+                        open: rawHour?.open || '09:00',
+                        close: rawHour?.close || '18:00',
+                        is_closed: isClosedSafe,
+                    },
+                };
+            },
             {} as Record<string, OpeningHour>,
         );
     };
@@ -100,7 +111,13 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
         {
             name: saloon?.name || '',
             address: saloon?.address || '',
+            city: saloon?.city || '',
+            province: saloon?.province || '',
+            region: saloon?.region || '',
+            cap: saloon?.cap || '',
             opening_hours: getInitialHours(),
+            main_photo: null as File | null, // Per la nuova cover
+            gallery: [] as File[], // Per le nuove foto gallery
         },
     );
 
@@ -173,12 +190,19 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
     };
 
     /**
-     * Submit Saloon
+     * Submit Saloon (Update o Create)
      * @param e
      */
     const submitSaloon = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('dashboard.barber.saloon.store'));
+        post(route('dashboard.barber.saloon.store'), {
+            forceFormData: true, // Forza l'invio come multipart/form-data
+            preserveScroll: true,
+            onSuccess: () => {
+                // Opzionale: puliamo i campi file dopo il caricamento riuscito
+                setData((prev) => ({ ...prev, main_photo: null, gallery: [] }));
+            },
+        });
     };
 
     /**
@@ -196,6 +220,13 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
         });
     };
 
+    const deletePhoto = (photoId: number) => {
+        setDeleteTarget({
+            id: photoId,
+            type: 'photo',
+        });
+    };
+
     /**
      * Confirm Delete
      */
@@ -208,6 +239,10 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                 deleteTarget.id,
             ),
             saloon: route('saloon.destroy'),
+            photo: route(
+                'dashboard.barber.saloon.photos.destroy',
+                deleteTarget.id,
+            ),
         };
 
         router.delete(routes[deleteTarget.type], {
@@ -295,7 +330,8 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                     )}
                 </div>
                 <form onSubmit={submitSaloon} className="space-y-6">
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="space-y-6">
+                        {/* Nome del Salone */}
                         <div className="space-y-2">
                             <Label htmlFor="name">Salon Name</Label>
                             <Input
@@ -305,8 +341,7 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                     setData('name', e.target.value)
                                 }
                                 className={cn(
-                                    errors.name &&
-                                        'border-destructive focus-visible:ring-destructive',
+                                    errors.name && 'border-destructive',
                                 )}
                             />
                             {errors.name && (
@@ -315,24 +350,190 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                 </p>
                             )}
                         </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="address">Address</Label>
-                            <Input
-                                id="address"
-                                value={data.address}
-                                onChange={(e) =>
-                                    setData('address', e.target.value)
-                                }
-                                className={cn(
-                                    errors.address &&
-                                        'border-destructive focus-visible:ring-destructive',
+
+                        {/* Indirizzo e Città */}
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div className="space-y-2">
+                                <Label htmlFor="address">
+                                    Address (Street & Number)
+                                </Label>
+                                <Input
+                                    id="address"
+                                    value={data.address}
+                                    onChange={(e) =>
+                                        setData('address', e.target.value)
+                                    }
+                                    className={cn(
+                                        errors.address && 'border-destructive',
+                                    )}
+                                />
+                                {errors.address && (
+                                    <p className="text-sm font-medium text-destructive">
+                                        {errors.address}
+                                    </p>
                                 )}
-                            />
-                            {errors.address && (
-                                <p className="text-sm font-medium text-destructive">
-                                    {errors.address}
-                                </p>
-                            )}
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="city">City</Label>
+                                <Input
+                                    id="city"
+                                    value={data.city}
+                                    onChange={(e) =>
+                                        setData('city', e.target.value)
+                                    }
+                                    className={cn(
+                                        errors.city && 'border-destructive',
+                                    )}
+                                />
+                                {errors.city && (
+                                    <p className="text-sm font-medium text-destructive">
+                                        {errors.city}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Provincia, Regione e CAP */}
+                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                            <div className="space-y-2">
+                                <Label htmlFor="province">
+                                    Province (Sigla)
+                                </Label>
+                                <Input
+                                    id="province"
+                                    value={data.province}
+                                    maxLength={2}
+                                    onChange={(e) =>
+                                        setData(
+                                            'province',
+                                            e.target.value.toUpperCase(),
+                                        )
+                                    }
+                                    placeholder="MI"
+                                    className={cn(
+                                        errors.province && 'border-destructive',
+                                    )}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="region">Region</Label>
+                                <Input
+                                    id="region"
+                                    value={data.region}
+                                    onChange={(e) =>
+                                        setData('region', e.target.value)
+                                    }
+                                    className={cn(
+                                        errors.region && 'border-destructive',
+                                    )}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="cap">CAP</Label>
+                                <Input
+                                    id="cap"
+                                    value={data.cap}
+                                    maxLength={5}
+                                    onChange={(e) =>
+                                        setData('cap', e.target.value)
+                                    }
+                                    className={cn(
+                                        errors.cap && 'border-destructive',
+                                    )}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-4">
+                        <h3 className="text-sm font-bold uppercase tracking-tight text-muted-foreground">
+                            Salon Images
+                        </h3>
+
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                            {/* Main Cover Photo */}
+                            <div className="space-y-2">
+                                <Label>Cover Photo (Main)</Label>
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                        setData(
+                                            'main_photo',
+                                            e.target.files?.[0] || null,
+                                        )
+                                    }
+                                    className="cursor-pointer"
+                                />
+                                {saloon?.main_photo && (
+                                    <div className="relative mt-2 h-32 w-full overflow-hidden rounded-md border bg-muted">
+                                        <img
+                                            src={`/storage/${saloon.main_photo.path}`}
+                                            alt="Current cover"
+                                            className="h-full w-full object-cover"
+                                        />
+                                        <div className="absolute inset-0 flex items-end bg-black/20 p-2">
+                                            <span className="rounded bg-black/50 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
+                                                Current Cover
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                                {errors.main_photo && (
+                                    <p className="text-sm font-medium text-destructive">
+                                        {errors.main_photo}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Gallery Photos */}
+                            <div className="space-y-2">
+                                <Label>Gallery (Multiple)</Label>
+                                <Input
+                                    type="file"
+                                    multiple
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                        setData(
+                                            'gallery',
+                                            Array.from(e.target.files || []),
+                                        )
+                                    }
+                                    className="cursor-pointer"
+                                />
+                                <div className="mt-2 flex flex-wrap gap-2">
+                                    {saloon?.photos
+                                        ?.filter((p) => !p.is_main)
+                                        .map((photo) => (
+                                            <div
+                                                key={photo.id}
+                                                className="group relative h-16 w-16 overflow-hidden rounded-md border"
+                                            >
+                                                <img
+                                                    src={`/storage/${photo.path}`}
+                                                    className="h-full w-full object-cover"
+                                                />
+                                                {/* Bottone per eliminare la singola foto - Opzionale */}
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        deletePhoto(photo.id)
+                                                    }
+                                                    className="absolute inset-0 flex items-center justify-center bg-destructive/80 opacity-0 transition-opacity group-hover:opacity-100"
+                                                >
+                                                    <Trash2 className="h-4 w-4 text-white" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                </div>
+                                {errors.gallery && (
+                                    <p className="text-sm font-medium text-destructive">
+                                        {errors.gallery}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -717,7 +918,9 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                         <AlertDialogDescription>
                             {deleteTarget?.type === 'exception'
                                 ? 'This action will immediately reopen these dates for customer bookings.'
-                                : 'This will permanently delete your salon and all associated data. This action cannot be undone.'}
+                                : deleteTarget?.type === 'photo'
+                                  ? 'This image will be permanently removed from your gallery.'
+                                  : 'This will permanently delete your salon and all associated data.'}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="flex-col gap-2 sm:flex-row">
@@ -739,7 +942,13 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                     Deleting...
                                 </>
                             ) : (
-                                `Delete ${deleteTarget?.type === 'saloon' ? 'Salon' : 'Closure'}`
+                                `Delete ${
+                                    deleteTarget?.type === 'exception'
+                                        ? 'Closure'
+                                        : deleteTarget?.type === 'photo'
+                                          ? 'Photo'
+                                          : 'Saloon'
+                                }`
                             )}
                         </AlertDialogAction>
                     </AlertDialogFooter>
