@@ -50,7 +50,7 @@ private function getAppointmentsData($user, $type, $page)
         $pageName = 'past_page';
     }
 
-    return $query->paginate(8, ['*'], $pageName)->withQueryString();
+    return $query->paginate(7, ['*'], $pageName)->withQueryString();
 }
 
     /**
