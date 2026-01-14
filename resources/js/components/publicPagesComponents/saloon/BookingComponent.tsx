@@ -24,6 +24,14 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from '@/components/ui/carousel';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -55,6 +63,7 @@ export default function BookingComponent({ saloon }: Props) {
     const isAuthenticated = !!auth.user;
     const authId = auth.user?.id;
     const isOwner = authId === saloon?.user_id;
+    const galleryPhotos = saloon.photos?.filter((p) => !p.is_main) || [];
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(
         new Date(),
@@ -300,7 +309,6 @@ export default function BookingComponent({ saloon }: Props) {
 
     return (
         <>
-
             <div className="grid grid-cols-1 gap-8">
                 {/* LEFT COLUMN: Saloon Info & Hours */}
                 <div className="space-y-6 lg:col-span-1">
@@ -322,7 +330,12 @@ export default function BookingComponent({ saloon }: Props) {
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <MapPin className="h-4 w-4" />
-                                    <span>{saloon.address}</span>
+
+                                    <span>
+                                        {saloon.city}, {saloon.address} (
+                                        {saloon.province}) {saloon.cap},{' '}
+                                        {saloon.region}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -342,7 +355,7 @@ export default function BookingComponent({ saloon }: Props) {
                         )}
                     </header>
 
-                    {stats && (
+                    {stats && !auth.user.is_barber && (
                         <Card
                             className={cn(
                                 'border-l-4',
@@ -405,25 +418,68 @@ export default function BookingComponent({ saloon }: Props) {
                         </Card>
                     )}
 
-                    {saloon.photos && saloon.photos.length > 0 && (
-                        <div className="mt-8">
-                            <h2 className="mb-4 text-xl font-bold">Gallery</h2>
-                            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                                {saloon.photos
-                                    .filter((p) => !p.is_main)
-                                    .map((photo) => (
-                                        <div
-                                            key={photo.id}
-                                            className="group relative aspect-square overflow-hidden rounded-xl border"
-                                        >
-                                            <img
-                                                src={`/storage/${photo.path}`}
-                                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                                alt="Saloon gallery"
-                                            />
-                                        </div>
-                                    ))}
-                            </div>
+                    {galleryPhotos.length > 0 && (
+                        <div className="mt-8 space-y-4">
+                            <h2 className="text-xl font-bold">Gallery</h2>
+
+                            <Dialog>
+                                {/* CAROSELLO IN PAGINA (Il Trigger) */}
+                                <div className="relative w-full overflow-hidden px-3">
+                                    {' '}
+                                    {/* Wrapper di sicurezza */}
+                                    <Carousel className="w-full">
+                                        <CarouselContent className="-ml-2 md:-ml-4">
+                                            {galleryPhotos.map(
+                                                (photo, index) => (
+                                                    <CarouselItem
+                                                        key={photo.id}
+                                                        className="basis-1/2 pl-2 md:basis-1/3 md:pl-4 lg:basis-1/4"
+                                                    >
+                                                        <DialogTrigger asChild>
+                                                            <div className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border-2 border-background/50 shadow-lg">
+                                                                <img
+                                                                    src={`/storage/${photo.path}`}
+                                                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                                                    alt="Saloon gallery"
+                                                                />
+                                                                {/* ... badge ... */}
+                                                            </div>
+                                                        </DialogTrigger>
+                                                    </CarouselItem>
+                                                ),
+                                            )}
+                                        </CarouselContent>
+
+                                        {/* Cambiamo il posizionamento delle frecce per evitare che escano dal body */}
+                                        <CarouselPrevious className="left-2 bg-background/50 backdrop-blur-sm md:-left-4" />
+                                        <CarouselNext className="right-2 bg-background/50 backdrop-blur-sm md:-right-4" />
+                                    </Carousel>
+                                </div>
+
+                                {/* MODALE CON CAROSELLO A TUTTO SCHERMO */}
+                                <DialogContent className="flex h-[90vh] max-w-[95vw] items-center justify-center border-none bg-transparent p-0 shadow-none">
+                                    <Carousel className="w-full max-w-5xl">
+                                        <CarouselContent>
+                                            {galleryPhotos.map((p) => (
+                                                <CarouselItem
+                                                    key={p.id}
+                                                    className="flex items-center justify-center"
+                                                >
+                                                    <div className="relative h-[80vh] w-full">
+                                                        <img
+                                                            src={`/storage/${p.path}`}
+                                                            className="h-full w-full object-contain"
+                                                            alt="Full screen view"
+                                                        />
+                                                    </div>
+                                                </CarouselItem>
+                                            ))}
+                                        </CarouselContent>
+                                        <CarouselPrevious className="bg-white/10 text-white hover:bg-white/20" />
+                                        <CarouselNext className="bg-white/10 text-white hover:bg-white/20" />
+                                    </Carousel>
+                                </DialogContent>
+                            </Dialog>
                         </div>
                     )}
 
