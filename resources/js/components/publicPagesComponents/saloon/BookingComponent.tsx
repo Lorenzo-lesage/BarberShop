@@ -117,7 +117,7 @@ export default function BookingComponent({ saloon }: Props) {
     }, [selectedDate, saloon.opening_hours, isHoliday]);
 
     // 3. Booking form (will be used later for the actual POST)
-    const { data, setData, post, processing } = useForm({
+    const { processing } = useForm({
         saloon_id: saloon.id,
         date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '',
         time: '',

@@ -683,19 +683,6 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                                         </p>
                                                     )}
                                                 </div>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={() =>
-                                                        setDeleteTarget({
-                                                            id: ex.id,
-                                                            type: 'exception',
-                                                        })
-                                                    }
-                                                    className="text-destructive"
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
                                             </div>
                                         ))}
                                     </div>

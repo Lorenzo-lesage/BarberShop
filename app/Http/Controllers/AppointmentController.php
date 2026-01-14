@@ -16,36 +16,42 @@ class AppointmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-        $user = $request->user();
+public function index(Request $request)
+{
+    $user = $request->user();
 
-        // Recuperiamo i dati paginati
-        $appointments = $this->getAppointmentsData($user, $request->get('page', 1));
+    return Inertia::render('Dashboard/Appointments/Index', [
+        // Appuntamenti Futuri
+        'appointments' => $this->getAppointmentsData($user, 'upcoming', $request->query('page')),
 
-        return Inertia::render('Dashboard/Appointments/Index', [
-            'appointments' => $appointments,
-            'breadcrumbs' => [
-                ['label' => 'Dashboard', 'href' => route('dashboard')],
-                ['label' => $user->is_barber ? 'Appointments Received' : 'My Appointments', 'href' => null],
+        // Appuntamenti Passati
+        'pastAppointments' => $this->getAppointmentsData($user, 'past', $request->query('past_page')),
 
-            ],
-        ]);
+        'breadcrumbs' => [
+            ['label' => 'Dashboard', 'href' => route('dashboard')],
+            ['label' => $user->is_barber ? 'Appointments Received' : 'My Appointments', 'href' => null],
+        ],
+    ]);
+}
+
+private function getAppointmentsData($user, $type, $page)
+{
+    $query = $user->is_barber
+        ? Appointment::where('barber_id', $user->id)->with('client')
+        : $user->appointments()->with('saloon');
+
+    if ($type === 'upcoming') {
+        $query->where('appointment_time', '>=', now())
+              ->orderBy('appointment_time', 'asc');
+        $pageName = 'page';
+    } else {
+        $query->where('appointment_time', '<', now())
+              ->orderBy('appointment_time', 'desc');
+        $pageName = 'past_page';
     }
 
-    private function getAppointmentsData($user, $page)
-    {
-        // Query base: se è barbiere vede quelli ricevuti, altrimenti quelli fatti
-        $query = $user->is_barber
-            ? Appointment::where('barber_id', $user->id)->with('client')
-            : $user->appointments()->with('saloon');
-
-        $query->where('appointment_time', '>=', now());
-
-        return $query->orderBy('appointment_time', 'asc')
-            ->paginate(8)
-            ->withQueryString();
-    }
+    return $query->paginate(8, ['*'], $pageName)->withQueryString();
+}
 
     /**
      * Show the form for creating a new resource.
