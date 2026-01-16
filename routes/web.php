@@ -17,7 +17,7 @@ use App\Http\Controllers\ClientController;
 // Rotte principali
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'saloons' => Saloon::latest()->take(10)->get(),
+        'saloons' => Saloon::latest()->with('barber:id,name', 'mainPhoto')->take(10)->get(),
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,

@@ -33,6 +33,7 @@ export default function SaloonsComponent({
     */
     const { auth } = usePage().props;
     const authId = auth.user?.id;
+    console.log('Dashboard Saloons:', saloons);
 
     /*
     |--------------------------------------------------------------------------
@@ -58,7 +59,7 @@ export default function SaloonsComponent({
                             style={{
                                 backgroundImage: saloon.main_photo
                                     ? `linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.9)), url('/storage/${saloon.main_photo.path}')`
-                                    : `linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url('/images/placeholder-saloon.jpg')`,
+                                    : `linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8))`,
                                 opacity: '0.6',
                             }}
                         />

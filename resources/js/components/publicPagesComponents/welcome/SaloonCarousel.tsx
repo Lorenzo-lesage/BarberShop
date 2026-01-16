@@ -25,6 +25,7 @@ export function SaloonCarousel({ saloons }: { saloons: Saloon[] }) {
     */
     const { auth } = usePage().props;
     const authId = auth.user?.id;
+    console.log('Saloons:', saloons);
 
     /*
     |--------------------------------------------------------------------------
@@ -62,12 +63,23 @@ export function SaloonCarousel({ saloons }: { saloons: Saloon[] }) {
                                 key={saloon.id}
                                 className="basis-[65%] pl-1 md:basis-[50%] lg:basis-[25%]"
                             >
+                                {/* Background Image Layer */}
+                                <div
+                                    className="absolute inset-0 z-0 bg-cover bg-center transition-transform duration-500 hover:scale-105"
+                                    style={{
+                                        backgroundImage: saloon.main_photo
+                                            ? `linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.9)), url('/storage/${saloon.main_photo.path}')`
+                                            : `linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8))`,
+                                        opacity: '0.6',
+                                    }}
+                                />
                                 <div className="p-0">
                                     <Card
                                         className={cn(
                                             isOwner &&
                                                 'relative bg-amber-50 dark:bg-amber-950/20',
                                         )}
+                                        key={saloon.id}
                                     >
                                         {isOwner && (
                                             <Badge
@@ -77,13 +89,19 @@ export function SaloonCarousel({ saloons }: { saloons: Saloon[] }) {
                                                 Your saloon
                                             </Badge>
                                         )}
-                                        <CardContent className="flex h-40 flex-col items-center justify-center">
-                                            <span className="text-xl font-semibold">
+                                        <CardContent className="flex flex-col items-center justify-center text-white">
+                                            <span className="text-xl font-bold">
                                                 {saloon.name}
                                             </span>
-                                            <p className="mt-2 text-center text-sm text-muted-foreground">
+                                            <p className="mt-2 text-center text-sm">
+                                                {saloon.region}
+                                                <span>, {saloon.city}</span> (
+                                                {saloon.province})
+                                            </p>
+                                            <p className="mt-2 text-center text-sm">
                                                 {saloon.address}
                                             </p>
+                                            <p>Barber: {saloon.barber?.name}</p>
                                             <Link
                                                 href={route(
                                                     'saloons.show',
