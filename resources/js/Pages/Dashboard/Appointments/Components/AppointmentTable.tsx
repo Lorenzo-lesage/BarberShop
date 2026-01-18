@@ -68,7 +68,6 @@ export const AppointmentTable = ({
                     )}
                 </TableRow>
             </TableHeader>
-            Table
             <TableBody>
                 {appointments.data.map((app, key) => (
                     <TableRow key={app.id}>
