@@ -6,6 +6,7 @@ import AppShell from '@/Layouts/Appshell';
 
 // Components
 import { MyPagination } from '@/components/publicPagesComponents/pagination/DataTablePagination';
+import SearchBar from '@/components/publicPagesComponents/searchbar/SearchBar';
 
 // Interfaces
 import { PaginationData } from '@/interfaces/pagination';
@@ -14,8 +15,9 @@ import { Saloon } from '@/interfaces/saloon';
 interface Props {
     // Stai usando lo stampo (PaginationData) con il tuo ingrediente (Saloon)
     saloons: PaginationData<Saloon>;
+    filters: { search?: string };
 }
-export default function Index({ saloons }: Props) {
+export default function Index({ saloons, filters }: Props) {
     /*
     |--------------------------------------------------------------------------
     | Render
@@ -26,6 +28,9 @@ export default function Index({ saloons }: Props) {
             <Head title="Saloons" />
 
             <div className="h-[80vh]">
+                <div className="mb-10 mt-2 flex justify-end">
+                    <SearchBar filters={filters} routeName="saloons.index" />
+                </div>
                 <SaloonsComponent
                     saloons={saloons.data}
                     routeName="saloons.show"

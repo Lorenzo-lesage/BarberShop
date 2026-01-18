@@ -20,6 +20,7 @@ import type BreadcrumbItemType from '@/interfaces/breadcrumbs';
 import { OpeningHour, Saloon } from '@/interfaces/saloon';
 
 // Shadcn UI Components
+import SaloonImage from '@/components/publicPagesComponents/SaloonImage';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -77,6 +78,11 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
     } | null>(null);
     const [isMobile, setIsMobile] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    // New states for upload progress
+    const [uploadingCover, setUploadingCover] = useState(false);
+    const [uploadingPhotosCount, setUploadingPhotosCount] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
 
     /**
      * Get initial hours
@@ -292,6 +298,64 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                 );
             }) || [];
 
+    /**
+     * Upload istantaneo della Cover
+     */
+    const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploadingCover(true);
+        router.post(
+            route('dashboard.barber.saloon.cover.update', saloon.id),
+            {
+                _method: 'patch',
+                cover: file,
+            },
+            {
+                forceFormData: true,
+                onFinish: () => setUploadingCover(false),
+                preserveScroll: true,
+            },
+        );
+    };
+    const uploadFiles = (files: File[]) => {
+        if (files.length === 0) return;
+        setUploadingPhotosCount(files.length);
+
+        files.forEach((file) => {
+            router.post(
+                route('dashboard.barber.saloon.photos.store', saloon.id),
+                {
+                    photo: file,
+                },
+                {
+                    forceFormData: true,
+                    preserveScroll: true,
+                    onFinish: () =>
+                        setUploadingPhotosCount((prev) =>
+                            Math.max(0, prev - 1),
+                        ),
+                },
+            );
+        });
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = () => {
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const files = Array.from(e.dataTransfer.files);
+        uploadFiles(files);
+    };
     /*
     |-------------------------------------------------------------------
     | Render
@@ -453,86 +517,128 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                         </h3>
 
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                            {/* Main Cover Photo */}
-                            <div className="space-y-2">
+                            {/* Sezione Cover */}
+                            <div className="space-y-3">
                                 <Label>Cover Photo (Main)</Label>
-                                <Input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) =>
-                                        setData(
-                                            'main_photo',
-                                            e.target.files?.[0] || null,
-                                        )
-                                    }
-                                    className="cursor-pointer"
-                                />
-                                {saloon?.main_photo && (
-                                    <div className="relative mt-2 h-32 w-full overflow-hidden rounded-md border bg-muted">
-                                        <img
-                                            src={`/storage/${saloon.main_photo.path}`}
-                                            alt="Current cover"
-                                            className="h-full w-full object-cover"
-                                        />
-                                        <div className="absolute inset-0 flex items-end bg-black/20 p-2">
-                                            <span className="rounded bg-black/50 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
-                                                Current Cover
+                                <div className="group relative h-40 w-full overflow-hidden rounded-lg border bg-muted shadow-inner">
+                                    {saloon?.main_photo ? (
+                                        <div className="h-48 w-full overflow-hidden rounded-t-xl">
+                                            <SaloonImage
+                                                src={
+                                                    saloon.main_photo
+                                                        ? `/storage/${saloon.main_photo.path}`
+                                                        : '/img/default-saloon.jpg'
+                                                }
+                                                alt={saloon.name}
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
+                                            <Plus className="mb-2 h-8 w-8 opacity-20" />
+                                            <span className="text-xs font-bold uppercase tracking-wider">
+                                                No Cover
                                             </span>
                                         </div>
-                                    </div>
-                                )}
-                                {errors.main_photo && (
-                                    <p className="text-sm font-medium text-destructive">
-                                        {errors.main_photo}
-                                    </p>
-                                )}
+                                    )}
+
+                                    {uploadingCover && (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                                            <Loader2 className="h-8 w-8 animate-spin text-white" />
+                                        </div>
+                                    )}
+
+                                    <label className="absolute bottom-2 right-2 cursor-pointer">
+                                        <div className="rounded-full bg-primary p-2 text-primary-foreground shadow-lg hover:bg-primary/90">
+                                            <Plus className="h-4 w-4" />
+                                        </div>
+                                        <input
+                                            type="file"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={handleCoverUpload}
+                                            disabled={uploadingCover}
+                                        />
+                                    </label>
+                                </div>
+                                <p className="text-[10px] italic text-muted-foreground">
+                                    Replaced instantly on selection.
+                                </p>
                             </div>
 
-                            {/* Gallery Photos */}
-                            <div className="space-y-2">
-                                <Label>Gallery (Multiple)</Label>
-                                <Input
-                                    type="file"
-                                    multiple
-                                    accept="image/*"
-                                    onChange={(e) =>
-                                        setData(
-                                            'gallery',
-                                            Array.from(e.target.files || []),
-                                        )
-                                    }
-                                    className="cursor-pointer"
-                                />
-                                <div className="mt-2 flex flex-wrap gap-2">
-                                    {saloon?.photos
-                                        ?.filter((p) => !p.is_main)
-                                        .map((photo) => (
-                                            <div
-                                                key={photo.id}
-                                                className="group relative h-16 w-16 overflow-hidden rounded-md border"
-                                            >
-                                                <img
-                                                    src={`/storage/${photo.path}`}
-                                                    className="h-full w-full object-cover"
-                                                />
-                                                {/* Bottone per eliminare la singola foto - Opzionale */}
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        deletePhoto(photo.id)
-                                                    }
-                                                    className="absolute inset-0 flex items-center justify-center bg-destructive/80 opacity-0 transition-opacity group-hover:opacity-100"
+                            {/* Sezione Gallery */}
+                            <div className="space-y-3">
+                                <div className="space-y-3">
+                                    <Label>
+                                        Gallery Photos (Drag & Drop available)
+                                    </Label>
+
+                                    <div
+                                        onDragOver={handleDragOver}
+                                        onDragLeave={handleDragLeave}
+                                        onDrop={handleDrop}
+                                        className={cn(
+                                            'grid min-h-[100px] grid-cols-4 gap-2 rounded-lg border-2 border-dashed p-2 transition-all',
+                                            isDragging
+                                                ? 'scale-[1.01] border-primary bg-primary/5'
+                                                : 'border-muted-foreground/25',
+                                            uploadingPhotosCount > 0 &&
+                                                'pointer-events-none opacity-70',
+                                        )}
+                                    >
+                                        {/* Tasto Aggiungi (anche cliccabile) */}
+                                        <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border border-muted-foreground/20 hover:bg-muted">
+                                            <Plus className="h-5 w-5" />
+                                            <input
+                                                type="file"
+                                                multiple
+                                                className="hidden"
+                                                accept="image/*"
+                                                onChange={(e) =>
+                                                    uploadFiles(
+                                                        Array.from(
+                                                            e.target.files ||
+                                                                [],
+                                                        ),
+                                                    )
+                                                }
+                                            />
+                                        </label>
+
+                                        {/* Foto Esistenti */}
+                                        {saloon?.photos
+                                            ?.filter((p) => !p.is_main)
+                                            .map((photo) => (
+                                                <div
+                                                    key={photo.id}
+                                                    className="group relative aspect-square overflow-hidden rounded-lg border"
                                                 >
-                                                    <Trash2 className="h-4 w-4 text-white" />
-                                                </button>
-                                            </div>
-                                        ))}
+                                                    <div className="w-full overflow-hidden rounded-t-xl">
+                                                        <SaloonImage
+                                                            src={
+                                                                photo.path
+                                                                    ? `/storage/${photo.path}`
+                                                                    : '/img/default-saloon.jpg'
+                                                            }
+                                                            alt={saloon.name}
+                                                            className="h-full w-full object-cover"
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            deletePhoto(
+                                                                photo.id,
+                                                            )
+                                                        }
+                                                        className="absolute inset-0 flex items-center justify-center bg-destructive/80 opacity-0 group-hover:opacity-100"
+                                                    >
+                                                        <Trash2 className="h-5 w-5 text-white" />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                    </div>
                                 </div>
-                                {errors.gallery && (
-                                    <p className="text-sm font-medium text-destructive">
-                                        {errors.gallery}
-                                    </p>
-                                )}
                             </div>
                         </div>
                     </div>

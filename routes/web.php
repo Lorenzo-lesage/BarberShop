@@ -41,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::patch('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
 });
 
 /**
@@ -91,8 +92,11 @@ Route::middleware(['auth', 'barber'])->group(function () {
     })->name('dashboard.barber.appointments');
 
     //Photos
+    Route::patch('/saloon/{saloon}/cover', [SaloonController::class, 'updateCover'])->name('dashboard.barber.saloon.cover.update');
+    Route::post('/saloon/{saloon}/photos', [SaloonController::class, 'addPhoto'])->name('dashboard.barber.saloon.photos.store');
     Route::delete('/dashboard/barber/saloon/photos/{id}', [SaloonController::class, 'destroyPhoto'])
         ->name('dashboard.barber.saloon.photos.destroy');
+
 
     // My Clients route
     Route::get('/dashboard/clients', [ClientController::class, 'index'])->name('clients.index');

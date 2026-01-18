@@ -24,6 +24,7 @@ class User extends Authenticatable
         'is_barber',
         'provider',
         'provider_id',
+        'profile_photo',
     ];
 
     /**
@@ -87,4 +88,16 @@ class User extends Authenticatable
         // Assicurati che la colonna nella tabella appointments si chiami client_id
         return $this->hasMany(Appointment::class, 'client_id');
     }
+
+
+    protected function profilePhotoUrl(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: fn() => $this->profile_photo
+            ? asset('storage/' . $this->profile_photo)
+            : null,
+        );
+    }
+
+    protected $appends = ['profile_photo_url'];
 }

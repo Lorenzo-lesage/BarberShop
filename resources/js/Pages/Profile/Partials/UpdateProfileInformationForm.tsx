@@ -1,14 +1,20 @@
 'use client';
 
 import { Transition } from '@headlessui/react';
-import { Link, useForm, usePage } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import { Link, router, useForm, usePage } from '@inertiajs/react';
+import { FormEventHandler, useState } from 'react';
 
 // Shadcn UI Components
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
+// Interfaces
+import { User } from '@/interfaces/auth';
+
+// Icons
+import { Camera, Loader2 } from 'lucide-react';
 export default function UpdateProfileInformation({
     mustVerifyEmail,
     status,
@@ -18,18 +24,71 @@ export default function UpdateProfileInformation({
     status?: string;
     className?: string;
 }) {
-    const user = usePage().props.auth.user;
+    /*
+    | --------------------------------------
+    | Data
+    | --------------------------------------
+    */
 
+    const user = usePage().props.auth.user as User;
+    const [uploading, setUploading] = useState(false);
+    const [photoError, setPhotoError] = useState<string | null>(null);
+
+    // Form per Nome ed Email (PATCH)
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
             name: user.name,
             email: user.email,
         });
 
+    /*
+    | --------------------------------------
+    | Methods
+    | --------------------------------------
+    */
+
+    // Funzione per l'upload istantaneo della foto
+    const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setPhotoError(null); // Resetta errori precedenti
+        setUploading(true);
+
+        router.post(
+            route('profile.photo.update'),
+            {
+                _method: 'patch',
+                photo: file,
+            },
+            {
+                forceFormData: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    setPhotoError(null);
+                    // Qui puoi far scattare un toast di successo
+                },
+                onError: (errors) => {
+                    // Inertia restituisce gli errori qui!
+                    if (errors.photo) {
+                        setPhotoError(errors.photo);
+                    }
+                },
+                onFinish: () => setUploading(false),
+            },
+        );
+    };
+
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         patch(route('profile.update'));
     };
+
+    /*
+    | --------------------------------------
+    | Render
+    | --------------------------------------
+    */
 
     return (
         <section className={`${className} max-w-xl`}>
@@ -41,6 +100,58 @@ export default function UpdateProfileInformation({
                     Update your account's profile information and email address.
                 </p>
             </header>
+
+            {/* SEZIONE FOTO PROFILO - SEPARATA */}
+            <div className="flex items-center gap-6 rounded-lg border bg-muted/30 p-4">
+                <div className="group relative">
+                    <Avatar className="h-24 w-24 border-2 border-background shadow-md">
+                        <AvatarImage
+                            src={
+                                user.profile_photo
+                                    ? `${window.location.origin}/storage/${user.profile_photo}`
+                                    : undefined
+                            }
+                            className="object-cover"
+                        />
+                        <AvatarFallback className="bg-primary text-xl text-primary-foreground">
+                            {user.name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                    </Avatar>
+
+                    {uploading && (
+                        <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40">
+                            <Loader2 className="h-8 w-8 animate-spin text-white" />
+                        </div>
+                    )}
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="photo-upload" className="cursor-pointer">
+                        <div className="flex items-center gap-2 text-sm font-medium text-primary hover:underline">
+                            <Camera className="h-4 w-4" />
+                            {user.profile_photo
+                                ? 'Change photo'
+                                : 'Upload photo'}
+                        </div>
+                    </Label>
+                    <Input
+                        id="photo-upload"
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handlePhotoUpload}
+                        disabled={uploading}
+                    />
+                    {photoError && (
+                        <p className="text-xs font-medium text-destructive animate-in fade-in slide-in-from-top-1">
+                            {photoError}
+                        </p>
+                    )}
+                    <p className="text-xs text-muted-foreground">
+                        Square images work best. Max 2MB.
+                    </p>
+                </div>
+            </div>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 {/* Name Field */}

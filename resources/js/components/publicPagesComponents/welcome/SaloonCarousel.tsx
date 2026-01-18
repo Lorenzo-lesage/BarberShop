@@ -5,7 +5,8 @@ import { cn } from '@/lib/utils';
 
 // Components
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
     Carousel,
     CarouselContent,
@@ -13,6 +14,9 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from '@/components/ui/carousel';
+
+// Icons
+import { User } from 'lucide-react';
 
 // Interfaces
 import type { Saloon } from '@/interfaces/saloon';
@@ -64,59 +68,74 @@ export function SaloonCarousel({ saloons }: { saloons: Saloon[] }) {
                                 className="basis-[65%] pl-1 md:basis-[50%] lg:basis-[25%]"
                             >
                                 {/* Background Image Layer */}
-                                <div
-                                    className="absolute inset-0 z-0 bg-cover bg-center transition-transform duration-500 hover:scale-105"
-                                    style={{
-                                        backgroundImage: saloon.main_photo
-                                            ? `linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.9)), url('/storage/${saloon.main_photo.path}')`
-                                            : `linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8))`,
-                                        opacity: '0.6',
-                                    }}
-                                />
                                 <div className="p-0">
                                     <Card
                                         className={cn(
+                                            'relative h-72 overflow-hidden border-none', // border-none se vuoi un look più pulito
                                             isOwner &&
-                                                'relative bg-amber-50 dark:bg-amber-950/20',
+                                                'bg-amber-50 dark:bg-amber-950/20',
                                         )}
-                                        key={saloon.id}
                                     >
-                                        {isOwner && (
-                                            <Badge
-                                                className="absolute right-2 top-2"
-                                                variant="secondary"
-                                            >
-                                                Your saloon
-                                            </Badge>
+                                        {/* Background Image Layer */}
+                                        {saloon.main_photo ? (
+                                            <div
+                                                className="absolute inset-0 z-0 bg-cover bg-center transition-transform duration-500 hover:scale-110"
+                                                style={{
+                                                    backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url('/storage/${saloon.main_photo.path}')`,
+                                                }}
+                                            />
+                                        ) : (
+                                            <div className="absolute inset-0 z-0 bg-muted" />
                                         )}
-                                        <CardContent className="flex flex-col items-center justify-center text-white">
-                                            <span className="text-xl font-bold">
+
+                                        {/* Overlay opzionale per scurire leggermente e migliorare la leggibilità */}
+                                        <div className="absolute inset-0 z-10 bg-black/40" />
+
+                                        {/* Contenuto sopra l'immagine */}
+                                        <div className="relative z-20 flex h-full flex-col items-center justify-center p-6 text-center text-white">
+                                            {isOwner && (
+                                                <Badge
+                                                    className="absolute right-2 top-2 z-30"
+                                                    variant="secondary"
+                                                >
+                                                    Your saloon
+                                                </Badge>
+                                            )}
+
+                                            <span className="text-2xl font-black tracking-tight">
                                                 {saloon.name}
                                             </span>
-                                            <p className="mt-2 text-center text-sm">
-                                                {saloon.region}
-                                                <span>, {saloon.city}</span> (
-                                                {saloon.province})
-                                            </p>
-                                            <p className="mt-2 text-center text-sm">
-                                                {saloon.address}
-                                            </p>
-                                            <p>Barber: {saloon.barber?.name}</p>
+
+                                            <div className="mt-2 space-y-1 text-sm font-medium text-white/90">
+                                                <p>
+                                                    {saloon.region},{' '}
+                                                    {saloon.city} (
+                                                    {saloon.province})
+                                                </p>
+                                                <p>{saloon.address}</p>
+                                                <p className="flex items-center justify-center gap-1 opacity-75">
+                                                    <User className="h-3 w-3" />
+                                                    {saloon.barber?.name}
+                                                </p>
+                                            </div>
+
                                             <Link
                                                 href={route(
                                                     'saloons.show',
                                                     saloon.id,
                                                 )}
+                                                className="mt-6"
                                                 prefetch
                                             >
-                                                <Badge
-                                                    className="mt-2"
-                                                    variant="outline"
+                                                <Button
+                                                    variant="secondary"
+                                                    size="sm"
+                                                    className="rounded-full bg-black/40 px-6 text-white hover:bg-black/60"
                                                 >
                                                     View Saloon
-                                                </Badge>
+                                                </Button>
                                             </Link>
-                                        </CardContent>
+                                        </div>
                                     </Card>
                                 </div>
                             </CarouselItem>

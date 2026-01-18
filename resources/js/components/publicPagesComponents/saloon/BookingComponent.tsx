@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 
 // Shadcn UI
+import SaloonImage from '@/components/publicPagesComponents/SaloonImage';
+import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -64,6 +66,8 @@ export default function BookingComponent({ saloon }: Props) {
     const authId = auth.user?.id;
     const isOwner = authId === saloon?.user_id;
     const galleryPhotos = saloon.photos?.filter((p) => !p.is_main) || [];
+
+    const [selectedIndex, setSelectedIndex] = useState(0);
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(
         new Date(),
@@ -186,22 +190,27 @@ export default function BookingComponent({ saloon }: Props) {
     );
 
     /*
-|-------------------------------------------------------------------
-| Statistics Logic
-|-------------------------------------------------------------------
-*/
+    |-------------------------------------------------------------------
+    | Statistics Logic
+    |-------------------------------------------------------------------
+    */
 
     const stats = useMemo(() => {
+        // Usiamo startOfHour o semplicemente la data attuale
         const now = new Date();
 
-        // 1. Ripristiniamo il filtro: Solo appuntamenti PASSATI
-        const pastAppointments =
-            saloon.appointments?.filter((app) =>
-                isBefore(new Date(app.appointment_time), now),
-            ) || [];
+        if (!saloon.appointments) return null;
 
-        // Ordiniamo per data decrescente (il più recente per primo)
-        // per essere sicuri che lastApp sia l'ultima visita effettiva
+        // 1. Filtriamo solo gli appuntamenti che sono REALMENTE passati
+        const pastAppointments = saloon.appointments.filter((app) => {
+            const appDate = new Date(app.appointment_time);
+
+            // Verifica che la data sia valida e precedente a "ora"
+            // Aggiungiamo un controllo per evitare errori se app.appointment_time è nullo
+            return app.appointment_time && isBefore(appDate, now);
+        });
+
+        // 2. Ordiniamo per data decrescente
         const sortedPast = [...pastAppointments].sort(
             (a, b) =>
                 new Date(b.appointment_time).getTime() -
@@ -210,6 +219,7 @@ export default function BookingComponent({ saloon }: Props) {
 
         // --- LATO BARBIERE (Proprietario) ---
         if (isOwner) {
+            // Il barbiere vede le statistiche di tutti i suoi clienti (nel suo salone)
             const confirmed = sortedPast.filter(
                 (a) => a.status === 'confirmed',
             ).length;
@@ -227,9 +237,9 @@ export default function BookingComponent({ saloon }: Props) {
             };
         }
 
-        // --- LATO CLIENTE (Utente loggato) ---
+        // --- LATO CLIENTE ---
         if (isAuthenticated && !auth.user.is_barber) {
-            // Usiamo client_id per massima sicurezza
+            // Il cliente vede solo la SUA storia in questo salone
             const myPast = sortedPast.filter(
                 (a) => Number(a.client_id) === Number(authId),
             );
@@ -253,6 +263,8 @@ export default function BookingComponent({ saloon }: Props) {
 
         return null;
     }, [saloon.appointments, isOwner, isAuthenticated, authId, auth.user]);
+
+    console.log('Stats:', stats);
 
     /*
     |-------------------------------------------------------------------
@@ -307,36 +319,51 @@ export default function BookingComponent({ saloon }: Props) {
     |-------------------------------------------------------------------
     */
 
+    console.log('Saloon:', saloon.barber);
+
     return (
         <>
-            <div className="grid grid-cols-1 gap-8">
+            <div className="gap-8">
                 {/* LEFT COLUMN: Saloon Info & Hours */}
-                <div className="space-y-6 lg:col-span-1">
+                <div className="mb-5 space-y-6">
                     <header className="flex justify-between space-y-4">
-                        <div>
+                        <div className="w-full space-y-2">
                             <Badge
                                 variant="outline"
                                 className="border-primary text-primary"
                             >
                                 Official Partner
                             </Badge>
-                            <h1 className="mt-2 text-4xl font-extrabold tracking-tight">
-                                {saloon.name}
-                            </h1>
-                            <div className="space-y-2 text-muted-foreground">
-                                <div className="flex items-center gap-2">
-                                    <User className="h-4 w-4" />
-                                    <span>Barber: {saloon?.barber?.name}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <MapPin className="h-4 w-4" />
+                            <div className="flex items-center justify-between gap-4">
+                                <div>
+                                    <h1 className="mt-2 text-4xl font-extrabold tracking-tight">
+                                        {saloon.name}
+                                    </h1>
+                                    <div className="space-y-2 text-muted-foreground">
+                                        <div className="flex items-center gap-2">
+                                            <User className="h-4 w-4" />
+                                            <span>
+                                                Barber: {saloon?.barber?.name}
+                                            </span>
+                                        </div>
 
-                                    <span>
-                                        {saloon.city}, {saloon.address} (
-                                        {saloon.province}) {saloon.cap},{' '}
-                                        {saloon.region}
-                                    </span>
+                                        <div className="flex items-center gap-2">
+                                            <MapPin className="h-4 w-4" />
+
+                                            <span>
+                                                {saloon.city}, {saloon.address}{' '}
+                                                ({saloon.province}) {saloon.cap}
+                                                , {saloon.region}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
+                                <Avatar className="h-24 w-24">
+                                    <SaloonImage
+                                        src={`/storage/${saloon?.barber?.profile_photo}`}
+                                        alt="Barber Profile Picture"
+                                    />
+                                </Avatar>
                             </div>
                         </div>
                         {isOwner && (
@@ -355,7 +382,7 @@ export default function BookingComponent({ saloon }: Props) {
                         )}
                     </header>
 
-                    {stats && !auth.user.is_barber && (
+                    {stats && (
                         <Card
                             className={cn(
                                 'border-l-4',
@@ -424,7 +451,8 @@ export default function BookingComponent({ saloon }: Props) {
 
                             <Dialog>
                                 {/* CAROSELLO IN PAGINA (Il Trigger) */}
-                                <div className="relative w-full overflow-hidden px-3">
+                                {/* CAROSELLO IN PAGINA (Il Trigger) */}
+                                <div className="relative w-full overflow-hidden px-1">
                                     {' '}
                                     {/* Wrapper di sicurezza */}
                                     <Carousel className="w-full">
@@ -435,12 +463,19 @@ export default function BookingComponent({ saloon }: Props) {
                                                         key={photo.id}
                                                         className="basis-1/2 pl-2 md:basis-1/3 md:pl-4 lg:basis-1/4"
                                                     >
-                                                        <DialogTrigger asChild>
+                                                        <DialogTrigger
+                                                            asChild
+                                                            onClick={() => {
+                                                                setSelectedIndex(
+                                                                    index,
+                                                                );
+                                                            }}
+                                                        >
                                                             <div className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border-2 border-background/50 shadow-lg">
-                                                                <img
+                                                                <SaloonImage
                                                                     src={`/storage/${photo.path}`}
-                                                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                                                                     alt="Saloon gallery"
+                                                                    className="absolute inset-0 h-full w-full object-cover"
                                                                 />
                                                                 {/* ... badge ... */}
                                                             </div>
@@ -451,14 +486,19 @@ export default function BookingComponent({ saloon }: Props) {
                                         </CarouselContent>
 
                                         {/* Cambiamo il posizionamento delle frecce per evitare che escano dal body */}
-                                        <CarouselPrevious className="left-2 bg-background/50 backdrop-blur-sm md:-left-4" />
-                                        <CarouselNext className="right-2 bg-background/50 backdrop-blur-sm md:-right-4" />
+                                        <CarouselPrevious className="left-2 bg-background/50 backdrop-blur-sm md:-left-1" />
+                                        <CarouselNext className="right-2 bg-background/50 backdrop-blur-sm md:-right-1" />
                                     </Carousel>
                                 </div>
 
                                 {/* MODALE CON CAROSELLO A TUTTO SCHERMO */}
                                 <DialogContent className="flex h-[90vh] max-w-[95vw] items-center justify-center border-none bg-transparent p-0 shadow-none">
-                                    <Carousel className="w-full max-w-5xl">
+                                    <Carousel
+                                        className="w-full max-w-5xl"
+                                        opts={{
+                                            startIndex: selectedIndex,
+                                        }}
+                                    >
                                         <CarouselContent>
                                             {galleryPhotos.map((p) => (
                                                 <CarouselItem
@@ -483,99 +523,115 @@ export default function BookingComponent({ saloon }: Props) {
                         </div>
                     )}
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg">
-                                Opening Hours
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="divide-y text-sm">
-                            {DAYS.map((day) => {
-                                const hours = saloon.opening_hours[day];
-                                if (!hours) return null;
+                    <div className="grid grid-cols-1 gap-6 space-y-4 md:grid-cols-3">
+                        <div className="md:col-span-2">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-lg">
+                                        Opening Hours
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="divide-y text-sm">
+                                    {DAYS.map((day) => {
+                                        const hours = saloon.opening_hours[day];
+                                        if (!hours) return null;
 
-                                // Controlla se il giorno è oggi (per evidenziarlo)
-                                const isToday =
-                                    format(new Date(), 'eeee').toLowerCase() ===
-                                    format(
-                                        parse(day, 'eeee', new Date()),
-                                        'eeee',
-                                    ).toLowerCase();
-
-                                return (
-                                    <div
-                                        key={day}
-                                        className="flex justify-between py-2 capitalize"
-                                    >
-                                        <span
-                                            className={cn(
-                                                isToday &&
-                                                    'font-bold text-primary',
-                                            )}
-                                        >
-                                            {format(
+                                        // Controlla se il giorno è oggi (per evidenziarlo)
+                                        const isToday =
+                                            format(
+                                                new Date(),
+                                                'eeee',
+                                            ).toLowerCase() ===
+                                            format(
                                                 parse(day, 'eeee', new Date()),
                                                 'eeee',
-                                            )}
-                                        </span>
-                                        <span className="font-mono text-muted-foreground">
-                                            {hours.is_closed ? (
-                                                <Badge
-                                                    variant="secondary"
-                                                    className="text-[10px]"
+                                            ).toLowerCase();
+
+                                        return (
+                                            <div
+                                                key={day}
+                                                className="flex justify-between py-2 capitalize"
+                                            >
+                                                <span
+                                                    className={cn(
+                                                        isToday &&
+                                                            'font-bold text-primary',
+                                                    )}
                                                 >
-                                                    Closed
-                                                </Badge>
-                                            ) : (
-                                                `${hours.open} - ${hours.close}`
-                                            )}
-                                        </span>
-                                    </div>
-                                );
-                            })}
-                        </CardContent>
-                    </Card>
+                                                    {format(
+                                                        parse(
+                                                            day,
+                                                            'eeee',
+                                                            new Date(),
+                                                        ),
+                                                        'eeee',
+                                                    )}
+                                                </span>
+                                                <span className="font-mono text-muted-foreground">
+                                                    {hours.is_closed ? (
+                                                        <Badge
+                                                            variant="secondary"
+                                                            className="text-[10px]"
+                                                        >
+                                                            Closed
+                                                        </Badge>
+                                                    ) : (
+                                                        `${hours.open} - ${hours.close}`
+                                                    )}
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
+                                </CardContent>
+                            </Card>
+                        </div>
+                        {/* Sotto la Card degli Opening Hours */}
+                        {saloon.exceptions?.length > 0 && (
+                            <Card className="border-destructive/20 bg-destructive/5">
+                                <CardHeader className="pb-2">
+                                    <CardTitle className="flex items-center gap-2 text-sm font-bold text-destructive">
+                                        <CalendarIcon className="h-4 w-4" />
+                                        Closing Days
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    {upcomingExceptions.length === 0 ? (
+                                        <p className="text-sm text-muted-foreground">
+                                            There are no upcoming closing days.
+                                        </p>
+                                    ) : (
+                                        <ul className="space-y-2">
+                                            {upcomingExceptions.map((ex) => (
+                                                <li
+                                                    key={ex.id}
+                                                    className="text-xs text-muted-foreground"
+                                                >
+                                                    <span className="font-semibold text-foreground">
+                                                        {format(
+                                                            new Date(
+                                                                ex.start_date,
+                                                            ),
+                                                            'dd MMM',
+                                                        )}{' '}
+                                                        -{' '}
+                                                        {format(
+                                                            new Date(
+                                                                ex.end_date,
+                                                            ),
+                                                            'dd MMM',
+                                                        )}
+                                                    </span>
+                                                    {ex.reason &&
+                                                        `: ${ex.reason}`}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        )}
+                    </div>
                 </div>
-                {/* Sotto la Card degli Opening Hours */}
-                {saloon.exceptions?.length > 0 && (
-                    <Card className="border-destructive/20 bg-destructive/5">
-                        <CardHeader className="pb-2">
-                            <CardTitle className="flex items-center gap-2 text-sm font-bold text-destructive">
-                                <CalendarIcon className="h-4 w-4" />
-                                Closing Days
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            {upcomingExceptions.length === 0 ? (
-                                <p className="text-sm text-muted-foreground">
-                                    There are no upcoming closing days.
-                                </p>
-                            ) : (
-                                <ul className="space-y-2">
-                                    {upcomingExceptions.map((ex) => (
-                                        <li
-                                            key={ex.id}
-                                            className="text-xs text-muted-foreground"
-                                        >
-                                            <span className="font-semibold text-foreground">
-                                                {format(
-                                                    new Date(ex.start_date),
-                                                    'dd MMM',
-                                                )}{' '}
-                                                -{' '}
-                                                {format(
-                                                    new Date(ex.end_date),
-                                                    'dd MMM',
-                                                )}
-                                            </span>
-                                            {ex.reason && `: ${ex.reason}`}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </CardContent>
-                    </Card>
-                )}
 
                 {auth?.user ? (
                     <>

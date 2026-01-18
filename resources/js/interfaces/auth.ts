@@ -10,6 +10,8 @@ export interface User {
     appointments_count?: number;
     created_at: string;
     updated_at: string;
+    profile_photo: string | null;
+    profile_photo_url: string | null;
 }
 
 export interface ToastFlash {

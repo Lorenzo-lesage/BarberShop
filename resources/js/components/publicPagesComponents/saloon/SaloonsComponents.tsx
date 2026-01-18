@@ -31,17 +31,18 @@ export default function SaloonsComponent({
     | Render
     |--------------------------------------------------------------------------
     */
+
     const { auth } = usePage().props;
     const authId = auth.user?.id;
-    console.log('Dashboard Saloons:', saloons);
 
     /*
     |--------------------------------------------------------------------------
     | Render
     |--------------------------------------------------------------------------
     */
+
     return (
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
             {saloons.map((saloon) => {
                 const isOwner = authId === saloon.user_id;
 

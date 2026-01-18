@@ -6,6 +6,7 @@ import Dashboard from '@/Layouts/Dashboard';
 
 // Componetns
 import { MyPagination } from '@/components/publicPagesComponents/pagination/DataTablePagination';
+import SearchBar from '@/components/publicPagesComponents/searchbar/SearchBar';
 
 // Interfaces
 import type BreadcrumbItemType from '@/interfaces/breadcrumbs';
@@ -15,8 +16,9 @@ import { Saloon } from '@/interfaces/saloon';
 interface Props {
     saloons: PaginationData<Saloon>;
     breadcrumbs: BreadcrumbItemType[];
+    filters: { search?: string };
 }
-export default function Index({ saloons, breadcrumbs }: Props) {
+export default function Index({ saloons, breadcrumbs, filters }: Props) {
     /*
     |--------------------------------------------------------------------------
     | Render
@@ -30,10 +32,19 @@ export default function Index({ saloons, breadcrumbs }: Props) {
         >
             <Head title="Dashboard Saloons" />
 
-            <SaloonsComponent
-                saloons={saloons.data}
-                routeName="saloons.dashboard.show"
-            />
+            <div>
+                <div className="mb-10 mt-2 flex justify-end">
+                    <SearchBar
+                        filters={filters}
+                        routeName="saloons.dashboard.index"
+                    />
+                </div>
+
+                <SaloonsComponent
+                    saloons={saloons.data}
+                    routeName="saloons.dashboard.show"
+                />
+            </div>
 
             {/* Pagination */}
             <MyPagination links={saloons.links} />

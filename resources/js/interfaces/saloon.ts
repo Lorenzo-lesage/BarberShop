@@ -11,7 +11,12 @@ export interface Appointment {
     // Relazioni (Opzionali, caricate tramite .with() in Laravel)
     client?: { id: number; name: string; email: string };
     saloon?: { id: number; name: string };
-    barber?: { id: number; name: string; email: string };
+    barber?: {
+        id: number;
+        name: string;
+        email: string;
+        profile_photo: string | null;
+    };
 }
 export interface OpeningHour {
     open: string;
@@ -33,7 +38,7 @@ export interface Saloon {
     opening_hours: Record<string, OpeningHour>;
     exceptions: Exception[];
     appointments?: Appointment[];
-    barber?: { id: number; name: string };
+    barber?: { id: number; name: string; profile_photo: string | null };
     user_id: number;
     city: string;
     province: string;

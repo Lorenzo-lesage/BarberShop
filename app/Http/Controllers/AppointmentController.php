@@ -70,7 +70,7 @@ private function getAppointmentsData($user, $type, $page)
         $validated = $request->validated();
 
         // Carbon parse per sicurezza se vuoi il formato DB
-        $time = Carbon::parse($validated['appointment_time'])->format('Y-m-d H:i:s');
+        $time = Carbon::parse($validated['appointment_time'])->format('Y-m-d H:i:s', 'Europe/Rome');
 
         Appointment::create([
             'client_id' => auth()->id(),

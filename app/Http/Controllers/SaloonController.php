@@ -14,6 +14,7 @@ use Inertia\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Intervention\Image\Laravel\Facades\Image;
 
 class SaloonController extends Controller
 {
@@ -22,11 +23,33 @@ class SaloonController extends Controller
      * Get Saloons data and cache it for 1 hour
      * @param mixed $page
      */
-    private function getSaloonsData($page)
+    private function getSaloonsData($page, $filters = [])
     {
-        return Cache::remember("saloons_shared_list_page_{$page}", now()->addHours(1), function () {
-            return Saloon::with('barber:id,name', 'mainPhoto')
-                ->latest()
+        // Creiamo una chiave cache unica basata su pagina e filtri (trasformati in stringa)
+        $filterKey = md5(json_encode($filters));
+        $cacheKey = "saloons_list_p{$page}_f{$filterKey}";
+
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($filters) {
+            $query = Saloon::with('barber:id,name', 'mainPhoto');
+
+            // Ricerca globale (Nome barbiere o campi indirizzo)
+            if (!empty($filters['search'])) {
+                $search = $filters['search'];
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('city', 'like', "%{$search}%")
+                        ->orWhere('province', 'like', "%{$search}%")
+                        ->orWhere('region', 'like', "%{$search}%")
+                        ->orWhere('cap', 'like', "%{$search}%")
+                        ->orWhere('address', 'like', "%{$search}%")
+                        // Ricerca anche per nome dell'utente barbiere
+                        ->orWhereHas('barber', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
+                        });
+                });
+            }
+
+            return $query->latest()
                 ->paginate(8)
                 ->withQueryString();
         });
@@ -41,14 +64,11 @@ class SaloonController extends Controller
             // Ricarichiamo il modello dalla query per assicurarci che
             // l'array salvato in cache contenga tutte le relazioni
             return Saloon::with([
-                'barber:id,name',
+                'barber:id,name,profile_photo',
                 'exceptions',
                 'photos',
                 'mainPhoto',
-                'appointments' => function ($query) {
-                    $query->where('appointment_time', '>=', now()->startOfDay())
-                        ->where('status', '!=', 'cancelled');
-                }
+                'appointments'
             ])->find($saloon->id);
         });
     }
@@ -58,13 +78,15 @@ class SaloonController extends Controller
      */
     private function clearSaloonCache($saloonId = null)
     {
-        // Svuotiamo la lista (almeno la prima pagina)
-        Cache::forget("saloons_shared_list_page_1");
-
-        // Se abbiamo un ID, svuotiamo il dettaglio specifico
+        // 1. Elimina il dettaglio specifico (questo è corretto)
         if ($saloonId) {
             Cache::forget("saloon_shared_detail_{$saloonId}");
         }
+
+        // 2. Forza la pulizia di TUTTA la cache delle liste.
+        // Dato che non conosciamo il nome esatto (a causa del filtro MD5),
+        // usiamo flush() per assicurarci che la Index si aggiorni al 100%.
+        Cache::flush();
     }
 
     /**
@@ -73,8 +95,12 @@ class SaloonController extends Controller
      */
     public function index(Request $request)
     {
+
+        $filters = $request->only(['search']);
+
         return Inertia::render('Public/Saloons/Index', [
-            'saloons' => $this->getSaloonsData($request->get('page', 1)),
+            'saloons' => $this->getSaloonsData($request->get('page', 1), $filters),
+            'filters' => $filters,
         ]);
     }
 
@@ -84,8 +110,12 @@ class SaloonController extends Controller
      */
     public function dashboardIndex(Request $request)
     {
+
+        $filters = $request->only(['search']);
+
         return Inertia::render('Dashboard/Saloons/DashboardIndex', [
-            'saloons' => $this->getSaloonsData($request->get('page', 1)),
+            'saloons' => $this->getSaloonsData($request->get('page', 1), $filters),
+            'filters' => $filters,
             'breadcrumbs' => [
                 ['label' => 'Dashboard', 'href' => route('dashboard')],
                 ['label' => 'Saloons', 'href' => null],
@@ -151,53 +181,23 @@ class SaloonController extends Controller
      */
     public function store(StoreSaloonRequest $request)
     {
-        // 1. Recuperiamo i dati validati (inclusi city, province, ecc.)
         $validated = $request->validated();
 
         if (isset($validated['opening_hours'])) {
             foreach ($validated['opening_hours'] as $day => $hours) {
-                // Questa riga trasforma "0", "1", "true", "false" in veri booleani PHP
                 $validated['opening_hours'][$day]['is_closed'] = filter_var($hours['is_closed'], FILTER_VALIDATE_BOOLEAN);
             }
         }
-        // Usiamo una transazione: se il caricamento dei file fallisce, il DB non viene sporcato
-        return DB::transaction(function () use ($request, $validated) {
 
-            // 2. Aggiorna o crea il salone
+        return DB::transaction(function () use ($validated, $request) {
+            // Aggiorna solo i dati testuali e gli orari
             $saloon = Auth::user()->saloon()->updateOrCreate(
                 ['user_id' => Auth::id()],
                 $validated
             );
 
-            // 3. Gestione Foto Principale (Cover)
-            if ($request->hasFile('main_photo')) {
-                // Eliminiamo la vecchia cover se esiste
-                $oldMain = $saloon->mainPhoto;
-                if ($oldMain) {
-                    Storage::disk('public')->delete($oldMain->path);
-                    $oldMain->delete();
-                }
 
-                // Salviamo la nuova
-                $path = $request->file('main_photo')->store('saloons/covers', 'public');
-                $saloon->photos()->create([
-                    'path' => $path,
-                    'is_main' => true
-                ]);
-            }
 
-            // 4. Gestione Galleria (Multiple)
-            if ($request->hasFile('gallery')) {
-                foreach ($request->file('gallery') as $file) {
-                    $path = $file->store('saloons/gallery', 'public');
-                    $saloon->photos()->create([
-                        'path' => $path,
-                        'is_main' => false
-                    ]);
-                }
-            }
-
-            // 5. Pulizia Cache
             $this->clearSaloonCache($saloon->id);
 
             return back()->with('toast', [
@@ -315,10 +315,10 @@ class SaloonController extends Controller
         })
             ->with(['barber:id,name'])
             ->withCount([
-                    'appointments' => function ($query) use ($userId) {
-                        $query->where('client_id', $userId);
-                    }
-                ])
+                'appointments' => function ($query) use ($userId) {
+                    $query->where('client_id', $userId);
+                }
+            ])
             ->latest()
             ->paginate(8)
             ->withQueryString();
@@ -365,6 +365,47 @@ class SaloonController extends Controller
             'message' => 'Removed!',
             'description' => 'The photo has been removed from your gallery.',
         ]);
+    }
+
+    public function updateCover(Request $request, Saloon $saloon)
+    {
+        $request->validate(['cover' => 'required|image|max:3000']);
+
+        // 1. Elimina vecchia cover se esiste
+        if ($saloon->mainPhoto) {
+            Storage::disk('public')->delete($saloon->mainPhoto->path);
+            $saloon->mainPhoto()->delete();
+        }
+
+        // 2. Salva la nuova
+        $path = $request->file('cover')->store('saloons/covers', 'public');
+
+        // Crea il record come is_main
+        $saloon->photos()->create([
+            'path' => $path,
+            'is_main' => true
+        ]);
+
+        $this->clearSaloonCache($saloon->id);
+
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Cover updated successfully.',
+        ]);
+    }
+
+    public function addPhoto(Request $request, Saloon $saloon)
+    {
+        $request->validate(['photo' => 'required|image|max:3000']);
+
+        $path = $request->file('photo')->store('saloons/gallery', 'public');
+
+        $saloon->photos()->create([
+            'path' => $path,
+            'is_main' => false
+        ]);
+
+        return back();
     }
 
 }

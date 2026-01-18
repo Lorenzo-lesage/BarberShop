@@ -65,6 +65,9 @@ class HandleInertiaRequests extends Middleware
                         'email' => $user->email,
                         'is_barber' => $user->is_barber,
                         'appointments' => $appointments,
+                        'profile_photo' => $user->profile_photo,
+                        'profile_photo_url' => $user->profile_photo_url,
+
                     ],
                 ];
             },

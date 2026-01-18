@@ -18,7 +18,7 @@ class Appointment extends Model
     ];
 
     protected $casts = [
-        'appointment_time' => 'datetime',
+        'appointment_time' => 'datetime:Y-m-d H:i:s', // Forza il formato senza Timezone
     ];
 
     /**

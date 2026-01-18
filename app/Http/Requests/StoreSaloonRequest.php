@@ -49,10 +49,10 @@ class StoreSaloonRequest extends FormRequest
 
             // Gestione Immagini
             // main_photo è la cover principale
-            'main_photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'main_photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             // gallery è un array di file
-            'gallery' => 'nullable|array',
-            'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+            'gallery' => 'nullable|array|max:10',
+            'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
         ];
     }
 
@@ -69,8 +69,9 @@ class StoreSaloonRequest extends FormRequest
             'province.size' => 'The province must be exactly 2 letters.',
             'cap.size' => 'The CAP must be 5 digits.',
             'main_photo.image' => 'The cover must be an image file.',
-            'main_photo.max' => 'The cover image cannot be larger than 2MB.',
+            'main_photo.max' => 'The cover image cannot be larger than 5MB.',
             'gallery.*.image' => 'Each file in the gallery must be an image.',
+            'gallery.*.max' => 'Each gallery image cannot be larger than 5MB.',
         ];
     }
 }
