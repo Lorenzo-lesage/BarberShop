@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/navigation-menu';
 
 // Icons
-import { LayoutDashboard, LogIn } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 
 export default function Navbar() {
     const { auth } = usePage<PageProps>().props;
@@ -29,27 +29,7 @@ export default function Navbar() {
 
             {/* Desktop Navigation */}
             <div className="ml-auto mr-4 hidden items-center gap-4 md:flex">
-                {auth?.user ? (
-                    <NavigationMenu>
-                        <NavigationMenuList>
-                            <NavigationMenuItem>
-                                <NavigationMenuLink asChild>
-                                    <Link
-                                        href={route('dashboard')}
-                                        className={cn(
-                                            'flex items-center gap-2 text-sm underline-offset-4 hover:underline',
-                                            route().current('dashboard') &&
-                                                'text-foreground underline underline-offset-4',
-                                        )}
-                                    >
-                                        Dashboard
-                                        <LayoutDashboard size={15} />
-                                    </Link>
-                                </NavigationMenuLink>
-                            </NavigationMenuItem>
-                        </NavigationMenuList>
-                    </NavigationMenu>
-                ) : (
+                {!auth?.user && (
                     <NavigationMenu>
                         <NavigationMenuList className="flex flex-row gap-4">
                             <NavigationMenuItem>

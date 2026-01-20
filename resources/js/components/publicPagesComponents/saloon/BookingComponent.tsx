@@ -20,13 +20,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import {
     Carousel,
     CarouselContent,
     CarouselItem,
@@ -35,7 +28,6 @@ import {
 } from '@/components/ui/carousel';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Interfaces
@@ -319,185 +311,185 @@ export default function BookingComponent({ saloon }: Props) {
     |-------------------------------------------------------------------
     */
 
-    console.log('Saloon:', saloon.barber);
-
     return (
         <>
             <div className="gap-8">
                 {/* LEFT COLUMN: Saloon Info & Hours */}
-                <div className="mb-5 space-y-6">
-                    <header className="flex justify-between space-y-4">
-                        <div className="w-full space-y-2">
-                            <Badge
-                                variant="outline"
-                                className="border-primary text-primary"
-                            >
-                                Official Partner
-                            </Badge>
-                            <div className="flex items-center justify-between gap-4">
-                                <div>
-                                    <h1 className="mt-2 text-4xl font-extrabold tracking-tight">
-                                        {saloon.name}
-                                    </h1>
-                                    <div className="space-y-2 text-muted-foreground">
-                                        <div className="flex items-center gap-2">
-                                            <User className="h-4 w-4" />
-                                            <span>
-                                                Barber: {saloon?.barber?.name}
-                                            </span>
-                                        </div>
+                <div className="space-y-16 py-10">
+                    {/* --- SALOON HEADER: THE IDENTITY --- */}
+                    <header className="flex flex-col justify-between gap-10 border-b border-border pb-12 lg:flex-row lg:items-end">
+                        <div className="flex-1 space-y-6">
+                            <div className="flex items-center gap-3">
+                                <Badge
+                                    variant="outline"
+                                    className="border-primary/30 bg-primary/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-primary"
+                                >
+                                    Official Partner
+                                </Badge>
+                                {isOwner && (
+                                    <Link
+                                        href={route(
+                                            'dashboard.barber.saloon',
+                                            saloon.id,
+                                        )}
+                                        className="text-[10px] font-bold uppercase tracking-widest underline decoration-primary/30 underline-offset-8 transition-colors hover:decoration-primary"
+                                        prefetch
+                                    >
+                                        Edit Studio
+                                    </Link>
+                                )}
+                            </div>
 
-                                        <div className="flex items-center gap-2">
-                                            <MapPin className="h-4 w-4" />
-
-                                            <span>
-                                                {saloon.city}, {saloon.address}{' '}
-                                                ({saloon.province}) {saloon.cap}
-                                                , {saloon.region}
+                            <div className="space-y-4">
+                                <h1 className="text-5xl font-black uppercase italic leading-[0.85] tracking-tighter sm:text-7xl md:text-8xl">
+                                    {saloon.name}
+                                </h1>
+                                <div className="flex flex-col gap-6 pt-4 text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground md:flex-row md:items-center">
+                                    <div className="flex items-center gap-2">
+                                        <User
+                                            size={16}
+                                            className="text-primary"
+                                        />
+                                        <span>
+                                            Master Barber:{' '}
+                                            <span className="text-foreground">
+                                                {saloon?.barber?.name}
                                             </span>
-                                        </div>
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <MapPin
+                                            size={16}
+                                            className="text-primary"
+                                        />
+                                        <span>
+                                            {saloon.city}, {saloon.address}
+                                        </span>
                                     </div>
                                 </div>
-                                <Avatar className="h-24 w-24">
-                                    <SaloonImage
-                                        src={`/storage/${saloon?.barber?.profile_photo}`}
-                                        alt="Barber Profile Picture"
-                                    />
-                                </Avatar>
                             </div>
                         </div>
-                        {isOwner && (
-                            <Link
-                                href={route(
-                                    'dashboard.barber.saloon',
-                                    saloon.id,
-                                )}
-                                className={buttonVariants({
-                                    variant: 'outline',
-                                })}
-                                prefetch
-                            >
-                                Edit
-                            </Link>
-                        )}
+
+                        <div className="group relative self-start lg:self-end">
+                            <div className="absolute -inset-2 bg-primary/20 opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100" />
+                            <Avatar className="h-32 w-32 rounded-none border border-border bg-muted ring-offset-background transition-transform group-hover:scale-[1.02]">
+                                <SaloonImage
+                                    src={`/storage/${saloon?.barber?.profile_photo}`}
+                                    alt={saloon?.barber?.name}
+                                />
+                            </Avatar>
+                        </div>
                     </header>
 
+                    {/* --- ANALYTICS: BUSINESS OVERVIEW --- */}
                     {stats && (
-                        <Card
-                            className={cn(
-                                'border-l-4',
-                                isOwner
-                                    ? 'border-l-blue-500'
-                                    : 'border-l-green-500',
-                            )}
-                        >
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-sm font-medium text-muted-foreground">
-                                    {isOwner
-                                        ? 'Business Overview (Past)'
-                                        : 'Your History here'}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="mb-4 grid grid-cols-3 gap-2">
-                                    <div className="text-center">
-                                        <p className="text-xl font-bold">
-                                            {stats.total}
-                                        </p>
-                                        <p className="text-[10px] uppercase text-muted-foreground">
-                                            Total
-                                        </p>
-                                    </div>
-                                    <div className="text-center">
-                                        <p className="text-xl font-bold text-green-600">
-                                            {stats.confirmed}
-                                        </p>
-                                        <p className="text-[10px] uppercase text-muted-foreground">
-                                            Done
-                                        </p>
-                                    </div>
-                                    <div className="text-center">
-                                        <p className="text-xl font-bold text-destructive">
-                                            {stats.cancelled}
-                                        </p>
-                                        <p className="text-[10px] uppercase text-muted-foreground">
-                                            Cancelled
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <Separator className="my-2" />
-
-                                <div className="flex items-center justify-between pt-2">
-                                    <span className="text-xs font-medium text-muted-foreground">
-                                        Last visit:{' '}
-                                        <span className="text-xs font-bold">
-                                            {stats.lastDate
-                                                ? format(
-                                                      stats.lastDate,
-                                                      'dd MMM yyyy',
-                                                  )
-                                                : 'No history yet'}
-                                        </span>
+                        <section className="grid grid-cols-1 gap-px overflow-hidden border border-border bg-border md:grid-cols-3">
+                            {[
+                                {
+                                    label: 'Total Sessions',
+                                    value: stats.total,
+                                    color: 'text-foreground',
+                                },
+                                {
+                                    label: 'Confirmed',
+                                    value: stats.confirmed,
+                                    color: 'text-emerald-500',
+                                },
+                                {
+                                    label: 'Cancelled',
+                                    value: stats.cancelled,
+                                    color: 'text-destructive',
+                                },
+                            ].map((stat, i) => (
+                                <div
+                                    key={i}
+                                    className="space-y-2 bg-background p-8"
+                                >
+                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">
+                                        {stat.label}
                                     </span>
+                                    <p
+                                        className={cn(
+                                            'text-5xl font-black tracking-tighter',
+                                            stat.color,
+                                        )}
+                                    >
+                                        {stat.value}
+                                    </p>
                                 </div>
-                            </CardContent>
-                        </Card>
+                            ))}
+                            <div className="col-span-full flex items-center justify-between border-t border-border bg-muted/20 px-8 py-3">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                    Last activity recorded
+                                </span>
+                                <span className="text-[11px] font-black uppercase italic">
+                                    {stats.lastDate
+                                        ? format(stats.lastDate, 'dd MMM yyyy')
+                                        : 'First Session Pending'}
+                                </span>
+                            </div>
+                        </section>
                     )}
 
+                    {/* --- GALLERY: VISUAL STANDARDS --- */}
                     {galleryPhotos.length > 0 && (
-                        <div className="mt-8 space-y-4">
-                            <h2 className="text-xl font-bold">Gallery</h2>
+                        <section className="space-y-8">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
+                                    The Atmosphere
+                                </h2>
+                                <div className="ml-8 h-[1px] flex-1 bg-border" />
+                            </div>
 
                             <Dialog>
-                                {/* CAROSELLO IN PAGINA (Il Trigger) */}
-                                {/* CAROSELLO IN PAGINA (Il Trigger) */}
-                                <div className="relative w-full overflow-hidden px-1">
-                                    {' '}
-                                    {/* Wrapper di sicurezza */}
-                                    <Carousel className="w-full">
+                                <div className="relative w-full">
+                                    <Carousel
+                                        className="w-full"
+                                        opts={{ align: 'start', loop: true }}
+                                    >
                                         <CarouselContent className="-ml-2 md:-ml-4">
                                             {galleryPhotos.map(
                                                 (photo, index) => (
                                                     <CarouselItem
                                                         key={photo.id}
-                                                        className="basis-1/2 pl-2 md:basis-1/3 md:pl-4 lg:basis-1/4"
+                                                        className="basis-full pl-2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
                                                     >
                                                         <DialogTrigger
                                                             asChild
-                                                            onClick={() => {
+                                                            onClick={() =>
                                                                 setSelectedIndex(
                                                                     index,
-                                                                );
-                                                            }}
+                                                                )
+                                                            }
                                                         >
-                                                            <div className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border-2 border-background/50 shadow-lg">
+                                                            <div className="group relative aspect-[4/5] cursor-none overflow-hidden border border-border bg-muted">
                                                                 <SaloonImage
                                                                     src={`/storage/${photo.path}`}
-                                                                    alt="Saloon gallery"
-                                                                    className="absolute inset-0 h-full w-full object-cover"
+                                                                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                                 />
-                                                                {/* ... badge ... */}
+                                                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                                                                    <span className="border border-white/20 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-sm">
+                                                                        View
+                                                                        Frame
+                                                                    </span>
+                                                                </div>
                                                             </div>
                                                         </DialogTrigger>
                                                     </CarouselItem>
                                                 ),
                                             )}
                                         </CarouselContent>
-
-                                        {/* Cambiamo il posizionamento delle frecce per evitare che escano dal body */}
-                                        <CarouselPrevious className="left-2 bg-background/50 backdrop-blur-sm md:-left-1" />
-                                        <CarouselNext className="right-2 bg-background/50 backdrop-blur-sm md:-right-1" />
+                                        <div className="hidden md:block">
+                                            <CarouselPrevious className="left-4 h-12 w-12 rounded-none border-white/10 bg-black/50 text-white backdrop-blur-md hover:bg-primary hover:text-primary-foreground" />
+                                            <CarouselNext className="right-4 h-12 w-12 rounded-none border-white/10 bg-black/50 text-white backdrop-blur-md hover:bg-primary hover:text-primary-foreground" />
+                                        </div>
                                     </Carousel>
                                 </div>
 
-                                {/* MODALE CON CAROSELLO A TUTTO SCHERMO */}
-                                <DialogContent className="flex h-[90vh] max-w-[95vw] items-center justify-center border-none bg-transparent p-0 shadow-none">
+                                <DialogContent className="h-[90vh] max-w-[95vw] border-none bg-background/95 p-0 shadow-none backdrop-blur-xl">
                                     <Carousel
-                                        className="w-full max-w-5xl"
-                                        opts={{
-                                            startIndex: selectedIndex,
-                                        }}
+                                        className="h-full w-full"
+                                        opts={{ startIndex: selectedIndex }}
                                     >
                                         <CarouselContent>
                                             {galleryPhotos.map((p) => (
@@ -505,347 +497,387 @@ export default function BookingComponent({ saloon }: Props) {
                                                     key={p.id}
                                                     className="flex items-center justify-center"
                                                 >
-                                                    <div className="relative h-[80vh] w-full">
-                                                        <img
-                                                            src={`/storage/${p.path}`}
-                                                            className="h-full w-full object-contain"
-                                                            alt="Full screen view"
-                                                        />
-                                                    </div>
+                                                    <img
+                                                        src={`/storage/${p.path}`}
+                                                        className="max-h-[85vh] w-full object-contain p-4"
+                                                        alt="Studio Gallery"
+                                                    />
                                                 </CarouselItem>
                                             ))}
                                         </CarouselContent>
-                                        <CarouselPrevious className="bg-white/10 text-white hover:bg-white/20" />
-                                        <CarouselNext className="bg-white/10 text-white hover:bg-white/20" />
+                                        <CarouselPrevious className="left-10 bg-foreground/10" />
+                                        <CarouselNext className="right-10 bg-foreground/10" />
                                     </Carousel>
                                 </DialogContent>
                             </Dialog>
-                        </div>
+                        </section>
                     )}
 
-                    <div className="grid grid-cols-1 gap-6 space-y-4 md:grid-cols-3">
-                        <div className="md:col-span-2">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="text-lg">
-                                        Opening Hours
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="divide-y text-sm">
+                    {/* --- LOGISTICS: SCHEDULE & EXCEPTIONS --- */}
+                    <section className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+                        <div className="lg:col-span-8">
+                            <div className="border border-border bg-card/30">
+                                <div className="border-b border-border p-6">
+                                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">
+                                        Opening Schedule
+                                    </h3>
+                                </div>
+                                <div className="divide-y divide-border/50 p-6">
                                     {DAYS.map((day) => {
                                         const hours = saloon.opening_hours[day];
-                                        if (!hours) return null;
-
-                                        // Controlla se il giorno è oggi (per evidenziarlo)
                                         const isToday =
                                             format(
                                                 new Date(),
                                                 'eeee',
-                                            ).toLowerCase() ===
-                                            format(
-                                                parse(day, 'eeee', new Date()),
-                                                'eeee',
-                                            ).toLowerCase();
+                                            ).toLowerCase() === day;
+                                        if (!hours) return null;
 
                                         return (
                                             <div
                                                 key={day}
-                                                className="flex justify-between py-2 capitalize"
+                                                className={cn(
+                                                    'flex justify-between py-4 transition-colors',
+                                                    isToday
+                                                        ? 'font-black italic text-primary'
+                                                        : 'font-light text-foreground',
+                                                )}
                                             >
-                                                <span
-                                                    className={cn(
-                                                        isToday &&
-                                                            'font-bold text-primary',
-                                                    )}
-                                                >
-                                                    {format(
-                                                        parse(
-                                                            day,
-                                                            'eeee',
-                                                            new Date(),
-                                                        ),
-                                                        'eeee',
-                                                    )}
+                                                <span className="text-xs uppercase tracking-widest">
+                                                    {day}
                                                 </span>
-                                                <span className="font-mono text-muted-foreground">
+                                                <span className="font-mono text-xs">
                                                     {hours.is_closed ? (
-                                                        <Badge
-                                                            variant="secondary"
-                                                            className="text-[10px]"
-                                                        >
-                                                            Closed
-                                                        </Badge>
+                                                        <span className="uppercase tracking-tighter opacity-40">
+                                                            Day Off
+                                                        </span>
                                                     ) : (
-                                                        `${hours.open} - ${hours.close}`
+                                                        `${hours.open} — ${hours.close}`
                                                     )}
                                                 </span>
                                             </div>
                                         );
                                     })}
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </div>
                         </div>
-                        {/* Sotto la Card degli Opening Hours */}
-                        {saloon.exceptions?.length > 0 && (
-                            <Card className="border-destructive/20 bg-destructive/5">
-                                <CardHeader className="pb-2">
-                                    <CardTitle className="flex items-center gap-2 text-sm font-bold text-destructive">
-                                        <CalendarIcon className="h-4 w-4" />
-                                        Closing Days
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
+
+                        <div className="space-y-6 lg:col-span-4">
+                            {saloon.exceptions?.length > 0 && (
+                                <div className="relative overflow-hidden border border-destructive/30 bg-destructive/5 p-8">
+                                    <div className="absolute right-0 top-0 p-2 opacity-10">
+                                        <CalendarIcon
+                                            size={64}
+                                            className="text-destructive"
+                                        />
+                                    </div>
+                                    <h3 className="mb-6 text-[10px] font-black uppercase tracking-[0.4em] text-destructive">
+                                        Service Alerts
+                                    </h3>
                                     {upcomingExceptions.length === 0 ? (
-                                        <p className="text-sm text-muted-foreground">
-                                            There are no upcoming closing days.
+                                        <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                                            No service interruptions scheduled.
                                         </p>
                                     ) : (
-                                        <ul className="space-y-2">
+                                        <ul className="space-y-6">
                                             {upcomingExceptions.map((ex) => (
                                                 <li
                                                     key={ex.id}
-                                                    className="text-xs text-muted-foreground"
+                                                    className="group"
                                                 >
-                                                    <span className="font-semibold text-foreground">
+                                                    <p className="text-xs font-black uppercase tracking-tighter">
                                                         {format(
                                                             new Date(
                                                                 ex.start_date,
                                                             ),
                                                             'dd MMM',
                                                         )}{' '}
-                                                        -{' '}
+                                                        —{' '}
                                                         {format(
                                                             new Date(
                                                                 ex.end_date,
                                                             ),
                                                             'dd MMM',
                                                         )}
-                                                    </span>
-                                                    {ex.reason &&
-                                                        `: ${ex.reason}`}
+                                                    </p>
+                                                    <p className="mt-1 text-[10px] uppercase italic text-muted-foreground/80">
+                                                        {ex.reason ||
+                                                            'Studio maintenance'}
+                                                    </p>
                                                 </li>
                                             ))}
                                         </ul>
                                     )}
-                                </CardContent>
-                            </Card>
-                        )}
-                    </div>
+                                </div>
+                            )}
+
+                            <div className="border border-border bg-muted/10 p-8">
+                                <p className="text-[10px] uppercase leading-relaxed tracking-[0.15em] text-muted-foreground">
+                                    Cancellations must be made at least 24 hours
+                                    prior to your scheduled session. Late
+                                    changes may incur technical service fees.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
                 </div>
 
-                {auth?.user ? (
-                    <>
-                        {/* RIGHT COLUMN: Booking System */}
-                        {!auth?.user?.is_barber && (
-                            <div className="space-y-6 lg:col-span-2">
-                                <Card className="border-2 border-primary/10 shadow-md">
-                                    <CardHeader>
-                                        <CardTitle className="flex items-center gap-2">
-                                            <Clock className="h-5 w-5 text-primary" />
-                                            Select Date & Time
-                                        </CardTitle>
-                                        <CardDescription>
-                                            Pick a day to see available slots
-                                            for your appointment.
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                                        {/* Calendar Section */}
-                                        <div className="space-y-4">
-                                            <Label className="text-base">
-                                                1. Choose the date
-                                            </Label>
-                                            <Calendar
-                                                mode="single"
-                                                selected={selectedDate}
-                                                onSelect={handleDateChange}
-                                                disabled={isDateDisabled}
-                                                className="w-full rounded-md border shadow-sm"
-                                            />
-                                            {isHoliday(selectedDate!) && (
-                                                <p className="text-xs font-medium italic text-destructive">
-                                                    * The shop is closed for
-                                                    holidays on this date.
+                <div className="py-12">
+                    {auth?.user ? (
+                        <>
+                            {!auth?.user?.is_barber && (
+                                <div className="lg:col-span-2">
+                                    {/* --- THE BOOKING ENGINE --- */}
+                                    <div className="border border-border bg-background shadow-2xl">
+                                        {/* Header Tecnico */}
+                                        <div className="flex items-center justify-between border-b border-border p-8">
+                                            <div className="space-y-1">
+                                                <h3 className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-primary">
+                                                    <Clock size={14} />
+                                                    Session Scheduler
+                                                </h3>
+                                                <p className="text-xs font-light uppercase tracking-widest text-muted-foreground">
+                                                    Precision booking for elite
+                                                    grooming.
                                                 </p>
-                                            )}
+                                            </div>
                                         </div>
 
-                                        {/* Time Slots Section */}
-                                        <div className="h-100 flex-1 space-y-4">
-                                            <Label className="text-base">
-                                                2. Choose the time
-                                            </Label>
-                                            <div className="grid grid-cols-3 gap-2">
-                                                {isCalculating ? (
-                                                    [...Array(18)].map(
-                                                        (_, i) => (
-                                                            <Skeleton
-                                                                key={i}
-                                                                className="h-9 w-full rounded-md"
-                                                            />
-                                                        ),
-                                                    )
-                                                ) : availableSlots.length >
-                                                  0 ? (
-                                                    availableSlots.map(
-                                                        (slot) => {
-                                                            // 1. Logica di controllo occupazione (usando la stringa come abbiamo visto prima)
-                                                            const isOccupied =
-                                                                saloon.appointments?.some(
-                                                                    (app) => {
-                                                                        const dbTimeRaw =
-                                                                            app.appointment_time;
-                                                                        const dbHourMinute =
-                                                                            dbTimeRaw.substring(
-                                                                                11,
-                                                                                16,
-                                                                            );
-                                                                        const dbDateOnly =
-                                                                            dbTimeRaw.substring(
-                                                                                0,
-                                                                                10,
-                                                                            );
-                                                                        const selectedDayString =
-                                                                            format(
-                                                                                selectedDate!,
-                                                                                'yyyy-MM-dd',
-                                                                            );
+                                        <div className="grid grid-cols-1 divide-y divide-border md:grid-cols-2 md:divide-x md:divide-y-0">
+                                            {/* --- STEP 1: CALENDAR --- */}
+                                            <div className="space-y-8 p-8">
+                                                <div className="flex items-center gap-4">
+                                                    <span className="flex h-6 w-6 items-center justify-center bg-foreground text-[10px] font-black text-background">
+                                                        01
+                                                    </span>
+                                                    <Label className="text-[10px] font-black uppercase tracking-widest">
+                                                        Select Date
+                                                    </Label>
+                                                </div>
 
-                                                                        return (
-                                                                            dbDateOnly ===
-                                                                                selectedDayString &&
-                                                                            dbHourMinute ===
-                                                                                slot &&
-                                                                            app.status !==
-                                                                                'cancelled'
-                                                                        );
-                                                                    },
-                                                                );
+                                                <div className="calendar-artisan-wrapper">
+                                                    <Calendar
+                                                        mode="single"
+                                                        selected={selectedDate}
+                                                        onSelect={
+                                                            handleDateChange
+                                                        }
+                                                        disabled={
+                                                            isDateDisabled
+                                                        }
+                                                        className="mx-auto border-none p-0"
+                                                        classNames={{
+                                                            day_selected:
+                                                                'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
+                                                            day_today:
+                                                                'bg-muted text-foreground',
+                                                            head_cell:
+                                                                'text-muted-foreground font-black uppercase text-[10px] tracking-tighter',
+                                                        }}
+                                                    />
+                                                </div>
 
-                                                            // 2. Controllo se l'orario è già passato (per oggi)
-                                                            const slotDateTime =
-                                                                parse(
-                                                                    slot,
-                                                                    'HH:mm',
-                                                                    selectedDate!,
-                                                                );
-                                                            const isPast =
-                                                                isBefore(
-                                                                    slotDateTime,
-                                                                    new Date(),
-                                                                );
-
-                                                            const isDisabled =
-                                                                isOccupied ||
-                                                                isPast;
-
-                                                            return (
-                                                                <Button
-                                                                    key={slot}
-                                                                    variant={
-                                                                        selectedTime ===
-                                                                        slot
-                                                                            ? 'default'
-                                                                            : 'outline'
-                                                                    }
-                                                                    disabled={
-                                                                        isDisabled
-                                                                    }
-                                                                    className={cn(
-                                                                        'w-full transition-all',
-                                                                        selectedTime ===
-                                                                            slot &&
-                                                                            'ring-2 ring-primary ring-offset-2',
-                                                                        isOccupied &&
-                                                                            'cursor-not-allowed border-destructive/20 bg-destructive/10 text-destructive opacity-100 hover:bg-destructive/10',
-                                                                        // ^ Styling opzionale per far capire che è occupato (rosso tenue)
-                                                                    )}
-                                                                    onClick={() =>
-                                                                        setSelectedTime(
-                                                                            slot,
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    {slot}
-                                                                </Button>
-                                                            );
-                                                        },
-                                                    )
-                                                ) : (
-                                                    <div className="col-span-3 rounded-lg border bg-muted/20 py-10 text-center">
-                                                        <p className="text-sm italic text-muted-foreground">
-                                                            No availability for
-                                                            the selected date.
+                                                {isHoliday(selectedDate!) && (
+                                                    <div className="border-l-2 border-destructive bg-destructive/5 p-4 transition-all animate-in fade-in slide-in-from-left-2">
+                                                        <p className="text-[10px] font-bold uppercase tracking-tight text-destructive">
+                                                            The studio is
+                                                            currently on
+                                                            seasonal break for
+                                                            this date.
                                                         </p>
                                                     </div>
                                                 )}
                                             </div>
 
-                                            {/* Summary & Confirm Button */}
-                                            {selectedTime && !isCalculating && (
-                                                <div className="h-100 pt-6 animate-in fade-in slide-in-from-top-4">
-                                                    <Separator className="mb-6" />
-                                                    <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
-                                                        <div className="flex items-start gap-3">
-                                                            <CheckCircle2 className="mt-0.5 h-5 w-5 text-primary" />
-                                                            <div>
-                                                                <p className="text-sm font-bold">
-                                                                    Summary
-                                                                </p>
-                                                                <p className="text-sm text-muted-foreground">
-                                                                    {format(
+                                            {/* --- STEP 2: TIME SLOTS --- */}
+                                            <div className="space-y-8 bg-muted/5 p-8">
+                                                <div className="flex items-center gap-4">
+                                                    <span className="flex h-6 w-6 items-center justify-center bg-foreground text-[10px] font-black text-background">
+                                                        02
+                                                    </span>
+                                                    <Label className="text-[10px] font-black uppercase tracking-widest">
+                                                        Select Timeframe
+                                                    </Label>
+                                                </div>
+
+                                                <div className="grid grid-cols-3 gap-1">
+                                                    {isCalculating ? (
+                                                        [...Array(12)].map(
+                                                            (_, i) => (
+                                                                <Skeleton
+                                                                    key={i}
+                                                                    className="h-10 w-full rounded-none bg-border/50"
+                                                                />
+                                                            ),
+                                                        )
+                                                    ) : availableSlots.length >
+                                                      0 ? (
+                                                        availableSlots.map(
+                                                            (slot) => {
+                                                                const isOccupied =
+                                                                    saloon.appointments?.some(
+                                                                        (
+                                                                            app,
+                                                                        ) => {
+                                                                            const dbTimeRaw =
+                                                                                app.appointment_time;
+                                                                            const dbHourMinute =
+                                                                                dbTimeRaw.substring(
+                                                                                    11,
+                                                                                    16,
+                                                                                );
+                                                                            const dbDateOnly =
+                                                                                dbTimeRaw.substring(
+                                                                                    0,
+                                                                                    10,
+                                                                                );
+                                                                            const selectedDayString =
+                                                                                format(
+                                                                                    selectedDate!,
+                                                                                    'yyyy-MM-dd',
+                                                                                );
+                                                                            return (
+                                                                                dbDateOnly ===
+                                                                                    selectedDayString &&
+                                                                                dbHourMinute ===
+                                                                                    slot &&
+                                                                                app.status !==
+                                                                                    'cancelled'
+                                                                            );
+                                                                        },
+                                                                    );
+
+                                                                const slotDateTime =
+                                                                    parse(
+                                                                        slot,
+                                                                        'HH:mm',
                                                                         selectedDate!,
-                                                                        'PPPP',
-                                                                    )}{' '}
-                                                                    at{' '}
-                                                                    {
-                                                                        selectedTime
-                                                                    }
-                                                                </p>
-                                                            </div>
+                                                                    );
+                                                                const isPast =
+                                                                    isBefore(
+                                                                        slotDateTime,
+                                                                        new Date(),
+                                                                    );
+                                                                const isDisabled =
+                                                                    isOccupied ||
+                                                                    isPast;
+
+                                                                return (
+                                                                    <button
+                                                                        key={
+                                                                            slot
+                                                                        }
+                                                                        disabled={
+                                                                            isDisabled
+                                                                        }
+                                                                        onClick={() =>
+                                                                            setSelectedTime(
+                                                                                slot,
+                                                                            )
+                                                                        }
+                                                                        className={cn(
+                                                                            'h-12 border text-[11px] font-black uppercase tracking-tighter transition-all duration-200',
+                                                                            selectedTime ===
+                                                                                slot
+                                                                                ? 'border-primary bg-primary text-primary-foreground shadow-[0_0_20px_rgba(var(--primary),0.3)]'
+                                                                                : 'border-border bg-background text-foreground hover:border-primary/50',
+                                                                            isDisabled &&
+                                                                                'cursor-not-allowed border-transparent bg-muted/50 text-muted-foreground opacity-20 grayscale',
+                                                                        )}
+                                                                    >
+                                                                        {slot}
+                                                                    </button>
+                                                                );
+                                                            },
+                                                        )
+                                                    ) : (
+                                                        <div className="col-span-3 border border-dashed border-border py-12 text-center">
+                                                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-50">
+                                                                No sessions
+                                                                available for
+                                                                this date.
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Summary & Confirm */}
+                                                <div
+                                                    className={cn(
+                                                        'pt-6 transition-all duration-500',
+                                                        selectedTime &&
+                                                            !isCalculating
+                                                            ? 'translate-y-0 opacity-100'
+                                                            : 'pointer-events-none translate-y-4 opacity-0',
+                                                    )}
+                                                >
+                                                    <div className="mb-6 border-l-2 border-primary bg-primary/5 p-6">
+                                                        <div className="flex flex-col gap-1">
+                                                            <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+                                                                Summary
+                                                            </span>
+                                                            <p className="text-xl font-black uppercase italic tracking-tighter">
+                                                                {format(
+                                                                    selectedDate!,
+                                                                    'dd MMMM',
+                                                                )}{' '}
+                                                                <span className="text-primary">
+                                                                    —
+                                                                </span>{' '}
+                                                                {selectedTime}
+                                                            </p>
+                                                            <p className="mt-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+                                                                Professional
+                                                                Grooming Session
+                                                            </p>
                                                         </div>
                                                     </div>
+
                                                     <Button
-                                                        className="h-12 w-full text-lg shadow-lg hover:shadow-primary/20"
-                                                        size="lg"
+                                                        className="group h-16 w-full rounded-none bg-primary text-xs font-black uppercase tracking-[0.3em] transition-all hover:bg-foreground hover:text-background"
                                                         onClick={handleBooking}
-                                                        disabled={
-                                                            processing ||
-                                                            !isAuthenticated
-                                                        }
+                                                        disabled={processing}
                                                     >
                                                         {processing ? (
-                                                            <>
-                                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                                Confirming...
-                                                            </>
-                                                        ) : !isAuthenticated ? (
-                                                            'Sign in to book'
+                                                            <Loader2 className="h-4 w-4 animate-spin" />
                                                         ) : (
-                                                            'Confirm Appointment'
+                                                            <>
+                                                                Secure
+                                                                Appointment
+                                                                <CheckCircle2 className="ml-3 h-4 w-4 transition-transform group-hover:scale-110" />
+                                                            </>
                                                         )}
                                                     </Button>
                                                 </div>
-                                            )}
+                                            </div>
                                         </div>
-                                    </CardContent>
-                                </Card>
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        /* --- AUTH REDIRECT --- */
+                        <div className="flex flex-col items-center justify-center space-y-8 border border-dashed border-border py-32 text-center">
+                            <div className="space-y-2">
+                                <h3 className="text-2xl font-black uppercase italic tracking-tighter">
+                                    Identity Required
+                                </h3>
+                                <p className="text-xs font-light uppercase tracking-[0.2em] text-muted-foreground">
+                                    Sign in to access the artisan network and
+                                    schedule your session.
+                                </p>
                             </div>
-                        )}
-                    </>
-                ) : (
-                    <div className="text-center">
-                        <p>You need to sign in to book an appointment</p>
-
-                        <Link
-                            href={route('login')}
-                            className={buttonVariants({ variant: 'outline' })}
-                            prefetch
-                        >
-                            Sign in
-                        </Link>
-                    </div>
-                )}
+                            <Link
+                                href={route('login')}
+                                className={cn(
+                                    buttonVariants({ variant: 'outline' }),
+                                    'h-14 rounded-none border-foreground px-12 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-foreground hover:text-background',
+                                )}
+                            >
+                                Login to Platform
+                            </Link>
+                        </div>
+                    )}
+                </div>
             </div>
         </>
     );

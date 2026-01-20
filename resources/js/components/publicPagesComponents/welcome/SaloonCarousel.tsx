@@ -48,15 +48,7 @@ export function SaloonCarousel({ saloons }: { saloons: Saloon[] }) {
     }
 
     return (
-        <div className="mx-auto w-full py-10">
-            <div className="flex items-center justify-between">
-                <h2 className="mb-6 text-center text-2xl font-bold">
-                    Our Saloons
-                </h2>
-                <Link href={route('saloons.index')} prefetch>
-                    <Badge variant="outline">View all Saloons</Badge>
-                </Link>
-            </div>
+        <div className="mx-auto w-full">
             <Carousel className="w-full">
                 <CarouselContent className="-ml-1">
                     {saloons.map((saloon) => {

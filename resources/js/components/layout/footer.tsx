@@ -1,103 +1,181 @@
-import { Link, router, usePage } from '@inertiajs/react';
-
-// Components
-import { Button } from '@/components/ui/button';
+import { Link } from '@inertiajs/react';
 import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
-
-// Icons
-import { MessageCircleQuestionMark } from 'lucide-react';
+    ArrowUp,
+    Facebook,
+    Instagram,
+    Linkedin,
+    Mail,
+    Twitter,
+} from 'lucide-react';
 
 export default function Footer() {
-    /*
-    |--------------------------
-    | Data
-    |--------------------------
-    */
-
-    const { auth } = usePage().props;
-
-    /*
-    |--------------------------
-    | Render
-    |--------------------------
-    */
+    const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
     return (
-        <footer className="flex flex-col gap-2 p-4 text-center text-gray-700 dark:text-gray-200">
-            {!auth?.user && (
-                <div className="mb-5">
-                    <p>Are you a barber?</p>
-                    <p>
-                        Join our team to manage your appointments and clients!
-                    </p>
-                    <Link href="/become-barber" className="text-sm underline">
-                        <Button variant="outline" size="sm">
-                            Click here to register as a Barber
-                        </Button>
-                    </Link>
-                </div>
-            )}
-
-            {!auth?.user?.is_barber && auth?.user && (
-                <div className="mb-5">
-                    <p>Are you a barber?</p>
-                    <p className="flex items-center justify-center gap-2">
-                        Join our team to manage your appointments and clients!
-                        <Tooltip>
-                            <TooltipTrigger>
-                                <span className="inline-block">
-                                    <MessageCircleQuestionMark size={18} />
+        <footer className="relative overflow-hidden border-t border-border bg-background px-6 pb-12 pt-24 md:px-12">
+            <div className="container mx-auto">
+                <div className="grid grid-cols-1 gap-16 lg:grid-cols-4">
+                    {/* Brand Section */}
+                    <div className="space-y-8 lg:col-span-2">
+                        <div className="space-y-4">
+                            <h3 className="text-3xl font-black uppercase tracking-tighter">
+                                BarberShop <br />
+                                <span className="italic text-primary">
+                                    Global
                                 </span>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>
-                                    By becoming a barber, you can manage your
-                                    appointments, clients, and services more
-                                    efficiently through our platform.
-                                    <br />
-                                    And your client dashboard won't be visible
-                                    anymore.
-                                </p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </p>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                            router.post(route('become.barber.request'))
-                        }
-                    >
-                        Send request to change role to Barber
-                    </Button>
+                            </h3>
+                            <p className="max-w-xs text-sm font-light uppercase leading-relaxed tracking-widest text-muted-foreground">
+                                The high-performance engine for the modern
+                                grooming industry. Engineered for excellence.
+                            </p>
+                        </div>
+
+                        {/* Social Links - Minimalist Icons */}
+                        <div className="flex gap-6">
+                            {[
+                                {
+                                    icon: <Linkedin size={18} />,
+                                    href: 'https://www.linkedin.com/in/lorenzo-lesage-developer/',
+                                    label: 'LinkedIn',
+                                },
+                                {
+                                    icon: <Instagram size={18} />,
+                                    href: '#',
+                                    label: 'Instagram',
+                                },
+                                {
+                                    icon: <Twitter size={18} />,
+                                    href: '#',
+                                    label: 'X',
+                                },
+                                {
+                                    icon: <Facebook size={18} />,
+                                    href: '#',
+                                    label: 'Facebook',
+                                },
+                                {
+                                    icon: <Mail size={18} />,
+                                    href: 'mailto:lorenzo.lesage99@gmail.com',
+                                    label: 'Email',
+                                },
+                            ].map((social, i) => (
+                                <a
+                                    key={i}
+                                    href={social.href}
+                                    className="text-muted-foreground transition-colors hover:text-primary"
+                                    aria-label={social.label}
+                                    target="blank"
+                                >
+                                    {social.icon}
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Navigation - Editorial Style */}
+                    <div className="space-y-6">
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/50">
+                            Navigation
+                        </h4>
+                        <ul className="space-y-4 text-[11px] font-bold uppercase tracking-widest">
+                            <li>
+                                <Link
+                                    href="#"
+                                    className="transition-colors hover:text-primary"
+                                >
+                                    Find a Studio
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="#"
+                                    className="transition-colors hover:text-primary"
+                                >
+                                    Become a Partner
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="#"
+                                    className="transition-colors hover:text-primary"
+                                >
+                                    Pricing
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="#"
+                                    className="transition-colors hover:text-primary"
+                                >
+                                    Legacy Journal
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Support & Legal */}
+                    <div className="space-y-6">
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/50">
+                            Standard
+                        </h4>
+                        <ul className="space-y-4 text-[11px] font-bold uppercase tracking-widest">
+                            <li>
+                                <Link
+                                    href="#"
+                                    className="transition-colors hover:text-primary"
+                                >
+                                    Privacy Policy
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="#"
+                                    className="transition-colors hover:text-primary"
+                                >
+                                    Terms of Service
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="#"
+                                    className="transition-colors hover:text-primary"
+                                >
+                                    Support Center
+                                </Link>
+                            </li>
+                            <li className="text-muted-foreground/40">
+                                v2.0.26
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            )}
-            <p className="text-sm text-black dark:text-white/70">
-                Built with ♥ by{' '}
-                <a
-                    href="https://laravel.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline"
-                >
-                    Laravel
-                </a>{' '}
-                &{' '}
-                <a
-                    href="https://inertiajs.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline"
-                >
-                    Inertia.js
-                </a>
-            </p>
-            <div className="text-sm text-black dark:text-white/70">
-                &copy; {new Date().getFullYear()} BarberShop
+
+                {/* Bottom Bar */}
+                <div className="mt-24 flex flex-col items-center justify-between border-t border-border/50 pt-8 md:flex-row">
+                    <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/50">
+                        © {new Date().getFullYear()} BarberShop — Built with{' '}
+                        <span className="text-foreground">
+                            Laravel & Inertia
+                        </span>
+                    </div>
+
+                    <button
+                        onClick={scrollToTop}
+                        className="group mt-8 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] md:mt-0"
+                    >
+                        Back to top
+                        <div className="flex h-8 w-8 items-center justify-center border border-border transition-colors group-hover:bg-foreground group-hover:text-background">
+                            <ArrowUp size={14} />
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            {/* Background Decorative Text */}
+            <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 select-none overflow-hidden whitespace-nowrap opacity-[0.02]">
+                <span className="text-[15vw] font-black uppercase leading-none tracking-tighter">
+                    The Artisan Standard
+                </span>
             </div>
         </footer>
     );
