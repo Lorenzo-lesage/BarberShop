@@ -20,7 +20,7 @@ import type BreadcrumbItemType from '@/interfaces/breadcrumbs';
 import { OpeningHour, Saloon } from '@/interfaces/saloon';
 
 // Shadcn UI Components
-import SaloonImage from '@/components/publicPagesComponents/SaloonImage';
+import SaloonImage from '@/components/saloon/SaloonImage';
 import {
     AlertDialog,
     AlertDialogAction,

@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 
 // Layouts
-import SaloonsComponent from '@/components/publicPagesComponents/saloon/SaloonsComponents';
+import SaloonsComponent from '@/components/saloon/SaloonsComponents';
 import Dashboard from '@/Layouts/Dashboard';
 
 // Componetns

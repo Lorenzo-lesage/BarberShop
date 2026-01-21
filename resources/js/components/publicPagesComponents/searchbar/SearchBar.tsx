@@ -11,7 +11,19 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ filters, routeName }: SearchBarProps) {
+    /*
+    |--------------------------------------------------------------------------
+    | Data
+    |--------------------------------------------------------------------------
+    */
+
     const [search, setSearch] = useState(filters.search || '');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Methods
+    |--------------------------------------------------------------------------
+    */
 
     const debouncedSearch = useMemo(
         () =>
@@ -29,15 +41,27 @@ export default function SearchBar({ filters, routeName }: SearchBarProps) {
         [routeName],
     );
 
-    useEffect(() => {
-        return () => debouncedSearch.cancel();
-    }, [debouncedSearch]);
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setSearch(value);
         debouncedSearch(value);
     };
+
+    /*
+    |--------------------------------------------------------------------------
+    | Hooks
+    |--------------------------------------------------------------------------
+    */
+
+    useEffect(() => {
+        return () => debouncedSearch.cancel();
+    }, [debouncedSearch]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Render
+    |--------------------------------------------------------------------------
+    */
 
     return (
         <div className="group relative w-full max-w-md">

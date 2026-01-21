@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 
 // Layouts
-import SaloonsComponent from '@/components/publicPagesComponents/saloon/SaloonsComponents';
+import SaloonsComponent from '@/components/saloon/SaloonsComponents';
 import AppShell from '@/Layouts/Appshell';
 
 // Components
@@ -34,6 +34,7 @@ export default function Index({ saloons, filters }: Props) {
                 <SaloonsComponent
                     saloons={saloons.data}
                     routeName="saloons.show"
+                    filters={filters}
                 />
             </div>
 

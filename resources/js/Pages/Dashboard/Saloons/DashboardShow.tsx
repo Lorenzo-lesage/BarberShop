@@ -2,7 +2,7 @@ import { Head } from '@inertiajs/react';
 
 // Layout
 import Dashboard from '@/Layouts/Dashboard';
-import BookingComponent from '@/components/publicPagesComponents/saloon/BookingComponent';
+import BookingComponent from '@/components/saloon/BookingComponent';
 
 // Interfaces
 import type BreadcrumbItemType from '@/interfaces/breadcrumbs';

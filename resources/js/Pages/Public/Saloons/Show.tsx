@@ -2,7 +2,7 @@ import { Head } from '@inertiajs/react';
 
 // Layout
 import AppShell from '@/Layouts/Appshell';
-import BookingComponent from '@/components/publicPagesComponents/saloon/BookingComponent';
+import BookingComponent from '@/components/saloon/BookingComponent';
 
 // Interfaces
 import type { Saloon } from '@/interfaces/saloon';

@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 
 // Shadcn UI
-import SaloonImage from '@/components/publicPagesComponents/SaloonImage';
+import SaloonImage from '@/components/saloon/SaloonImage';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
