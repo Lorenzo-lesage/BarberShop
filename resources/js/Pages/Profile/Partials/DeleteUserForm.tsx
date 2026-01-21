@@ -28,6 +28,12 @@ export default function DeleteUserForm({
     className?: string;
     isOAuth?: boolean;
 }) {
+    /*
+    |------------------------------------------
+    | Data
+    |------------------------------------------
+    */
+
     const [open, setOpen] = useState(false);
     const passwordInput = useRef<HTMLInputElement>(null);
 
@@ -43,6 +49,16 @@ export default function DeleteUserForm({
         password: '',
     });
 
+    /*
+    |------------------------------------------
+    | Methods
+    |------------------------------------------
+    */
+
+    /**
+     * Handles the form submission.
+     * @param e
+     */
     const deleteUser: FormEventHandler = (e) => {
         e.preventDefault();
 
@@ -54,11 +70,20 @@ export default function DeleteUserForm({
         });
     };
 
+    /**
+     * Closes the modal.
+     */
     const closeModal = () => {
         setOpen(false);
         clearErrors();
         reset();
     };
+
+    /*
+    |------------------------------------------
+    | Render
+    |------------------------------------------
+    */
 
     return (
         <section

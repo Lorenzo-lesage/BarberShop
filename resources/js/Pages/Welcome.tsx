@@ -32,8 +32,6 @@ import {
 import type { Saloon } from '@/interfaces/saloon';
 
 export default function Welcome({
-    laravelVersion,
-    phpVersion,
     saloons,
 }: PageProps<{
     laravelVersion: string;
