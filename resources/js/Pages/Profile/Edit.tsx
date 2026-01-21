@@ -1,10 +1,16 @@
 import AppShell from '@/Layouts/Appshell';
-import { PageProps } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { ShieldCheck, Trash2, User } from 'lucide-react';
+
+// Components
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
+
+// Interfaces
+import { PageProps } from '@/types';
+
+// Icons
+import { ShieldCheck, Trash2, User } from 'lucide-react';
 
 export default function ProfileEdit({
     mustVerifyEmail,
@@ -15,7 +21,19 @@ export default function ProfileEdit({
     status?: string;
     isOAuth: boolean;
 }>) {
+    /*
+    |------------------------------------------
+    | Data
+    |------------------------------------------
+    */
+
     const { auth } = usePage().props;
+
+    /*
+    |------------------------------------------
+    | Render
+    |------------------------------------------
+    */
 
     return (
         <AppShell>

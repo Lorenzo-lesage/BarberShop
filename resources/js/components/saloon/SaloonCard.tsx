@@ -52,9 +52,9 @@ export function SaloonCard({
                 <div className="flex items-start justify-between">
                     <Badge
                         className={cn(
-                            'rounded-none border-none px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.2em] shadow-2xl',
+                            'rounded-none border-none bg-white/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.2em] shadow-2xl',
                             isOwner
-                                ? 'bg-primary text-primary-foreground'
+                                ? 'bg-white text-black shadow-[0_0_10px_rgba(var(--primary),0.8)]'
                                 : 'bg-white/10 text-white backdrop-blur-xl',
                         )}
                     >
@@ -64,9 +64,9 @@ export function SaloonCard({
                     {/* Active Indicator Dot */}
                     <div
                         className={cn(
-                            'h-1.5 w-1.5 rounded-full transition-all duration-500',
+                            'h-1.5 w-1.5 rounded-full bg-white/40 transition-all duration-500 group-hover:bg-white group-hover:shadow-[0_0_8px_#fff]',
                             isOwner
-                                ? 'bg-primary shadow-[0_0_10px_rgba(var(--primary),0.8)]'
+                                ? 'bg-black/40 group-hover:shadow-[0_0_10px_rgba(var(--primary),0.8)]'
                                 : 'bg-white/40 group-hover:bg-primary group-hover:shadow-[0_0_8px_#fff]',
                         )}
                     />
@@ -88,7 +88,7 @@ export function SaloonCard({
                         </div>
 
                         {/* Artisan Divider */}
-                        <div className="h-[1px] w-8 bg-primary transition-all duration-700 ease-in-out group-hover:w-full" />
+                        <div className="h-[1px] w-8 bg-white transition-all duration-700 ease-in-out group-hover:w-full group-hover:bg-white" />
                     </div>
 
                     <div className="flex flex-col gap-4">

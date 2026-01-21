@@ -1,4 +1,5 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 // Layouts
 import SaloonsComponent from '@/components/saloon/SaloonsComponents';
@@ -19,6 +20,34 @@ interface Props {
     filters: { search?: string };
 }
 export default function Index({ saloons, breadcrumbs, filters }: Props) {
+    /*
+      |--------------------------------------------------------------------------
+      | Data
+      |--------------------------------------------------------------------------
+      */
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    /*
+      |--------------------------------------------------------------------------
+      | Hooks
+      |--------------------------------------------------------------------------
+      */
+
+    useEffect(() => {
+        const removeStartListener = router.on('start', () =>
+            setIsLoading(true),
+        );
+        const removeFinishListener = router.on('finish', () =>
+            setIsLoading(false),
+        );
+
+        return () => {
+            removeStartListener();
+            removeFinishListener();
+        };
+    }, []);
+
     /*
     |--------------------------------------------------------------------------
     | Render
@@ -43,6 +72,7 @@ export default function Index({ saloons, breadcrumbs, filters }: Props) {
                 <SaloonsComponent
                     saloons={saloons.data}
                     routeName="saloons.dashboard.show"
+                    isLoading={isLoading}
                 />
             </div>
 

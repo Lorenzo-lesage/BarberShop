@@ -18,6 +18,7 @@ export default function SearchBar({ filters, routeName }: SearchBarProps) {
     */
 
     const [search, setSearch] = useState(filters.search || '');
+    const [isLoading, setIsLoading] = useState(false);
 
     /*
     |--------------------------------------------------------------------------
@@ -35,6 +36,8 @@ export default function SearchBar({ filters, routeName }: SearchBarProps) {
                         preserveState: true,
                         replace: true,
                         preserveScroll: true,
+                        onBefore: () => setIsLoading(true),
+                        onFinish: () => setIsLoading(false),
                     },
                 );
             }, 400),
@@ -67,9 +70,12 @@ export default function SearchBar({ filters, routeName }: SearchBarProps) {
         <div className="group relative w-full max-w-md">
             {/* Label Tecnica Superiore */}
             <div className="mb-2 flex items-center justify-between px-1">
-                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 transition-colors group-focus-within:text-primary">
-                    Search Registry
+                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">
+                    {isLoading ? 'Scanning Registry...' : 'Search Registry'}
                 </label>
+                {isLoading && (
+                    <div className="h-1 w-12 animate-pulse bg-primary" />
+                )}
                 <span className="font-mono text-[9px] italic text-muted-foreground/30">
                     {search.length > 0
                         ? `Filtering: ${search.length}ch`

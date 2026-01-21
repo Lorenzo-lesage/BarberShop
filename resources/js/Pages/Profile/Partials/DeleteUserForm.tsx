@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef, useState } from 'react';
 
@@ -16,6 +17,9 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+
+// Icons
+import { AlertTriangle, Trash2 } from 'lucide-react';
 
 export default function DeleteUserForm({
     className = '',
@@ -57,45 +61,65 @@ export default function DeleteUserForm({
     };
 
     return (
-        <section className={`space-y-6 ${className}`}>
-            <header>
-                <h2 className="text-lg font-medium text-foreground">
-                    Delete Account
+        <section
+            className={cn(
+                'space-y-12 border-t border-destructive/20 pt-12',
+                className,
+            )}
+        >
+            {/* HEADER TECNICO DI PERICOLO */}
+            <header className="relative border-l-2 border-destructive pl-4">
+                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-destructive">
+                    Terminal_Action
                 </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                    Once your account is deleted, all of its resources and data
-                    will be permanently deleted. Before deleting your account,
-                    please download any data or information that you wish to
-                    retain.
+                <h3 className="text-2xl font-black uppercase italic tracking-tighter text-foreground">
+                    Delete Registry
+                </h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                    Irreversible removal of all personal resources and system
+                    data.
                 </p>
             </header>
 
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="destructive">Delete Account</Button>
+                    <Button
+                        variant="outline"
+                        className="h-12 rounded-none border-destructive/50 px-8 text-[10px] font-black uppercase tracking-[0.3em] text-destructive hover:bg-destructive hover:text-white"
+                    >
+                        <Trash2 className="mr-2 h-3 w-3" />
+                        Terminate Account
+                    </Button>
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="rounded-none border-destructive/50 bg-background sm:max-w-[480px]">
                     <form onSubmit={deleteUser}>
-                        <DialogHeader>
-                            <DialogTitle>
-                                Are you sure you want to delete your account?
+                        <DialogHeader className="space-y-4">
+                            <div className="flex h-12 w-12 items-center justify-center border border-destructive/30 bg-destructive/5 text-destructive">
+                                <AlertTriangle size={24} />
+                            </div>
+                            <DialogTitle className="text-xl font-black uppercase italic tracking-tighter">
+                                Confirm System Deletion
                             </DialogTitle>
-                            <DialogDescription>
-                                Once your account is deleted, all of its
-                                resources and data will be permanently deleted.
-                                Please enter your password to confirm.
+                            <DialogDescription className="text-[10px] font-bold uppercase leading-relaxed tracking-widest text-muted-foreground">
+                                You are about to wipe all data from our servers.
+                                This process is{' '}
+                                <span className="text-destructive underline">
+                                    permanent
+                                </span>
+                                .
+                                {!isOAuth &&
+                                    ' Please authorize with your secret key.'}
                             </DialogDescription>
                         </DialogHeader>
 
                         {!isOAuth && (
-                            <div className="mt-6">
+                            <div className="mt-8 space-y-2">
                                 <Label
                                     htmlFor="password"
-                                    icon-only
-                                    className="sr-only"
+                                    className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground"
                                 >
-                                    Password
+                                    Authorization_Key
                                 </Label>
 
                                 <Input
@@ -107,39 +131,39 @@ export default function DeleteUserForm({
                                     onChange={(e) =>
                                         setData('password', e.target.value)
                                     }
-                                    placeholder="Password"
-                                    className={`mt-1 block w-full ${
-                                        errors.password
-                                            ? 'border-destructive focus-visible:ring-destructive'
-                                            : ''
-                                    }`}
+                                    placeholder="ENTER PASSWORD"
+                                    className={cn(
+                                        'h-12 rounded-none border-x-0 border-b border-t-0 border-border bg-transparent px-0 text-sm font-bold tracking-[0.3em] focus-visible:border-destructive focus-visible:ring-0',
+                                        errors.password && 'border-destructive',
+                                    )}
                                     autoFocus
                                 />
 
                                 {errors.password && (
-                                    <p className="mt-2 text-xs font-medium text-destructive">
+                                    <p className="text-[9px] font-bold uppercase italic text-destructive animate-in fade-in slide-in-from-top-1">
                                         {errors.password}
                                     </p>
                                 )}
                             </div>
                         )}
 
-                        <DialogFooter className="mt-6">
+                        <DialogFooter className="mt-10 gap-4 sm:flex-row-reverse sm:justify-start">
                             <Button
-                                type="button"
-                                variant="secondary"
-                                onClick={closeModal}
+                                type="submit"
+                                disabled={processing}
+                                className="h-12 rounded-none bg-destructive px-8 text-[10px] font-black uppercase tracking-[0.3em] text-white hover:bg-destructive/90"
                             >
-                                Cancel
+                                {processing
+                                    ? 'Wiping...'
+                                    : 'Confirm Termination'}
                             </Button>
 
                             <Button
-                                type="submit"
-                                variant="destructive"
-                                className="ms-3"
-                                disabled={processing}
+                                type="button"
+                                onClick={closeModal}
+                                className="h-12 rounded-none border-border bg-transparent px-8 text-[10px] font-black uppercase tracking-[0.3em] text-foreground hover:bg-muted"
                             >
-                                {processing ? 'Deleting...' : 'Delete Account'}
+                                Abort
                             </Button>
                         </DialogFooter>
                     </form>

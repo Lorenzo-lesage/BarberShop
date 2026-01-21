@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef } from 'react';
@@ -9,11 +10,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
+// Icons
+import { CheckCircle2, LockKeyhole, ShieldCheck } from 'lucide-react';
+
 export default function UpdatePasswordForm({
     className = '',
 }: {
     className?: string;
 }) {
+    /*
+    |------------------------------------------
+    | Data
+    |------------------------------------------
+    */
+
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
 
@@ -31,6 +41,16 @@ export default function UpdatePasswordForm({
         password_confirmation: '',
     });
 
+    /*
+    |------------------------------------------
+    | Methods
+    |------------------------------------------
+    */
+
+    /**
+     * Handles the form submission.
+     * @param e
+     */
     const updatePassword: FormEventHandler = (e) => {
         e.preventDefault();
 
@@ -42,7 +62,6 @@ export default function UpdatePasswordForm({
                     reset('password', 'password_confirmation');
                     passwordInput.current?.focus();
                 }
-
                 if (errors.current_password) {
                     reset('current_password');
                     currentPasswordInput.current?.focus();
@@ -51,125 +70,155 @@ export default function UpdatePasswordForm({
         });
     };
 
+    /*
+    |------------------------------------------
+    | Render
+    |------------------------------------------
+    */
+
     return (
-        <section className={`${className} max-w-xl`}>
-            <header>
-                <h2 className="text-lg font-medium text-foreground">
-                    Update Password
+        <section className={cn('space-y-12', className)}>
+            {/* HEADER TECNICO */}
+            <header className="relative border-l-2 border-primary pl-4">
+                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">
+                    Security_Protocol
                 </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                    Ensure your account is using a long, random password to stay
-                    secure.
+                <h3 className="text-2xl font-black uppercase italic tracking-tighter text-foreground">
+                    Access Credentials
+                </h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                    Update system keys to ensure account integrity.
                 </p>
             </header>
 
-            <form onSubmit={updatePassword} className="mt-6 space-y-6">
-                {/* Current Password */}
-                <div className="grid gap-2">
-                    <Label
-                        htmlFor="current_password"
-                        className={
-                            errors.current_password ? 'text-destructive' : ''
-                        }
-                    >
-                        Current Password
-                    </Label>
-                    <Input
-                        id="current_password"
-                        ref={currentPasswordInput}
-                        value={data.current_password}
-                        onChange={(e) =>
-                            setData('current_password', e.target.value)
-                        }
-                        type="password"
-                        autoComplete="current-password"
-                        className={
-                            errors.current_password
-                                ? 'border-destructive focus-visible:ring-destructive'
-                                : ''
-                        }
-                    />
-                    {errors.current_password && (
-                        <p className="text-[0.8rem] font-medium text-destructive">
-                            {errors.current_password}
-                        </p>
-                    )}
+            <form onSubmit={updatePassword} className="max-w-xl space-y-10">
+                <div className="space-y-8">
+                    {/* Current Password */}
+                    <div className="group relative space-y-2">
+                        <Label
+                            htmlFor="current_password"
+                            className={cn(
+                                'text-[9px] font-black uppercase tracking-[0.3em] transition-colors',
+                                errors.current_password
+                                    ? 'text-destructive'
+                                    : 'text-muted-foreground',
+                            )}
+                        >
+                            Verification_Key (Current)
+                        </Label>
+                        <div className="relative">
+                            <Input
+                                id="current_password"
+                                ref={currentPasswordInput}
+                                value={data.current_password}
+                                onChange={(e) =>
+                                    setData('current_password', e.target.value)
+                                }
+                                type="password"
+                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-border bg-transparent px-0 text-sm font-bold tracking-[0.3em] focus-visible:border-primary focus-visible:ring-0"
+                            />
+                            <LockKeyhole
+                                size={14}
+                                className="absolute right-0 top-1/2 -translate-y-1/2 opacity-20"
+                            />
+                        </div>
+                        {errors.current_password && (
+                            <p className="text-[10px] font-bold uppercase italic text-destructive animate-in fade-in slide-in-from-left-2">
+                                {errors.current_password}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* New Password */}
+                    <div className="group relative space-y-2">
+                        <Label
+                            htmlFor="password"
+                            className={cn(
+                                'text-[9px] font-black uppercase tracking-[0.3em] transition-colors',
+                                errors.password
+                                    ? 'text-destructive'
+                                    : 'text-muted-foreground',
+                            )}
+                        >
+                            Generation_New_Key
+                        </Label>
+                        <div className="relative">
+                            <Input
+                                id="password"
+                                ref={passwordInput}
+                                value={data.password}
+                                onChange={(e) =>
+                                    setData('password', e.target.value)
+                                }
+                                type="password"
+                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-border bg-transparent px-0 text-sm font-bold tracking-[0.3em] focus-visible:border-primary focus-visible:ring-0"
+                            />
+                            <ShieldCheck
+                                size={14}
+                                className="absolute right-0 top-1/2 -translate-y-1/2 opacity-20"
+                            />
+                        </div>
+                        {errors.password && (
+                            <p className="text-[10px] font-bold uppercase italic text-destructive animate-in fade-in slide-in-from-left-2">
+                                {errors.password}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Confirm Password */}
+                    <div className="group relative space-y-2">
+                        <Label
+                            htmlFor="password_confirmation"
+                            className={cn(
+                                'text-[9px] font-black uppercase tracking-[0.3em] transition-colors',
+                                errors.password_confirmation
+                                    ? 'text-destructive'
+                                    : 'text-muted-foreground',
+                            )}
+                        >
+                            Confirm_Identity_Key
+                        </Label>
+                        <Input
+                            id="password_confirmation"
+                            value={data.password_confirmation}
+                            onChange={(e) =>
+                                setData('password_confirmation', e.target.value)
+                            }
+                            type="password"
+                            className="h-12 rounded-none border-x-0 border-b border-t-0 border-border bg-transparent px-0 text-sm font-bold tracking-[0.3em] focus-visible:border-primary focus-visible:ring-0"
+                        />
+                        {errors.password_confirmation && (
+                            <p className="text-[10px] font-bold uppercase italic text-destructive animate-in fade-in slide-in-from-left-2">
+                                {errors.password_confirmation}
+                            </p>
+                        )}
+                    </div>
                 </div>
 
-                {/* New Password */}
-                <div className="grid gap-2">
-                    <Label
-                        htmlFor="password"
-                        className={errors.password ? 'text-destructive' : ''}
+                {/* Bottom Actions */}
+                <div className="flex items-center gap-6 pt-4">
+                    <Button
+                        type="submit"
+                        disabled={processing}
+                        className="h-12 rounded-none px-10 text-[10px] font-black uppercase tracking-[0.3em]"
                     >
-                        New Password
-                    </Label>
-                    <Input
-                        id="password"
-                        ref={passwordInput}
-                        value={data.password}
-                        onChange={(e) => setData('password', e.target.value)}
-                        type="password"
-                        autoComplete="new-password"
-                        className={
-                            errors.password
-                                ? 'border-destructive focus-visible:ring-destructive'
-                                : ''
-                        }
-                    />
-                    {errors.password && (
-                        <p className="text-[0.8rem] font-medium text-destructive">
-                            {errors.password}
-                        </p>
-                    )}
-                </div>
-
-                {/* Confirm Password */}
-                <div className="grid gap-2">
-                    <Label
-                        htmlFor="password_confirmation"
-                        className={
-                            errors.password_confirmation
-                                ? 'text-destructive'
-                                : ''
-                        }
-                    >
-                        Confirm Password
-                    </Label>
-                    <Input
-                        id="password_confirmation"
-                        value={data.password_confirmation}
-                        onChange={(e) =>
-                            setData('password_confirmation', e.target.value)
-                        }
-                        type="password"
-                        autoComplete="new-password"
-                        className={
-                            errors.password_confirmation
-                                ? 'border-destructive focus-visible:ring-destructive'
-                                : ''
-                        }
-                    />
-                    {errors.password_confirmation && (
-                        <p className="text-[0.8rem] font-medium text-destructive">
-                            {errors.password_confirmation}
-                        </p>
-                    )}
-                </div>
-
-                <div className="flex items-center gap-4">
-                    <Button type="submit" disabled={processing}>
-                        {processing ? 'Saving...' : 'Save'}
+                        {processing ? 'Encrypting...' : 'Update Keys'}
                     </Button>
 
                     <Transition
                         show={recentlySuccessful}
-                        enter="transition ease-in-out duration-300"
-                        enterFrom="opacity-0 translate-y-1"
-                        leave="transition ease-in-out duration-300"
+                        enter="transition ease-out duration-500"
+                        enterFrom="opacity-0 -translate-x-2"
+                        enterTo="opacity-100 translate-x-0"
+                        leave="transition opacity duration-500"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-muted-foreground">Saved.</p>
+                        <div className="flex items-center gap-2 text-primary">
+                            <CheckCircle2 size={14} />
+                            <span className="text-[9px] font-black uppercase tracking-widest">
+                                Protocol Secured
+                            </span>
+                        </div>
                     </Transition>
                 </div>
             </form>

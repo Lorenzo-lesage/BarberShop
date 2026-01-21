@@ -8,7 +8,7 @@ import {
 import type { Saloon } from '@/interfaces/saloon';
 import { usePage } from '@inertiajs/react';
 
-import { SaloonCard } from '@/components/ui/SaloonCard';
+import { SaloonCard } from '@/components/saloon/SaloonCard';
 
 export function SaloonCarousel({ saloons }: { saloons: Saloon[] }) {
     const { auth } = usePage().props;

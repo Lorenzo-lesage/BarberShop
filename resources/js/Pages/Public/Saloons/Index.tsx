@@ -1,4 +1,5 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 // Layouts
 import SaloonsComponent from '@/components/saloon/SaloonsComponents';
@@ -20,14 +21,43 @@ interface Props {
 export default function Index({ saloons, filters }: Props) {
     /*
     |--------------------------------------------------------------------------
+    | Data
+    |--------------------------------------------------------------------------
+    */
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Hooks
+    |--------------------------------------------------------------------------
+    */
+
+    useEffect(() => {
+        const removeStartListener = router.on('start', () =>
+            setIsLoading(true),
+        );
+        const removeFinishListener = router.on('finish', () =>
+            setIsLoading(false),
+        );
+
+        return () => {
+            removeStartListener();
+            removeFinishListener();
+        };
+    }, []);
+
+    /*
+    |--------------------------------------------------------------------------
     | Render
     |--------------------------------------------------------------------------
     */
+
     return (
         <AppShell className="mx-auto flex max-w-7xl flex-col px-4">
             <Head title="Saloons" />
 
-            <div className="mt-28 h-[80vh]">
+            <div className="mt-28 min-h-[80vh]">
                 <div className="mb-10 mt-2 flex justify-end">
                     <SearchBar filters={filters} routeName="saloons.index" />
                 </div>
@@ -35,10 +65,13 @@ export default function Index({ saloons, filters }: Props) {
                     saloons={saloons.data}
                     routeName="saloons.show"
                     filters={filters}
+                    isLoading={isLoading}
                 />
             </div>
 
-            <MyPagination links={saloons.links} />
+            <div className="my-5">
+                <MyPagination links={saloons.links} />
+            </div>
         </AppShell>
     );
 }

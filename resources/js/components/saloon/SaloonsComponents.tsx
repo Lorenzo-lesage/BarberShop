@@ -1,22 +1,26 @@
 import { usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 // Interfaces
 import type { Saloon } from '@/interfaces/saloon';
 
 // Components
 import { EmptyState } from '@/components/saloon/EmptyState';
-import { SaloonCard } from '@/components/ui/SaloonCard';
+import { SaloonCard } from '@/components/saloon/SaloonCard';
+import { SaloonSkeleton } from '@/components/saloon/SaloonSkeleton';
 
 interface Props {
     saloons: Saloon[];
     routeName?: string;
     filters?: { search?: string };
+    isLoading: boolean;
 }
 
 export default function SaloonsComponent({
     saloons,
     routeName = 'saloons.show',
     filters,
+    isLoading = false,
 }: Props) {
     /*
     |--------------------------------------------------------------------------
@@ -27,6 +31,7 @@ export default function SaloonsComponent({
     const { auth } = usePage().props;
     const authId = auth.user?.id;
 
+    // Filtered Saloons
     const safeSaloons = saloons ?? [];
     const urlParams = new URLSearchParams(window.location.search);
     const searchFromUrl = urlParams.get('search');
@@ -36,11 +41,44 @@ export default function SaloonsComponent({
     );
     const isEmpty = safeSaloons.length === 0;
 
+    // Skeleton
+    const [showSkeleton, setShowSkeleton] = useState(false);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Hooks
+    |--------------------------------------------------------------------------
+    */
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+
+        if (isLoading) {
+            timer = setTimeout(() => {
+                setShowSkeleton(true);
+            }, 500);
+        } else {
+            setShowSkeleton(false);
+        }
+
+        return () => clearTimeout(timer);
+    }, [isLoading]);
+
     /*
     |--------------------------------------------------------------------------
     | Render
     |--------------------------------------------------------------------------
     */
+
+    if (showSkeleton) {
+        return (
+            <div className="grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {[...Array(8)].map((_, i) => (
+                    <SaloonSkeleton key={i} />
+                ))}
+            </div>
+        );
+    }
 
     if (isEmpty) {
         return (

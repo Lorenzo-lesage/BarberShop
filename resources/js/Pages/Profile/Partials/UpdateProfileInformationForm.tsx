@@ -12,9 +12,11 @@ import { Label } from '@/components/ui/label';
 
 // Interfaces
 import { User } from '@/interfaces/auth';
+import { cn } from '@/lib/utils';
 
 // Icons
-import { Camera, Loader2 } from 'lucide-react';
+import { AlertCircle, Camera, CheckCircle2, Loader2 } from 'lucide-react';
+
 export default function UpdateProfileInformation({
     mustVerifyEmail,
     status,
@@ -25,16 +27,15 @@ export default function UpdateProfileInformation({
     className?: string;
 }) {
     /*
-    | --------------------------------------
+    |------------------------------------------
     | Data
-    | --------------------------------------
+    |------------------------------------------
     */
 
     const user = usePage().props.auth.user as User;
     const [uploading, setUploading] = useState(false);
     const [photoError, setPhotoError] = useState<string | null>(null);
 
-    // Form per Nome ed Email (PATCH)
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
             name: user.name,
@@ -42,212 +43,212 @@ export default function UpdateProfileInformation({
         });
 
     /*
-    | --------------------------------------
-    | Methods
-    | --------------------------------------
+    |------------------------------------------
+    | ;Methods
+    |------------------------------------------
     */
 
-    // Funzione per l'upload istantaneo della foto
+    /**
+     * Handles the form submission.
+     * @param e
+     * @returns
+     */
     const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-
-        setPhotoError(null); // Resetta errori precedenti
+        setPhotoError(null);
         setUploading(true);
 
         router.post(
             route('profile.photo.update'),
-            {
-                _method: 'patch',
-                photo: file,
-            },
+            { _method: 'patch', photo: file },
             {
                 forceFormData: true,
                 preserveScroll: true,
-                onSuccess: () => {
-                    setPhotoError(null);
-                    // Qui puoi far scattare un toast di successo
-                },
-                onError: (errors) => {
-                    // Inertia restituisce gli errori qui!
-                    if (errors.photo) {
-                        setPhotoError(errors.photo);
-                    }
-                },
                 onFinish: () => setUploading(false),
+                onError: (err) => err.photo && setPhotoError(err.photo),
             },
         );
     };
 
+    /**
+     * Handles the form submission.
+     * @param e
+     */
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        patch(route('profile.update'));
+        patch(route('profile.update'), {
+            preserveScroll: true,
+        });
     };
 
     /*
-    | --------------------------------------
+    |------------------------------------------
     | Render
-    | --------------------------------------
+    |------------------------------------------
     */
 
     return (
-        <section className={`${className} max-w-xl`}>
-            <header>
-                <h2 className="text-lg font-medium text-foreground">
-                    Profile Information
+        <section className={cn('space-y-12', className)}>
+            {/* HEADER TECNICO */}
+            <header className="relative border-l-2 border-primary pl-4">
+                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">
+                    Registry_01
                 </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                    Update your account's profile information and email address.
+                <h3 className="text-2xl font-black uppercase italic tracking-tighter text-foreground">
+                    Profile Information
+                </h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                    Maintain personal identification and system credentials.
                 </p>
             </header>
 
-            {/* SEZIONE FOTO PROFILO - SEPARATA */}
-            <div className="flex items-center gap-6 rounded-lg border bg-muted/30 p-4">
-                <div className="group relative">
-                    <Avatar className="h-24 w-24 border-2 border-background shadow-md">
-                        <AvatarImage
-                            src={
-                                user.profile_photo
-                                    ? `${window.location.origin}/storage/${user.profile_photo}`
-                                    : undefined
-                            }
-                            className="object-cover"
-                        />
-                        <AvatarFallback className="bg-primary text-xl text-primary-foreground">
-                            {user.name.substring(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                    </Avatar>
-
-                    {uploading && (
-                        <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40">
-                            <Loader2 className="h-8 w-8 animate-spin text-white" />
-                        </div>
-                    )}
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="photo-upload" className="cursor-pointer">
-                        <div className="flex items-center gap-2 text-sm font-medium text-primary hover:underline">
-                            <Camera className="h-4 w-4" />
-                            {user.profile_photo
-                                ? 'Change photo'
-                                : 'Upload photo'}
-                        </div>
+            <div className="grid gap-12 md:grid-cols-[200px_1fr]">
+                {/* LATO SINISTRO: FOTO PROFILO (Visual Identity) */}
+                <div className="space-y-4">
+                    <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground">
+                        Visual_ID
                     </Label>
-                    <Input
-                        id="photo-upload"
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={handlePhotoUpload}
-                        disabled={uploading}
-                    />
+                    <div className="group relative aspect-square w-full overflow-hidden border border-border bg-muted/20">
+                        <Avatar className="h-full w-full rounded-none">
+                            <AvatarImage
+                                src={
+                                    user.profile_photo
+                                        ? `/storage/${user.profile_photo}`
+                                        : undefined
+                                }
+                                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                            />
+                            <AvatarFallback className="rounded-none bg-background text-2xl font-black">
+                                {user.name.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                        </Avatar>
+
+                        {/* Overlay Upload */}
+                        <label className="absolute inset-0 z-20 flex cursor-pointer items-center justify-center bg-black/60 opacity-0 transition-opacity group-hover:opacity-100">
+                            <Input
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handlePhotoUpload}
+                                disabled={uploading}
+                            />
+                            {uploading ? (
+                                <Loader2 className="h-6 w-6 animate-spin text-white" />
+                            ) : (
+                                <Camera className="h-6 w-6 text-white" />
+                            )}
+                        </label>
+                    </div>
                     {photoError && (
-                        <p className="text-xs font-medium text-destructive animate-in fade-in slide-in-from-top-1">
+                        <p className="text-[9px] font-bold uppercase italic tracking-tighter text-destructive">
                             {photoError}
                         </p>
                     )}
-                    <p className="text-xs text-muted-foreground">
-                        Square images work best. Max 2MB.
-                    </p>
-                </div>
-            </div>
-
-            <form onSubmit={submit} className="mt-6 space-y-6">
-                {/* Name Field */}
-                <div className="grid gap-2">
-                    <Label
-                        htmlFor="name"
-                        className={errors.name ? 'text-destructive' : ''}
-                    >
-                        Name
-                    </Label>
-                    <Input
-                        id="name"
-                        value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                        autoComplete="name"
-                        className={
-                            errors.name
-                                ? 'border-destructive focus-visible:ring-destructive'
-                                : ''
-                        }
-                    />
-                    {errors.name && (
-                        <p className="text-[0.8rem] font-medium text-destructive">
-                            {errors.name}
-                        </p>
-                    )}
                 </div>
 
-                {/* Email Field */}
-                <div className="grid gap-2">
-                    <Label
-                        htmlFor="email"
-                        className={errors.email ? 'text-destructive' : ''}
-                    >
-                        Email
-                    </Label>
-                    <Input
-                        id="email"
-                        type="email"
-                        value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
-                        autoComplete="username"
-                        className={
-                            errors.email
-                                ? 'border-destructive focus-visible:ring-destructive'
-                                : ''
-                        }
-                    />
-                    {errors.email && (
-                        <p className="text-[0.8rem] font-medium text-destructive">
-                            {errors.email}
-                        </p>
-                    )}
-                </div>
-
-                {mustVerifyEmail && user.email_verified_at === null && (
-                    <div className="rounded-md border border-yellow-200 bg-yellow-50 p-3 dark:border-yellow-900/30 dark:bg-yellow-900/10">
-                        <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                            Your email address is unverified.
-                            <Link
-                                href={route('verification.send')}
-                                method="post"
-                                as="button"
-                                className="ml-1 font-medium underline transition-colors hover:text-yellow-900 dark:hover:text-yellow-100"
+                {/* LATO DESTRO: FORM DATI (Core Data) */}
+                <form onSubmit={submit} className="space-y-8">
+                    <div className="grid gap-6">
+                        {/* Nome Field */}
+                        <div className="space-y-2">
+                            <Label
+                                htmlFor="name"
+                                className="text-[9px] font-black uppercase tracking-[0.3em]"
                             >
-                                Click here to re-send the verification email.
-                            </Link>
-                        </p>
+                                Full_Name
+                            </Label>
+                            <Input
+                                id="name"
+                                value={data.name}
+                                onChange={(e) =>
+                                    setData('name', e.target.value)
+                                }
+                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-border bg-transparent px-0 text-sm font-bold uppercase tracking-widest focus-visible:border-primary focus-visible:ring-0"
+                            />
+                            {errors.name && (
+                                <p className="text-[10px] font-bold uppercase italic text-destructive">
+                                    {errors.name}
+                                </p>
+                            )}
+                        </div>
 
-                        {status === 'verification-link-sent' && (
-                            <div className="mt-2 text-sm font-medium text-green-600 dark:text-green-400">
-                                A new verification link has been sent to your
-                                email address.
-                            </div>
-                        )}
+                        {/* Email Field */}
+                        <div className="space-y-2">
+                            <Label
+                                htmlFor="email"
+                                className="text-[9px] font-black uppercase tracking-[0.3em]"
+                            >
+                                System_Email
+                            </Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                value={data.email}
+                                onChange={(e) =>
+                                    setData('email', e.target.value)
+                                }
+                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-border bg-transparent px-0 text-sm font-bold uppercase tracking-widest focus-visible:border-primary focus-visible:ring-0"
+                            />
+                            {errors.email && (
+                                <p className="text-[10px] font-bold uppercase italic text-destructive">
+                                    {errors.email}
+                                </p>
+                            )}
+                        </div>
                     </div>
-                )}
 
-                <div className="flex items-center gap-4">
-                    <Button type="submit" disabled={processing} size="sm">
-                        {processing ? 'Saving...' : 'Save'}
-                    </Button>
+                    {/* Email Verification Banner */}
+                    {mustVerifyEmail && user.email_verified_at === null && (
+                        <div className="flex items-start gap-4 border border-primary/20 bg-primary/5 p-4">
+                            <AlertCircle
+                                size={16}
+                                className="mt-0.5 text-primary"
+                            />
+                            <div className="space-y-1">
+                                <p className="text-[10px] font-black uppercase tracking-widest">
+                                    Verification Required
+                                </p>
+                                <Link
+                                    href={route('verification.send')}
+                                    method="post"
+                                    as="button"
+                                    className="text-[9px] font-bold uppercase underline transition-colors hover:text-primary"
+                                >
+                                    Resend Credentials
+                                </Link>
+                            </div>
+                        </div>
+                    )}
 
-                    <Transition
-                        show={recentlySuccessful}
-                        enter="transition ease-in-out duration-300"
-                        enterFrom="opacity-0 translate-y-1"
-                        leave="transition ease-in-out duration-300"
-                        leaveTo="opacity-0"
-                    >
-                        <p className="text-sm text-muted-foreground">Saved.</p>
-                    </Transition>
-                </div>
-            </form>
+                    {/* Actions */}
+                    <div className="flex items-center gap-6 pt-4">
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="h-12 rounded-none px-10 text-[10px] font-black uppercase tracking-[0.3em]"
+                        >
+                            {processing ? 'Updating...' : 'Commit Changes'}
+                        </Button>
+
+                        <Transition
+                            show={recentlySuccessful}
+                            enter="transition ease-out duration-500"
+                            enterFrom="opacity-0 -translate-x-2"
+                            enterTo="opacity-100 translate-x-0"
+                            leave="transition opacity duration-500"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="flex items-center gap-2 text-primary">
+                                <CheckCircle2 size={14} />
+                                <span className="text-[9px] font-black uppercase tracking-widest">
+                                    Success
+                                </span>
+                            </div>
+                        </Transition>
+                    </div>
+                </form>
+            </div>
         </section>
     );
 }
