@@ -21,7 +21,9 @@ export default function Show({ saloon }: Props) {
     return (
         <AppShell className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
             <Head title={`${saloon.name} - Booking`} />
-            <BookingComponent saloon={saloon} />
+            <div className="mt-10">
+                <BookingComponent saloon={saloon} />
+            </div>
         </AppShell>
     );
 }

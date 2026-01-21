@@ -64,7 +64,7 @@ export default function Welcome({
                     }}
                 />
 
-                <div className="z-10 mt-10">
+                <div className="z-10 mt-14 md:mt-32">
                     {/* --- HERO: THE STATEMENT --- */}
                     <header className="container mx-auto mb-10 flex h-[95vh] flex-col justify-center px-6 md:px-12">
                         <div className="max-w-5xl space-y-10">

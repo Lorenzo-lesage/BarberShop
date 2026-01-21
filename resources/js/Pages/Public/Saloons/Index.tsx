@@ -27,7 +27,7 @@ export default function Index({ saloons, filters }: Props) {
         <AppShell className="mx-auto flex max-w-7xl flex-col px-4">
             <Head title="Saloons" />
 
-            <div className="h-[80vh]">
+            <div className="mt-28 h-[80vh]">
                 <div className="mb-10 mt-2 flex justify-end">
                     <SearchBar filters={filters} routeName="saloons.index" />
                 </div>

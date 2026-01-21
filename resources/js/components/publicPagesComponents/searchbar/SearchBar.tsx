@@ -1,4 +1,5 @@
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 import { router } from '@inertiajs/react';
 import { debounce } from 'lodash';
 import { Search } from 'lucide-react';
@@ -12,8 +13,6 @@ interface SearchBarProps {
 export default function SearchBar({ filters, routeName }: SearchBarProps) {
     const [search, setSearch] = useState(filters.search || '');
 
-    // Creiamo la funzione di ricerca ritardata (400ms)
-    // useMemo è fondamentale: mantiene la stessa istanza della funzione tra i render
     const debouncedSearch = useMemo(
         () =>
             debounce((value: string) => {
@@ -30,27 +29,61 @@ export default function SearchBar({ filters, routeName }: SearchBarProps) {
         [routeName],
     );
 
-    // Pulizia: se il componente viene smontato, cancelliamo ricerche pendenti
     useEffect(() => {
         return () => debouncedSearch.cancel();
     }, [debouncedSearch]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        setSearch(value); // L'input rimane reattivo e fluido
-        debouncedSearch(value); // La chiamata al server parte solo dopo che l'utente smette di scrivere
+        setSearch(value);
+        debouncedSearch(value);
     };
 
     return (
-        <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-                placeholder="Search for city, province, region..."
-                className="pl-10"
-                value={search}
-                onChange={handleChange}
-                type="search"
-            />
+        <div className="group relative w-full max-w-md">
+            {/* Label Tecnica Superiore */}
+            <div className="mb-2 flex items-center justify-between px-1">
+                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 transition-colors group-focus-within:text-primary">
+                    Search Registry
+                </label>
+                <span className="font-mono text-[9px] italic text-muted-foreground/30">
+                    {search.length > 0
+                        ? `Filtering: ${search.length}ch`
+                        : 'Waiting for input...'}
+                </span>
+            </div>
+
+            <div className="relative">
+                {/* Icona Mirino (Invece della lente classica) */}
+                <div className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
+                    <Search
+                        size={14}
+                        className={cn(
+                            'transition-all duration-300',
+                            search.length > 0
+                                ? 'rotate-90 scale-110 text-primary'
+                                : 'text-muted-foreground/40',
+                        )}
+                    />
+                </div>
+
+                <Input
+                    placeholder="CITY, PROVINCE, REGION..."
+                    className={cn(
+                        'h-12 w-full rounded-none border-border bg-background pl-12 pr-4 text-xs font-bold uppercase tracking-widest transition-all',
+                        'placeholder:text-[10px] placeholder:font-medium placeholder:tracking-[0.2em] placeholder:text-muted-foreground/30',
+                        'focus-visible:border-primary focus-visible:bg-primary/5 focus-visible:ring-0',
+                        search.length > 0 && 'border-primary/50',
+                    )}
+                    value={search}
+                    onChange={handleChange}
+                    type="search"
+                />
+
+                {/* Decorazione Angolare (Stile Mirino) */}
+                <div className="absolute -bottom-[1px] -right-[1px] h-2 w-2 border-b border-r border-primary/40 opacity-0 transition-opacity group-focus-within:opacity-100" />
+                <div className="absolute -left-[1px] -top-[1px] h-2 w-2 border-l border-t border-primary/40 opacity-0 transition-opacity group-focus-within:opacity-100" />
+            </div>
         </div>
     );
 }
