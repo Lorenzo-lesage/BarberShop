@@ -22,7 +22,7 @@ export default function ProfileEdit({
             <Head title="Account Settings | Artisan Standard" />
 
             {/* --- HEADER EDITORALE --- */}
-            <header className="border-b border-border bg-background/80 backdrop-blur-md">
+            <header className="border-b border-border bg-background/80 pt-28 backdrop-blur-md">
                 <div className="mx-auto max-w-7xl px-6 py-4 md:px-12">
                     <div className="flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
                         {/* Sinistra: Titolo Compatto */}

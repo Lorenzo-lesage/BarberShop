@@ -78,9 +78,9 @@ export default function Welcome({
 
                             <div className="space-y-4">
                                 <h1 className="text-7xl font-black uppercase leading-[0.85] tracking-tighter sm:text-8xl md:text-[11rem]">
-                                    Master <br />
-                                    <span className="text-outline-white opacity-20 transition-opacity hover:opacity-100 dark:stroke-white dark:stroke-1 dark:text-transparent">
-                                        The Craft
+                                    Barber <br />
+                                    <span className="text-foreground/80 opacity-80">
+                                        Shop
                                     </span>
                                 </h1>
                             </div>

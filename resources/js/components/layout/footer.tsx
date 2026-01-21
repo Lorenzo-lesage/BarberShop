@@ -174,7 +174,7 @@ export default function Footer() {
             {/* Background Decorative Text */}
             <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 select-none overflow-hidden whitespace-nowrap opacity-[0.02]">
                 <span className="text-[15vw] font-black uppercase leading-none tracking-tighter">
-                    The Artisan Standard
+                    Barber Shop
                 </span>
             </div>
         </footer>
