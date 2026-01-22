@@ -313,7 +313,7 @@ class SaloonController extends Controller
         $saloons = Saloon::whereHas('appointments', function ($query) use ($userId) {
             $query->where('client_id', $userId);
         })
-            ->with(['barber:id,name'])
+            ->with(['barber:id,name', 'mainPhoto'])
             ->withCount([
                 'appointments' => function ($query) use ($userId) {
                     $query->where('client_id', $userId);
