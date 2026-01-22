@@ -206,7 +206,7 @@ export default function Welcome({
                                                 {f.tag}
                                             </span>
                                         </div>
-                                        <h3 className="text-3xl font-black uppercase leading-none tracking-tighter">
+                                        <h3 className="text-3xl font-black uppercase leading-none tracking-tighter md:text-2xl lg:text-3xl">
                                             {f.title}
                                         </h3>
                                         <p className="text-lg font-light leading-relaxed opacity-60 group-hover:opacity-100">

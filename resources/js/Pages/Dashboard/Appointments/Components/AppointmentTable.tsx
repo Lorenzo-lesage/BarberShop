@@ -1,6 +1,7 @@
 'use client';
 
 // Components
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -30,10 +31,9 @@ import { Appointment } from '@/interfaces/saloon';
 import { cn } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { it } from 'date-fns/locale';
 
 // Icons
-import { Calendar, Clock, Store, User, XCircle } from 'lucide-react';
+import { Calendar, Clock, Store, UserCircle, XCircle } from 'lucide-react';
 
 interface AppointmentTableProps {
     appointments: PaginationData<Appointment>;
@@ -46,6 +46,7 @@ export const AppointmentTable = ({
     isBarber,
     showActions = true,
 }: AppointmentTableProps) => {
+    console.log(appointments);
     return (
         <Table className="border-collapse">
             <TableHeader className="bg-muted/50">
@@ -88,11 +89,53 @@ export const AppointmentTable = ({
                         {/* CLIENT / SALOON */}
                         <TableCell className="py-6">
                             <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center border border-border bg-background">
+                                <div className="flex h-10 w-10 items-center justify-center border border-border bg-background transition-colors group-hover:border-primary/50">
                                     {isBarber ? (
-                                        <User size={14} />
+                                        <div>
+                                            {app.client?.profile_photo ? (
+                                                <Avatar className="h-full w-full rounded-none">
+                                                    <AvatarImage
+                                                        src={
+                                                            app.client
+                                                                ?.profile_photo
+                                                                ? `/storage/${app.client.profile_photo}`
+                                                                : undefined
+                                                        }
+                                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                                    />
+                                                </Avatar>
+                                            ) : (
+                                                <div className="flex h-10 w-10 items-center justify-center border border-border bg-background transition-colors group-hover:border-primary/50">
+                                                    <UserCircle
+                                                        size={18}
+                                                        className="text-muted-foreground/40 transition-colors group-hover:text-primary"
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
                                     ) : (
-                                        <Store size={14} />
+                                        <div>
+                                            {app.saloon?.main_photo ? (
+                                                <Avatar className="h-full w-full rounded-none">
+                                                    <AvatarImage
+                                                        src={
+                                                            app.saloon
+                                                                ?.main_photo
+                                                                ? `/storage/${app.saloon.main_photo.path}`
+                                                                : undefined
+                                                        }
+                                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                                    />
+                                                </Avatar>
+                                            ) : (
+                                                <div className="flex h-10 w-10 items-center justify-center border border-border bg-background transition-colors group-hover:border-primary/50">
+                                                    <Store
+                                                        size={18}
+                                                        className="text-muted-foreground/40 transition-colors group-hover:text-primary"
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                                 <div className="flex flex-col">
@@ -134,7 +177,6 @@ export const AppointmentTable = ({
                                     {format(
                                         new Date(app.appointment_time),
                                         'dd MMM yyyy',
-                                        { locale: it },
                                     )}
                                 </div>
                                 <div className="flex items-center gap-2 font-mono text-lg font-black leading-none tracking-tighter">

@@ -36,9 +36,10 @@ public function index(Request $request)
 
 private function getAppointmentsData($user, $type, $page)
 {
+
     $query = $user->is_barber
         ? Appointment::where('barber_id', $user->id)->with('client')
-        : $user->appointments()->with('saloon');
+        : $user->appointments()->with(['saloon.mainPhoto']);
 
     if ($type === 'upcoming') {
         $query->where('appointment_time', '>=', now())

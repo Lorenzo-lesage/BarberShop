@@ -94,7 +94,7 @@ export default function Index({ clients, breadcrumbs }: Props) {
                                         <div className="flex items-center gap-4">
                                             <div className="flex h-10 w-10 items-center justify-center border border-border bg-background transition-colors group-hover:border-primary/50">
                                                 {client.profile_photo ? (
-                                                    <Avatar className="rounded-none h-full w-full">
+                                                    <Avatar className="h-full w-full rounded-none">
                                                         <AvatarImage
                                                             src={
                                                                 client.profile_photo

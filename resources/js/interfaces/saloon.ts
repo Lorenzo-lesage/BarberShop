@@ -9,8 +9,17 @@ export interface Appointment {
     barber_id: number;
 
     // Relazioni (Opzionali, caricate tramite .with() in Laravel)
-    client?: { id: number; name: string; email: string };
-    saloon?: { id: number; name: string };
+    client?: {
+        id: number;
+        name: string;
+        email: string;
+        profile_photo: string | null;
+    };
+    saloon?: {
+        id: number;
+        name: string;
+        main_photo: { id: number; url: string; is_main: boolean; path: string };
+    };
     barber?: {
         id: number;
         name: string;
