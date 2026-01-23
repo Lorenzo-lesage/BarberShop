@@ -70,13 +70,13 @@ export default function SearchBar({ filters, routeName }: SearchBarProps) {
         <div className="group relative w-full max-w-md">
             {/* Label Tecnica Superiore */}
             <div className="mb-2 flex items-center justify-between px-1">
-                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">
+                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground">
                     {isLoading ? 'Scanning Registry...' : 'Search Registry'}
                 </label>
                 {isLoading && (
                     <div className="h-1 w-12 animate-pulse bg-primary" />
                 )}
-                <span className="font-mono text-[9px] italic text-muted-foreground/30">
+                <span className="font-mono text-[9px] italic text-muted-foreground">
                     {search.length > 0
                         ? `Filtering: ${search.length}ch`
                         : 'Waiting for input...'}
@@ -92,7 +92,7 @@ export default function SearchBar({ filters, routeName }: SearchBarProps) {
                             'transition-all duration-300',
                             search.length > 0
                                 ? 'rotate-90 scale-110 text-primary'
-                                : 'text-muted-foreground/40',
+                                : 'text-muted-foreground',
                         )}
                     />
                 </div>
@@ -100,8 +100,8 @@ export default function SearchBar({ filters, routeName }: SearchBarProps) {
                 <Input
                     placeholder="CITY, PROVINCE, REGION..."
                     className={cn(
-                        'h-12 w-full rounded-none border-border bg-background pl-12 pr-4 text-xs font-bold uppercase tracking-widest transition-all',
-                        'placeholder:text-[10px] placeholder:font-medium placeholder:tracking-[0.2em] placeholder:text-muted-foreground/30',
+                        'h-12 w-full rounded-none border-primary/30 bg-background pl-12 pr-4 text-xs font-bold uppercase tracking-widest transition-all',
+                        'placeholder:text-[10px] placeholder:font-medium placeholder:tracking-[0.2em] placeholder:text-muted-foreground',
                         'focus-visible:border-primary focus-visible:bg-primary/5 focus-visible:ring-0',
                         search.length > 0 && 'border-primary/50',
                     )}

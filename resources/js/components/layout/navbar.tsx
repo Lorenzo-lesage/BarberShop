@@ -13,10 +13,21 @@ import ThemeSwitcher from '@/components/ThemeSwitcher';
 import { LogIn } from 'lucide-react';
 
 export default function Navbar() {
+    /*
+    |-----------------------------------------------------------------------
+    | Data
+    |-----------------------------------------------------------------------
+    */
+
     const { auth } = usePage<PageProps>().props;
     const [scrolled, setScrolled] = useState(false);
 
-    // Monitoriamo lo scroll
+    /*
+    |-----------------------------------------------------------------------
+    | Hooks
+    |-----------------------------------------------------------------------
+    */
+
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
@@ -25,24 +36,30 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    /*
+    |-----------------------------------------------------------------------
+    | Render
+    |-----------------------------------------------------------------------
+    */
+
     return (
         <nav
             className={cn(
-                'fixed left-0 right-0 top-0 z-50 transition-all duration-500 ease-in-out',
+                'fixed left-0 right-0 top-0 z-50 backdrop-blur-[3px] transition-all duration-500 ease-in-out',
                 scrolled
-                    ? 'border-b border-border bg-background/80 backdrop-blur-md'
-                    : 'border-b border-transparent bg-transparent',
+                    ? 'bg-background/50 backdrop-blur-lg'
+                    : 'bg-transparent',
             )}
         >
             {/* 1. BANNER SUPERIORE (Scompare allo scroll) */}
             <div
                 className={cn(
-                    'overflow-hidden border-b border-border/10 bg-foreground/5 transition-all duration-500 ease-in-out',
+                    'overflow-hidden border-b border-border/10 bg-background/50 transition-all duration-500 ease-in-out',
                     scrolled ? 'max-h-0 opacity-0' : 'max-h-10 opacity-100',
                 )}
             >
                 <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 md:px-12">
-                    <span className="text-[8px] font-black uppercase tracking-[0.4em] text-muted-foreground/60">
+                    <span className="animate-pulse text-[8px] font-black uppercase tracking-[0.4em] text-primary">
                         Official BarberShop — V1
                     </span>
                     <span className="animate-pulse text-[8px] font-black uppercase tracking-[0.4em] text-primary">
@@ -55,7 +72,7 @@ export default function Navbar() {
             <div
                 className={cn(
                     'mx-auto flex max-w-7xl items-center justify-between px-6 transition-all duration-500 md:px-12',
-                    scrolled ? 'h-16' : 'h-24',
+                    scrolled ? 'h-16' : 'h-16',
                 )}
             >
                 {/* Logo */}
@@ -73,13 +90,13 @@ export default function Navbar() {
                     </Link>
                     <div
                         className={cn(
-                            'h-4 w-[1px] bg-border transition-opacity duration-500',
+                            'h-4 w-[1px] bg-border bg-primary transition-opacity duration-500',
                             scrolled ? 'opacity-100' : 'opacity-0',
                         )}
                     />
                     <span
                         className={cn(
-                            'hidden text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/50 transition-all md:block',
+                            'hidden text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground transition-all md:block',
                             scrolled
                                 ? 'translate-x-0 opacity-100'
                                 : '-translate-x-4 opacity-0',
@@ -120,7 +137,7 @@ export default function Navbar() {
                         </div>
                     )}
 
-                    <div className="flex items-center gap-2 border-l border-border/20 pl-6">
+                    <div className="flex items-center gap-2 border-l border-primary/40 pl-6">
                         <ThemeSwitcher />
                         <div className="md:hidden">
                             <MobileMenu />

@@ -19,6 +19,12 @@ export default function ThemeSwitcher() {
     const theme = useThemeStore((state) => state.theme);
     const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
+    /*
+    |----------------------------------------------------------------
+    | Hooks
+    |----------------------------------------------------------------
+    */
+
     useEffect(() => {
         const root = window.document.documentElement;
         if (theme === 'dark') {
@@ -49,7 +55,7 @@ export default function ThemeSwitcher() {
                         transition={{ duration: 0.2 }}
                         className="absolute inset-0 flex items-center justify-center"
                     >
-                        <Sun className="text-amber-500" size={18} />
+                        <Sun className="text-amber-800" size={18} />
                     </motion.div>
                 ) : (
                     <motion.div

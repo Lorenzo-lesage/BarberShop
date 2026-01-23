@@ -38,7 +38,7 @@ export function SaloonCarousel({ saloons }: { saloons: Saloon[] }) {
                         return (
                             <CarouselItem
                                 key={saloon.id}
-                                className="basis-[85%] pl-4 sm:basis-[50%] lg:basis-[33.333%] xl:basis-[25%]"
+                                className="basis-[55%] pl-2 sm:basis-[29%] md:basis-[33.333%] lg:basis-[28%] xl:basis-[22%]"
                             >
                                 <SaloonCard
                                     saloon={saloon}

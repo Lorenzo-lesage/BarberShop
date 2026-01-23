@@ -1,4 +1,4 @@
-import hero from '@/assets/hero.jpg';
+import bg2 from '@/assets/bg2.jpg';
 
 // Layout Components
 import { SaloonCarousel } from '@/components/publicPagesComponents/welcome/SaloonCarousel';
@@ -44,11 +44,11 @@ export default function Welcome({
         <AppShell>
             <Head title="BarberShop | The Artisan Standard" />
 
-            <div className="min-h-screen w-full overflow-hidden selection:bg-primary selection:text-primary-foreground">
+            <div className="w-full overflow-hidden selection:bg-primary selection:text-primary-foreground">
                 {/* --- TUO SFONDO ORIGINALE (INTEGRATO CON LAYER DI PROFONDITÀ) --- */}
                 <div
                     style={{
-                        backgroundImage: `linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background)) 100%), url(${hero})`,
+                        backgroundImage: `linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background)) 100%), url(${bg2})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',

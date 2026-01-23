@@ -27,7 +27,7 @@ export function SaloonCard({
     return (
         <div
             className={cn(
-                'group relative aspect-[3/4] overflow-hidden bg-neutral-900',
+                'group relative aspect-[3/4] overflow-hidden bg-background',
                 className,
             )}
         >
@@ -52,7 +52,7 @@ export function SaloonCard({
                 <div className="flex items-start justify-between">
                     <Badge
                         className={cn(
-                            'rounded-none border-none bg-white/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.2em] shadow-2xl',
+                            'md:traking-[0.2em] rounded-none border-none bg-white/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.1em] shadow-2xl',
                             isOwner
                                 ? 'bg-white text-black shadow-[0_0_10px_rgba(var(--primary),0.8)]'
                                 : 'bg-white/10 text-white backdrop-blur-xl',
@@ -76,12 +76,12 @@ export function SaloonCard({
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <div className="space-y-0">
-                            <h3 className="text-3xl font-black uppercase italic leading-none tracking-tighter transition-transform duration-500 group-hover:-translate-y-1">
+                            <h3 className="font-black uppercase italic leading-none tracking-tighter transition-transform duration-500 group-hover:-translate-y-1 lg:text-3xl">
                                 {saloon.name}
                             </h3>
-                            <div className="flex items-center gap-2 pt-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white/50">
-                                <MapPin size={10} className="text-primary" />
-                                <span>
+                            <div className="flex items-center gap-2 pt-1 text-[8px] font-bold uppercase tracking-tighter text-white/80 lg:text-[11px]">
+                                <MapPin size={10} className="text-white" />
+                                <span className="line-clamp-1 shadow-lg">
                                     {saloon.city} — {saloon.province}
                                 </span>
                             </div>
@@ -92,7 +92,7 @@ export function SaloonCard({
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <p className="line-clamp-1 text-[10px] font-medium uppercase tracking-widest text-white/60">
+                        <p className="line-clamp-1 text-[8px] font-medium uppercase tracking-widest text-white/60 lg:text-[10px]">
                             Directed by{' '}
                             <span className="font-black italic text-white">
                                 {saloon.barber?.name}
@@ -102,14 +102,14 @@ export function SaloonCard({
                         <Link
                             href={route(routeName, saloon.id)}
                             prefetch
-                            className="translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100"
+                            className="opacity-100 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 lg:translate-y-4 lg:opacity-0"
                         >
                             <Button
                                 variant="outline"
-                                className="h-12 w-full rounded-none border-white/20 bg-white/5 text-[10px] font-black uppercase tracking-[0.3em] text-white backdrop-blur-md transition-all hover:border-white hover:bg-white hover:text-black"
+                                className="group h-11 w-full rounded-none border-white/20 bg-white/5 px-4 text-[9px] font-black uppercase tracking-[0.08em] text-white backdrop-blur-md transition-all hover:border-white hover:bg-white hover:text-black md:h-12 md:px-6 md:text-xs lg:tracking-[0.3em]"
                             >
                                 {isOwner ? 'Manage Registry' : 'Secure Session'}
-                                <ArrowRight className="ml-2 h-3 w-3 transition-transform duration-300 group-hover:translate-x-1" />
+                                <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-1 lg:ml-2 lg:h-4 lg:w-4" />
                             </Button>
                         </Link>
                     </div>

@@ -305,6 +305,7 @@ export default function BookingComponent({ saloon }: Props) {
             },
         );
     };
+
     /*
     |-------------------------------------------------------------------
     | Render

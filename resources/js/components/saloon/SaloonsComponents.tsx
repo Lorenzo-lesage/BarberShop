@@ -95,7 +95,7 @@ export default function SaloonsComponent({
     }
 
     return (
-        <div className="grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {saloons.map((saloon) => (
                 <SaloonCard
                     key={saloon.id}
