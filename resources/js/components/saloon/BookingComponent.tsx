@@ -452,7 +452,7 @@ export default function BookingComponent({ saloon }: Props) {
                                                 (photo, index) => (
                                                     <CarouselItem
                                                         key={photo.id}
-                                                        className="basis-full pl-2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                                                        className="basis-[38%] pl-2 sm:basis-[29%] md:basis-[33.333%] lg:basis-[28%] xl:basis-[22%]"
                                                     >
                                                         <DialogTrigger
                                                             asChild
@@ -466,6 +466,9 @@ export default function BookingComponent({ saloon }: Props) {
                                                                 <SaloonImage
                                                                     src={`/storage/${photo.path}`}
                                                                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                                    alt={
+                                                                        saloon?.name
+                                                                    }
                                                                 />
                                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                                                                     <span className="border border-white/20 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-sm">
@@ -654,27 +657,21 @@ export default function BookingComponent({ saloon }: Props) {
                                                     </Label>
                                                 </div>
 
-                                                <div className="calendar-artisan-wrapper">
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={selectedDate}
-                                                        onSelect={
-                                                            handleDateChange
-                                                        }
-                                                        disabled={
-                                                            isDateDisabled
-                                                        }
-                                                        className="mx-auto border-none p-0"
-                                                        classNames={{
-                                                            day_selected:
-                                                                'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
-                                                            day_today:
-                                                                'bg-muted text-foreground',
-                                                            head_cell:
-                                                                'text-muted-foreground font-black uppercase text-[10px] tracking-tighter',
-                                                        }}
-                                                    />
-                                                </div>
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={selectedDate}
+                                                    onSelect={handleDateChange}
+                                                    disabled={isDateDisabled}
+                                                    className="mx-auto w-full border-none p-0"
+                                                    classNames={{
+                                                        day_selected:
+                                                            'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
+                                                        day_today:
+                                                            'bg-muted text-foreground',
+                                                        head_cell:
+                                                            'text-muted-foreground font-black uppercase text-[10px] tracking-tighter',
+                                                    }}
+                                                />
 
                                                 {isHoliday(selectedDate!) && (
                                                     <div className="border-l-2 border-destructive bg-destructive/5 p-4 transition-all animate-in fade-in slide-in-from-left-2">

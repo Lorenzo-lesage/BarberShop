@@ -3,7 +3,7 @@ import 'react-lazy-load-image-component/src/effects/blur.css'; // Effetto sfocat
 
 interface Props {
     src: string;
-    alt: string;
+    alt: string | undefined;
     className?: string;
 }
 
