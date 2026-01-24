@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/sidebar';
 
 // Icons
-import { BadgeCheck, ChevronsUpDown, LogOut, Sparkles } from 'lucide-react';
+import { Power, Shield, Terminal, User as UserIcon } from 'lucide-react';
 
 // Toast
 import { toast } from 'sonner';
@@ -36,76 +36,62 @@ export function NavUser({
     user: {
         name: string;
         email: string;
-        profile_photo_url: string;
+        profile_photo_url: string | undefined;
     };
 }) {
     /*
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     | Data
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     */
 
     const { isMobile } = useSidebar();
     const { flash } = usePage<AuthProps>().props;
 
     /*
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     | Hooks
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     */
 
-    /**
-     * Displays toast notifications based on flash messages.
-     */
     useEffect(() => {
         if (flash?.toast) {
             const { type, message, description } = flash.toast;
-
             setTimeout(() => {
-                if (type === 'success') {
-                    toast.success(message, { description });
-                } else if (type === 'error') {
-                    toast.error(message, { description });
-                }
+                const toastFn =
+                    type === 'success' ? toast.success : toast.error;
+                toastFn(message, { description });
             }, 100);
         }
     }, [flash]);
 
     /*
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     | Methods
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     */
+
     /**
-     * Handles user logout with feedback toasts.
+     * Handle logout
      */
     const handleLogout = () => {
-        const loadingToast = toast.loading('Logging out...');
-
+        const loadingToast = toast.loading('Terminating_Session...');
         router.post(
             route('logout'),
             {},
             {
-                onSuccess: () => {
-                    toast.success('Logged out!', {
-                        id: loadingToast,
-                        description: 'See you soon!',
-                    });
-                },
-                onError: () => {
-                    toast.error('Logout failed', {
-                        id: loadingToast,
-                        description: 'Please try again',
-                    });
-                },
+                onSuccess: () =>
+                    toast.success('Session_Closed', { id: loadingToast }),
+                onError: () =>
+                    toast.error('Termination_Failed', { id: loadingToast }),
             },
         );
     };
 
     /*
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     | Render
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     */
 
     return (
@@ -115,92 +101,96 @@ export function NavUser({
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             size="lg"
-                            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                            className="rounded-none border border-transparent transition-all data-[state=open]:border-border data-[state=open]:bg-muted/50"
                         >
-                            <Avatar className="h-8 w-8 rounded-lg">
+                            <Avatar className="h-8 w-8 rounded-none border border-border/50">
                                 <AvatarImage
                                     src={user.profile_photo_url}
                                     alt={user.name}
+                                    className="object-cover"
                                 />
-                                <AvatarFallback className="rounded-lg">
-                                    {user.name
-                                        .split(' ')
-                                        .map((n) => n[0])
-                                        .join('')
-                                        .toUpperCase()}
+                                <AvatarFallback className="rounded-none bg-primary/10 text-[10px] font-black">
+                                    {user.name.substring(0, 2).toUpperCase()}
                                 </AvatarFallback>
                             </Avatar>
-                            <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-medium">
-                                    {user.name}
+                            <div className="grid flex-1 text-left text-xs leading-tight">
+                                <span className="truncate font-black uppercase tracking-tighter">
+                                    {user.name.replace(' ', '_')}
                                 </span>
-                                <span className="truncate text-xs">
+                                <span className="truncate font-mono text-[9px] opacity-50">
                                     {user.email}
                                 </span>
                             </div>
-                            <ChevronsUpDown className="ml-auto size-4" />
+                            <Terminal className="ml-auto size-3 opacity-30" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
+
                     <DropdownMenuContent
-                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-none border-border bg-background p-0 shadow-2xl"
                         side={isMobile ? 'bottom' : 'right'}
                         align="end"
-                        sideOffset={4}
+                        sideOffset={8}
                     >
-                        <DropdownMenuLabel className="p-0 font-normal">
-                            <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                                <Avatar className="h-8 w-8 rounded-lg">
+                        <DropdownMenuLabel className="bg-muted/30 p-4 font-normal">
+                            <div className="flex items-center gap-3">
+                                <Avatar className="h-10 w-10 rounded-none border border-primary/20">
                                     <AvatarImage
                                         src={user.profile_photo_url}
                                         alt={user.name}
                                     />
-                                    <AvatarFallback className="rounded-lg">
-                                        {user.name
-                                            .split(' ')
-                                            .map((n) => n[0])
-                                            .join('')
-                                            .toUpperCase()}
+                                    <AvatarFallback className="rounded-none text-xs font-black">
+                                        {user.name[0]}
                                     </AvatarFallback>
                                 </Avatar>
-                                <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-medium">
+                                <div className="grid flex-1 text-left leading-tight">
+                                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+                                        Active_User
+                                    </div>
+                                    <span className="truncate text-sm font-black uppercase italic tracking-tighter">
                                         {user.name}
                                     </span>
-                                    <span className="truncate text-xs">
+                                    <span className="truncate font-mono text-[9px] opacity-50">
                                         {user.email}
                                     </span>
                                 </div>
                             </div>
                         </DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem
-                                onClick={() => router.visit('/')}
-                                className="cursor-pointer"
-                            >
-                                <Sparkles />
-                                Homepage
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuGroup>
+
+                        <DropdownMenuSeparator className="m-0" />
+
+                        <DropdownMenuGroup className="p-2">
                             <DropdownMenuItem
                                 onClick={() =>
                                     router.visit(route('profile.edit'))
                                 }
-                                className="cursor-pointer"
+                                className="cursor-pointer gap-3 rounded-none px-3 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-primary/5"
                             >
-                                <BadgeCheck />
-                                Profile
+                                <Shield size={14} className="text-primary/60" />
+                                Account_Security
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => router.visit('/')}
+                                className="cursor-pointer gap-3 rounded-none px-3 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-primary/5"
+                            >
+                                <UserIcon
+                                    size={14}
+                                    className="text-primary/60"
+                                />
+                                Public_View
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                            onClick={handleLogout}
-                            className="cursor-pointer"
-                        >
-                            <LogOut />
-                            Log out
-                        </DropdownMenuItem>
+
+                        <DropdownMenuSeparator className="m-0" />
+
+                        <div className="p-2">
+                            <DropdownMenuItem
+                                onClick={handleLogout}
+                                className="cursor-pointer gap-3 rounded-none px-3 py-2 text-[10px] font-black uppercase tracking-widest text-destructive transition-colors hover:bg-destructive/5 focus:bg-destructive focus:text-white"
+                            >
+                                <Power size={14} />
+                                Terminate_Session
+                            </DropdownMenuItem>
+                        </div>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>

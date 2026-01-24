@@ -27,16 +27,16 @@ export function SaloonCard({
     return (
         <div
             className={cn(
-                'group relative aspect-[3/4] overflow-hidden bg-background',
+                'group relative aspect-[3/4] overflow-hidden border-none',
                 className,
             )}
         >
             {/* --- VISUAL LAYER --- */}
             <div
-                className="absolute inset-0 z-0 transition-transform duration-1000 ease-out group-hover:scale-110"
+                className="absolute inset-0 z-0 h-[101%] transition-transform duration-1000 ease-out group-hover:scale-110"
                 style={{
                     backgroundImage: saloon.main_photo
-                        ? `url('/storage/${saloon.main_photo.path}')`
+                        ? `linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background)) 100%), url('/storage/${saloon.main_photo.path}')`
                         : 'none',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
@@ -44,10 +44,9 @@ export function SaloonCard({
             />
 
             {/* Cinematic Overlay */}
-            <div className="absolute inset-0 z-10 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-90" />
 
             {/* --- CONTENT LAYER --- */}
-            <div className="relative z-20 flex h-full flex-col justify-between p-6 text-white">
+            <div className="relative z-20 flex h-full flex-col justify-between p-6">
                 {/* Header: Status Badge */}
                 <div className="flex items-start justify-between">
                     <Badge
@@ -64,10 +63,10 @@ export function SaloonCard({
                     {/* Active Indicator Dot */}
                     <div
                         className={cn(
-                            'h-1.5 w-1.5 rounded-full bg-white/40 transition-all duration-500 group-hover:bg-white group-hover:shadow-[0_0_8px_#fff]',
+                            'h-1.5 w-1.5 rounded-full bg-white/40 transition-all duration-500 group-hover:bg-primary group-hover:shadow-[0_0_8px_#fff]',
                             isOwner
-                                ? 'bg-black/40 group-hover:shadow-[0_0_10px_rgba(var(--primary),0.8)]'
-                                : 'bg-white/40 group-hover:bg-primary group-hover:shadow-[0_0_8px_#fff]',
+                                ? 'bg-primary/40 group-hover:shadow-[0_0_10px_rgba(var(--primary),0.8)]'
+                                : 'bg-primary/40 group-hover:bg-primary group-hover:shadow-[0_0_8px_#fff]',
                         )}
                     />
                 </div>
@@ -76,25 +75,25 @@ export function SaloonCard({
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <div className="space-y-0">
-                            <h3 className="font-black uppercase italic leading-none tracking-tighter transition-transform duration-500 group-hover:-translate-y-1 lg:text-3xl">
+                            <h3 className="font-black uppercase italic leading-none tracking-tighter text-primary transition-transform duration-500 group-hover:-translate-y-1 lg:text-3xl">
                                 {saloon.name}
                             </h3>
-                            <div className="flex items-center gap-2 pt-1 text-[8px] font-bold uppercase tracking-tighter text-white/80 lg:text-[11px]">
-                                <MapPin size={10} className="text-white" />
-                                <span className="line-clamp-1 shadow-lg">
+                            <div className="flex items-center gap-2 pt-1 text-[8px] font-bold uppercase tracking-tighter lg:text-[11px]">
+                                <MapPin size={10} className="text-primary" />
+                                <span className="line-clamp-1 text-primary/50 shadow-lg">
                                     {saloon.city} — {saloon.province}
                                 </span>
                             </div>
                         </div>
 
                         {/* Artisan Divider */}
-                        <div className="h-[1px] w-8 bg-white transition-all duration-700 ease-in-out group-hover:w-full group-hover:bg-white" />
+                        <div className="h-[1px] w-8 bg-primary/80 transition-all duration-700 ease-in-out group-hover:w-full group-hover:bg-primary" />
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <p className="line-clamp-1 text-[8px] font-medium uppercase tracking-widest text-white/60 lg:text-[10px]">
+                        <p className="line-clamp-1 text-[8px] font-medium uppercase tracking-widest text-primary lg:text-[10px]">
                             Directed by{' '}
-                            <span className="font-black italic text-white">
+                            <span className="font-black italic text-primary/50">
                                 {saloon.barber?.name}
                             </span>
                         </p>
@@ -106,7 +105,7 @@ export function SaloonCard({
                         >
                             <Button
                                 variant="outline"
-                                className="group h-11 w-full rounded-none border-white/20 bg-white/5 px-4 text-[9px] font-black uppercase tracking-[0.08em] text-white backdrop-blur-md transition-all hover:border-white hover:bg-white hover:text-black md:h-12 md:px-6 md:text-xs lg:tracking-[0.3em]"
+                                className="group h-11 w-full rounded-none border-primary/20 bg-primary/5 px-4 text-[9px] font-black uppercase tracking-[0.08em] text-primary backdrop-blur-md transition-all hover:border-white hover:bg-white hover:text-black md:h-12 md:px-6 md:text-xs lg:tracking-[0.3em]"
                             >
                                 {isOwner ? 'Manage Registry' : 'Secure Session'}
                                 <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-1 lg:ml-2 lg:h-4 lg:w-4" />
@@ -115,9 +114,6 @@ export function SaloonCard({
                     </div>
                 </div>
             </div>
-
-            {/* Corner Accent (Solo visibile in hover) */}
-            <div className="absolute bottom-0 right-0 h-1 w-1 bg-primary opacity-0 transition-opacity group-hover:opacity-100" />
         </div>
     );
 }

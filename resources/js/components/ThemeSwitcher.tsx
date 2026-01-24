@@ -55,7 +55,7 @@ export default function ThemeSwitcher() {
                         transition={{ duration: 0.2 }}
                         className="absolute inset-0 flex items-center justify-center"
                     >
-                        <Sun className="text-amber-800" size={18} />
+                        <Sun className="text-amber-400" size={18} />
                     </motion.div>
                 ) : (
                     <motion.div

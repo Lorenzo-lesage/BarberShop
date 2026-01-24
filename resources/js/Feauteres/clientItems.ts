@@ -1,13 +1,19 @@
-import { Clock, Store } from 'lucide-react';
+import { History, Search, ShieldCheck } from 'lucide-react';
 
 export const clientItems = [
     {
-        label: 'My Appointments',
+        label: 'Session_History',
         href: '/dashboard/appointments',
-        icon: Clock,
+        icon: History,
     },
-
-    //  { label: 'Barbers', href: '/dashboard/barbers', icon: Scissors }, // Per visualizzare i Barbieri
-    { label: 'Saloons', href: '/dashboard/saloons', icon: Store }, // Per visualizzare i Saloni
-    { label: 'My Saloons', href: '/dashboard/my-saloons', icon: Store },
+    {
+        label: 'Explore_Network',
+        href: '/dashboard/saloons',
+        icon: Search,
+    },
+    {
+        label: 'Affiliated_Saloons',
+        href: '/dashboard/my-saloons',
+        icon: ShieldCheck,
+    },
 ];

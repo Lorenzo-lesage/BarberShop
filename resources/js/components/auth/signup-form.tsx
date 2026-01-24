@@ -107,7 +107,7 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                             <Input
                                 id="name"
                                 placeholder="IDENTIFY YOURSELF"
-                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-border bg-transparent px-0 text-sm font-bold uppercase tracking-widest placeholder:text-muted-foreground/20 focus-visible:border-primary focus-visible:ring-0"
+                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold uppercase tracking-widest placeholder:text-muted-foreground/40 focus-visible:border-primary focus-visible:ring-0"
                                 value={data.name}
                                 onChange={(e) =>
                                     setData('name', e.target.value)
@@ -116,7 +116,7 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                             />
                             <UserIcon
                                 size={14}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 opacity-20"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 opacity-40"
                             />
                         </div>
                         {errors.name && (
@@ -139,7 +139,7 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                                 id="email"
                                 type="email"
                                 placeholder="m@example.com"
-                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-border bg-transparent px-0 text-sm font-bold  tracking-widest placeholder:text-muted-foreground/20 focus-visible:border-primary focus-visible:ring-0"
+                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-widest placeholder:text-muted-foreground/40 focus-visible:border-primary focus-visible:ring-0"
                                 value={data.email}
                                 onChange={(e) =>
                                     setData('email', e.target.value)
@@ -148,7 +148,7 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                             />
                             <Mail
                                 size={14}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 opacity-20"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 opacity-40"
                             />
                         </div>
                         {errors.email && (
@@ -170,7 +170,7 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                             <Input
                                 id="password"
                                 type={showPassword ? 'text' : 'password'}
-                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-border bg-transparent px-0 text-sm font-bold tracking-[0.4em] focus-visible:border-primary focus-visible:ring-0"
+                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-[0.4em] focus-visible:border-primary focus-visible:ring-0"
                                 value={data.password}
                                 onChange={(e) =>
                                     setData('password', e.target.value)
@@ -203,7 +203,7 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                             <Input
                                 id="password_confirmation"
                                 type={showPasswordConfirm ? 'text' : 'password'}
-                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-border bg-transparent px-0 text-sm font-bold tracking-[0.4em] focus-visible:border-primary focus-visible:ring-0"
+                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-[0.4em] focus-visible:border-primary focus-visible:ring-0"
                                 value={data.password_confirmation}
                                 onChange={(e) =>
                                     setData(

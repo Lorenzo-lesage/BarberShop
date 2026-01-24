@@ -113,12 +113,12 @@ export function LoginForm({
                                 onChange={(e) =>
                                     setData('email', e.target.value)
                                 }
-                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-border bg-transparent px-0 text-sm font-bold tracking-widest placeholder:text-muted-foreground/20 focus-visible:border-primary focus-visible:ring-0"
+                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-widest placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0"
                                 required
                             />
                             <Mail
                                 size={14}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 opacity-20"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 opacity-40"
                             />
                         </div>
                         {errors.email && (
@@ -154,12 +154,12 @@ export function LoginForm({
                                 onChange={(e) =>
                                     setData('password', e.target.value)
                                 }
-                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-border bg-transparent px-0 text-sm font-bold tracking-[0.4em] focus-visible:border-primary focus-visible:ring-0"
+                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-[0.4em] focus-visible:border-primary focus-visible:ring-0"
                                 required
                             />
                             <button
                                 type="button"
-                                className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground/50 hover:text-primary"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
                                 {showPassword ? (

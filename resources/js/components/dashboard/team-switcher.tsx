@@ -1,9 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Link } from '@inertiajs/react';
-
-// Interfaces
+import { Link, usePage } from '@inertiajs/react';
 
 // Icons
 import { User } from 'lucide-react';
@@ -17,40 +15,75 @@ import {
 } from '@/components/ui/sidebar';
 
 export function TeamSwitcher() {
+    /*
+    |-----------------------------------------------------------------------
+    | Data
+    |-----------------------------------------------------------------------
+    */
+
     const { open } = useSidebar();
+    const { auth } = usePage().props;
+
+    /*
+    |-----------------------------------------------------------------------
+    | Render
+    |-----------------------------------------------------------------------
+    */
 
     return (
         <SidebarMenu>
             <SidebarMenuItem>
                 <div
                     className={cn(
-                        'transition-all duration-300 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground',
-                        !open && 'px-0',
+                        'flex h-16 items-center transition-all duration-300',
+                        open ? 'justify-between px-4' : 'justify-center px-0',
                     )}
                 >
-                    <div
-                        className={cn(
-                            'flex w-full items-center justify-between px-0',
-                            !open && 'px-0',
-                        )}
-                    >
-                        <Link href="/">
+                    {/* --- AREA LOGO / BRAND --- */}
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href="/"
+                            className="flex items-center justify-center transition-transform hover:scale-105"
+                        >
                             <ApplicationLogo
                                 className={cn(
-                                    'h-8 fill-current text-gray-500',
-                                    !open && 'mx-auto',
+                                    'h-9 fill-current text-foreground transition-all',
                                 )}
                             />
                         </Link>
 
-                        {open ? (
-                            <div className="grid text-left text-sm leading-tight">
-                                <Link href={route('profile.edit')}>
-                                    <User />
-                                </Link>
+                        {open && (
+                            <div className="flex flex-col border-l border-border/60 pl-3">
+                                <span className="text-[10px] font-black uppercase leading-none tracking-[0.3em]">
+                                    Manage
+                                </span>
+                                <span className="text-[8px] font-bold uppercase tracking-widest text-primary/60">
+                                    {auth.user.is_barber
+                                        ? 'your saloon'
+                                        : 'Appointments'}
+                                </span>
                             </div>
-                        ) : null}
+                        )}
                     </div>
+
+                    {/* --- USER ACTION (Solo se aperto) --- */}
+                    {open && (
+                        <Link
+                            href={route('profile.edit')}
+                            className="group flex h-8 w-8 items-center justify-center border border-border bg-muted/20 transition-all hover:border-primary hover:bg-primary/5"
+                            title="Account_Settings"
+                        >
+                            <User
+                                size={14}
+                                className="text-muted-foreground transition-colors group-hover:text-primary"
+                            />
+                        </Link>
+                    )}
+
+                    {/* --- STATUS DOT (Solo se chiuso) --- */}
+                    {!open && (
+                        <div className="absolute bottom-2 h-1 w-1 animate-pulse rounded-full bg-primary" />
+                    )}
                 </div>
             </SidebarMenuItem>
         </SidebarMenu>

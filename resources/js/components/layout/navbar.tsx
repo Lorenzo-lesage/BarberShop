@@ -45,7 +45,7 @@ export default function Navbar() {
     return (
         <nav
             className={cn(
-                'fixed left-0 right-0 top-0 z-50 backdrop-blur-[3px] transition-all duration-500 ease-in-out',
+                'fixed left-0 right-0 top-0 z-50  transition-all duration-500 ease-in-out',
                 scrolled
                     ? 'bg-background/50 backdrop-blur-lg'
                     : 'bg-transparent',
@@ -54,7 +54,7 @@ export default function Navbar() {
             {/* 1. BANNER SUPERIORE (Scompare allo scroll) */}
             <div
                 className={cn(
-                    'overflow-hidden border-b border-border/10 bg-background/50 transition-all duration-500 ease-in-out',
+                    'overflow-hidden border-b border-border/10 bg-background/20 transition-all duration-500 ease-in-out',
                     scrolled ? 'max-h-0 opacity-0' : 'max-h-10 opacity-100',
                 )}
             >

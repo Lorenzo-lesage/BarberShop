@@ -148,13 +148,20 @@ Route::middleware('auth')->group(function () {
 
 
 
-
-
 Route::get('/barbers', function () {
     return Inertia::render('Public/Barbers');
 })->name('barbers');
 Route::get('/saloons', [SaloonController::class, 'index'])->name('saloons.index');
 Route::get('/saloons/{saloon}', [SaloonController::class, 'show'])->name('saloons.show');
 
+
+/**
+ * Routes for not found
+ */
+Route::fallback(function () {
+    return Inertia::render('Errors/NotFound')
+        ->toResponse(request())
+        ->setStatusCode(404);
+});
 
 require __DIR__ . '/auth.php';

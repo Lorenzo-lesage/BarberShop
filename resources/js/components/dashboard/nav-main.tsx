@@ -1,9 +1,10 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 
 // Icons
-import { type LucideIcon } from 'lucide-react';
+import { type LucideIcon, Activity, ChevronRight } from 'lucide-react';
 
 // Components
 import {
@@ -23,53 +24,69 @@ export function NavMain({
         icon: LucideIcon;
     }[];
 }) {
-    /*
-    |-----------------------------------------------------------------------
-    | Methods
-    |-----------------------------------------------------------------------
-    */
-
-    const HandleRoute = (href: string) => {
-        window.location.href = href;
-    };
-
-    /*
-    |-----------------------------------------------------------------------
-    | Render
-    |-----------------------------------------------------------------------
-    */
-
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>Managemant</SidebarGroupLabel>
-            <SidebarMenu>
+            <SidebarGroupLabel className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/30">
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-primary/70">
+                    <Activity size={10} /> Main_Terminal
+                </div>
+            </SidebarGroupLabel>
+
+            <SidebarMenu className="gap-1">
                 {items.map((item) => {
-                    const isActive = window.location.pathname === item.href;
+                    // Utilizziamo route().current() se disponibile, o un confronto pulito dell'URL
+                    const isActive =
+                        route().current(item.href) ||
+                        window.location.pathname === item.href;
 
                     return (
                         <SidebarMenuItem key={item.label}>
-                            <Link href={item.href} prefetch>
-                                <SidebarMenuButton tooltip={item.label}>
+                            <SidebarMenuButton
+                                asChild
+                                tooltip={item.label}
+                                className={cn(
+                                    'group/menu relative h-11 rounded-none border-l-2 transition-all duration-200',
+                                    isActive
+                                        ? 'border-primary bg-primary/5 text-foreground'
+                                        : 'border-transparent text-muted-foreground hover:bg-muted hover:text-foreground',
+                                )}
+                            >
+                                <Link
+                                    href={item.href}
+                                    prefetch
+                                    className="flex w-full items-center px-3"
+                                >
                                     {item.icon && (
                                         <item.icon
-                                            className={`transition-all duration-300 ease-in-out ${
+                                            size={18}
+                                            className={cn(
+                                                'transition-transform duration-300',
                                                 isActive
-                                                    ? 'scale-125 text-primary'
-                                                    : 'scale-100 opacity-70'
-                                            }`}
+                                                    ? 'scale-110 text-primary'
+                                                    : 'opacity-50 group-hover/menu:opacity-100',
+                                            )}
                                         />
                                     )}
+
                                     <span
-                                        className={
+                                        className={cn(
+                                            'ml-3 text-[11px] font-black uppercase tracking-widest transition-all',
                                             isActive
-                                                ? 'font-black'
-                                                : 'opacity-70'
-                                        }
+                                                ? 'translate-x-1'
+                                                : 'group-hover/menu:translate-x-1',
+                                        )}
                                     >
-                                        {item.label}
+                                        {item.label.replace(/\s+/g, '_')}
                                     </span>
-                                </SidebarMenuButton>
-                            </Link>
+
+                                    {isActive && (
+                                        <ChevronRight
+                                            size={12}
+                                            className="ml-auto animate-pulse text-primary"
+                                        />
+                                    )}
+                                </Link>
+                            </SidebarMenuButton>
                         </SidebarMenuItem>
                     );
                 })}

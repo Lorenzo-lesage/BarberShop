@@ -1,4 +1,4 @@
-import bg2 from '@/assets/bg2.jpg';
+import hero from '@/assets/hero.jpg';
 
 // Layout Components
 import { SaloonCarousel } from '@/components/publicPagesComponents/welcome/SaloonCarousel';
@@ -48,7 +48,7 @@ export default function Welcome({
                 {/* --- TUO SFONDO ORIGINALE (INTEGRATO CON LAYER DI PROFONDITÀ) --- */}
                 <div
                     style={{
-                        backgroundImage: `linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background)) 100%), url(${bg2})`,
+                        backgroundImage: `linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background)) 100%), url(${hero})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
@@ -114,9 +114,6 @@ export default function Welcome({
 
                     {/* --- FEATURED SECTION: THE ELITE NETWORK --- */}
                     <section className="relative overflow-hidden bg-background py-40 transition-colors duration-500">
-                        {/* Background accent decorativo - un fascio di luce sottile */}
-                        <div className="absolute left-1/2 top-0 h-[1px] w-full -translate-x-1/2 bg-gradient-to-r from-transparent via-border to-transparent" />
-
                         <div className="container mx-auto px-6 md:px-12">
                             <div className="relative mb-24 flex flex-col items-start justify-between gap-12 lg:flex-row lg:items-end">
                                 <div className="space-y-6">
@@ -153,7 +150,7 @@ export default function Welcome({
 
                             {/* Carousel Container: eliminiamo il box grigio pesante e usiamo un'ombra soffusa */}
                             <div className="relative">
-                                <div className="absolute -inset-4 bg-muted/5 blur-3xl dark:bg-primary/[0.02]" />
+                                <div className="absolute -inset-4 bg-primary/5 blur-3xl dark:bg-primary/[0.02]" />
                                 <div className="relative z-10">
                                     <SaloonCarousel saloons={saloons} />
                                 </div>
@@ -169,7 +166,9 @@ export default function Welcome({
                     </section>
 
                     {/* --- FEATURES: BENTO LOGIC 2.0 --- */}
-                    <main className="container mx-auto px-6 pb-40 md:px-12">
+                    <section className="relative flex items-center bg-background px-6 py-40 md:px-12">
+                        {/* Background accent decorativo - un fascio di luce sottile */}
+                        <div className="absolute left-1/2 top-0 h-[1px] w-full -translate-x-1/2 bg-gradient-to-r from-transparent via-border to-primary" />
                         <div className="grid grid-cols-1 gap-1 md:grid-cols-3">
                             {[
                                 {
@@ -195,7 +194,7 @@ export default function Welcome({
                             ].map((f, i) => (
                                 <div
                                     key={i}
-                                    className="group relative flex flex-col justify-between border border-white/[0.05] bg-[#0a0a0a]/40 p-12 transition-all duration-700 hover:bg-primary hover:text-primary-foreground"
+                                    className="group relative flex flex-col justify-between border border-primary/20 bg-background p-12 transition-all duration-700 hover:bg-primary hover:text-primary-foreground"
                                 >
                                     <div className="space-y-8">
                                         <div className="flex items-center justify-between">
@@ -219,12 +218,12 @@ export default function Welcome({
                                 </div>
                             ))}
                         </div>
-                    </main>
+                    </section>
 
                     {/* --- CTA: THE CONVERSION --- */}
                     {!auth?.user?.is_barber && (
-                        <section className="container mx-auto px-6 pb-40 md:px-12">
-                            <div className="group relative overflow-hidden bg-primary px-10 py-24 text-primary-foreground shadow-2xl transition-colors duration-500 dark:shadow-primary/10 md:px-24 md:py-32">
+                        <section className="mx-auto bg-foreground/20 px-6 md:px-0">
+                            <div className="group relative overflow-hidden px-10 py-24 text-primary-foreground transition-colors duration-500 dark:shadow-primary/10 md:px-24 md:py-32">
                                 {/* Texture a grana: invertiamo l'opacità in base al tema per renderla visibile ma elegante */}
                                 <div className="pointer-events-none absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] mix-blend-overlay dark:opacity-[0.03]" />
 

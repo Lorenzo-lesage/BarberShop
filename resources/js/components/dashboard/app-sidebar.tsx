@@ -34,26 +34,35 @@ export function AppSidebar({
     user: User;
 }) {
     /*
-    |-----------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     | Data
-    |-----------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     */
 
     const { auth } = usePage().props;
-    const isBarber = auth.user.is_barber;
+    const user = auth.user as User;
+    const isBarber = user.is_barber;
 
     const items = isBarber ? barberItems : clientItems;
 
+    /*
+    |---------------------------------------------------------------------------
+    | Methods
+    |---------------------------------------------------------------------------
+    */
+
     /**
-     * Appointments Items
+     * Appointments Items: Formattazione "Artisan"
+     * Estraiamo la data per passarla come stringa pulita
      */
     const appointmentItems =
-        auth.user.appointments?.map((app: Appointment) => ({
+        user.appointments?.map((app: Appointment) => ({
             id: app.id,
             name: isBarber
                 ? `${app.client?.name} (${format(new Date(app.appointment_time), 'dd/MM/yyyy HH:mm')})`
                 : `${app.saloon?.name} (${format(new Date(app.appointment_time), 'dd/MM/yyyy HH:mm')})`,
             icon: Clock,
+            url: `/appointments/${app.id}`,
         })) || [];
 
     /*
