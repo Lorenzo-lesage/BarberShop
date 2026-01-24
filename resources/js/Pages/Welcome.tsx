@@ -252,8 +252,9 @@ export default function Welcome({
                                                     className="border-border bg-popover text-popover-foreground shadow-xl"
                                                 >
                                                     <p className="p-1 text-[10px] font-bold uppercase tracking-widest">
-                                                        Pro Suite Access
-                                                        Included
+                                                        {auth?.user
+                                                            ? 'This is just for saloons owners, if you proceed you will not be able to book appointments to other barbers'
+                                                            : 'This is just for saloons owners'}
                                                     </p>
                                                 </TooltipContent>
                                             </Tooltip>
@@ -282,7 +283,7 @@ export default function Welcome({
                                                 }
                                             >
                                                 {auth?.user
-                                                    ? 'Switch to Pro'
+                                                    ? 'Manage your studio'
                                                     : 'Join the Network'}
                                             </Button>
                                         </Link>

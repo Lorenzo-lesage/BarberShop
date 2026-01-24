@@ -57,3 +57,21 @@ export interface Saloon {
     gallery?: string[];
     photos?: { id: number; url: string; is_main: boolean; path: string }[];
 }
+
+export interface DashboardProps {
+    nextAppointment: {
+        date: string;
+        time: string;
+        service: string;
+        barber: string;
+        barber_photo: string | null;
+        saloon: Saloon;
+    } | null;
+    history: Array<{
+        id: number;
+        date: string;
+        time: string;
+        barber: string;
+        saloon: Saloon;
+    }>;
+}

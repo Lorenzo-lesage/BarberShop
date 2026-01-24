@@ -364,7 +364,9 @@ export default function BookingComponent({ saloon }: Props) {
                                             className="text-primary"
                                         />
                                         <span>
-                                            {saloon.city}, {saloon.address}
+                                            {saloon.city}, {saloon.address} (
+                                            {saloon.province}) {saloon.region}{' '}
+                                            {saloon.cap}
                                         </span>
                                     </div>
                                 </div>

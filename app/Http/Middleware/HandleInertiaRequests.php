@@ -67,7 +67,8 @@ class HandleInertiaRequests extends Middleware
                         'appointments' => $appointments,
                         'profile_photo' => $user->profile_photo,
                         'profile_photo_url' => $user->profile_photo_url,
-
+                        'created_at' => $user->created_at,
+                        'updated_at' => $user->updated_at
                     ],
                 ];
             },

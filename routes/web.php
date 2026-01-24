@@ -13,7 +13,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Models\Saloon;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ClientController;
-
+use App\Http\Controllers\DashboardController;
 // Rotte principali
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -25,16 +25,13 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    $user = Auth::user(); // Ottieni l'utente corrente
 
-    $componentName = $user->is_barber
-        ? 'Dashboard/DashboardBarber'
-        : 'Dashboard/DashboardClient';
-
-    return Inertia::render($componentName);
-
-})->middleware(['auth', 'verified'])->name('dashboard');
+/**
+ * Dashboard
+ */
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 // Rotte profilo
 Route::middleware('auth')->group(function () {
