@@ -46,7 +46,10 @@ export function KpiGrid({ stats }: KpiGridProps) {
     ];
 
     return (
-        <div className="grid grid-cols-2 divide-x divide-y border-b border-border/60 md:grid-cols-4 md:divide-y-0">
+        <div className="relative grid grid-cols-2 divide-x divide-y border-b border-border/60 md:grid-cols-4 md:divide-y-0">
+            <div className="absolute -top-3 left-6 z-10 border border-border/60 bg-background px-2 py-1 text-[8px] font-black uppercase tracking-[0.3em] text-emerald-500">
+                Live_Session_Data [24H]
+            </div>
             {kpis.map((stat, i) => (
                 <div
                     key={i}

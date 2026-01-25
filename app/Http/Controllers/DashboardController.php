@@ -60,6 +60,46 @@ class DashboardController extends Controller
             ->orderBy('appointment_time', 'asc')
             ->get();
 
+        // --- STATISTICHE TOTALI (LIFETIME) ---
+        // 1. Calcoli preventivi
+        $totalAppointments = Appointment::where('barber_id', $user->id)->where('status', 'confirmed')->count();
+        $totalClients = Appointment::where('barber_id', $user->id)->where('status', 'confirmed')->distinct('client_id')->count();
+
+        // 2. Calcolo Retention
+        $returningClients = Appointment::where('barber_id', $user->id)
+            ->where('status', 'confirmed')
+            ->select('client_id')
+            ->groupBy('client_id')
+            ->havingRaw('COUNT(*) > 1')
+            ->get()
+            ->count();
+
+        $retentionRate = $totalClients > 0 ? (int) round(($returningClients / $totalClients) * 100) : 0;
+
+        // 3. Calcolo Efficienza (Basata su 10 slot)
+        $efficiencyToday = $todayAppointments->count() > 0
+            ? (int) min(round(($todayAppointments->count() / 10) * 100), 100)
+            : 0;
+
+
+        // 4. Calcolo Pico Orario
+        $peakHour = Appointment::where('barber_id', $user->id)
+            ->where('status', 'confirmed')
+            ->selectRaw('HOUR(appointment_time) as hour, count(*) as total')
+            ->groupBy('hour')
+            ->orderBy('total', 'desc')
+            ->first();
+
+
+        // 5. Calcolo Giorno Più Occupato
+        $busyDay = Appointment::where('barber_id', $user->id)
+            ->where('status', 'confirmed')
+            ->selectRaw('DAYNAME(appointment_time) as day, count(*) as total')
+            ->groupBy('day')
+            ->orderBy('total', 'desc')
+            ->first();
+
+
         $stats = [
             'completed_today' => $todayAppointments->filter(
                 fn($apt) =>
@@ -77,6 +117,12 @@ class DashboardController extends Controller
                 ->whereDate('created_at', Carbon::today('Europe/Rome'))
                 ->distinct('client_id')
                 ->count(),
+            'total_appointments' => $totalAppointments,
+            'unique_clients' => $totalClients,
+            'retention_rate' => $retentionRate,
+            'efficiency_today' => $efficiencyToday,
+            'peak_hour' => $peakHour ? sprintf('%02d:00', $peakHour->hour) : "--:--",
+            'busy_day' => $busyDay ? strtoupper($busyDay->day) : "N/A",
         ];
 
         return Inertia::render('Dashboard/DashboardBarber', [

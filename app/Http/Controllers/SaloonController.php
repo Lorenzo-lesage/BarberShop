@@ -369,7 +369,16 @@ class SaloonController extends Controller
 
     public function updateCover(Request $request, Saloon $saloon)
     {
-        $request->validate(['cover' => 'required|image|max:3000']);
+        $request->validate(
+            [
+                'main_photo' => 'required|image|max:3000',
+            ],
+            [
+                'main_photo.required' => 'Please select an image to upload.',
+                'main_photo.image' => 'The file must be a valid image (jpg, png, webp).',
+                'main_photo.max' => 'The image size must not exceed 3MB.',
+            ]
+        );
 
         // 1. Elimina vecchia cover se esiste
         if ($saloon->mainPhoto) {
@@ -396,7 +405,18 @@ class SaloonController extends Controller
 
     public function addPhoto(Request $request, Saloon $saloon)
     {
-        $request->validate(['photo' => 'required|image|max:3000']);
+
+        $request->validate(
+            [
+                'photo' => 'required|image|max:3000',
+            ],
+            [
+                'photo.required' => 'Please select an image to upload.',
+                'photo.image' => 'The file must be a valid image (jpg, png, webp).',
+                'photo.max' => 'The image size must not exceed 3MB.',
+            ]
+        );
+
 
         $path = $request->file('photo')->store('saloons/gallery', 'public');
 

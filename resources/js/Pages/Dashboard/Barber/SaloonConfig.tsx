@@ -83,6 +83,10 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
     const [uploadingCover, setUploadingCover] = useState(false);
     const [uploadingPhotosCount, setUploadingPhotosCount] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
+    const [localErrors, setLocalErrors] = useState<{
+        main_photo?: string;
+        photos?: string; // Errore per la galleria
+    }>({});
 
     /**
      * Get initial hours
@@ -310,25 +314,43 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
             route('dashboard.barber.saloon.cover.update', saloon.id),
             {
                 _method: 'patch',
-                cover: file,
+                main_photo: file,
             },
             {
                 forceFormData: true,
                 onFinish: () => setUploadingCover(false),
                 preserveScroll: true,
+                onError: (err) => {
+                    setLocalErrors(err);
+                },
             },
         );
     };
+
     const uploadFiles = (files: File[]) => {
         if (files.length === 0) return;
+
+        // 1. Reset errori all'inizio del caricamento di gruppo
+        setLocalErrors((prev) => ({ ...prev, photos: undefined }));
+
+        // 2. VALIDAZIONE LATO CLIENT (Opzionale ma consigliata)
+        const MAX_SIZE = 3 * 1024 * 1024; // 3MB
+        const oversized = files.find((f) => f.size > MAX_SIZE);
+
+        if (oversized) {
+            setLocalErrors((prev) => ({
+                ...prev,
+                photos: `Il file "${oversized.name}" è troppo grande. Massimo 3MB.`,
+            }));
+            return; // Blocca tutto prima di iniziare gli upload
+        }
+
         setUploadingPhotosCount(files.length);
 
         files.forEach((file) => {
             router.post(
                 route('dashboard.barber.saloon.photos.store', saloon.id),
-                {
-                    photo: file,
-                },
+                { photo: file },
                 {
                     forceFormData: true,
                     preserveScroll: true,
@@ -336,6 +358,13 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                         setUploadingPhotosCount((prev) =>
                             Math.max(0, prev - 1),
                         ),
+                    onError: (err) => {
+                        // Mappiamo l'errore 'photo' (backend) su 'photos' (frontend)
+                        setLocalErrors((prev) => ({
+                            ...prev,
+                            photos: err.photo,
+                        }));
+                    },
                 },
             );
         });
@@ -362,6 +391,7 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
     |-------------------------------------------------------------------
     */
 
+    console.log('Errori attuali:', errors);
     return (
         <Dashboard breadcrumbs={breadcrumbs}>
             <Head title="Saloon Configuration" />
@@ -478,6 +508,11 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                         errors.province && 'border-destructive',
                                     )}
                                 />
+                                {errors.province && (
+                                    <p className="text-sm font-medium text-destructive">
+                                        {errors.province}
+                                    </p>
+                                )}
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="region">Region</Label>
@@ -491,6 +526,12 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                         errors.region && 'border-destructive',
                                     )}
                                 />
+
+                                {errors.region && (
+                                    <p className="text-sm font-medium text-destructive">
+                                        {errors.region}
+                                    </p>
+                                )}
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="cap">CAP</Label>
@@ -505,6 +546,11 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                         errors.cap && 'border-destructive',
                                     )}
                                 />
+                                {errors.cap && (
+                                    <p className="text-sm font-medium text-destructive">
+                                        {errors.cap}
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -520,7 +566,13 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                             {/* Sezione Cover */}
                             <div className="space-y-3">
                                 <Label>Cover Photo (Main)</Label>
-                                <div className="group relative h-40 w-full overflow-hidden rounded-lg border bg-muted shadow-inner">
+                                <div
+                                    className={cn(
+                                        'group relative h-40 w-full overflow-hidden rounded-lg border bg-muted shadow-inner',
+                                        localErrors.main_photo &&
+                                            'border-destructive',
+                                    )}
+                                >
                                     {saloon?.main_photo ? (
                                         <div className="h-48 w-full overflow-hidden rounded-t-xl">
                                             <SaloonImage
@@ -556,11 +608,17 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                             type="file"
                                             className="hidden"
                                             accept="image/*"
+                                            name="main_photo"
                                             onChange={handleCoverUpload}
                                             disabled={uploadingCover}
                                         />
                                     </label>
                                 </div>
+                                {localErrors.main_photo && (
+                                    <p className="mt-2 text-[12px] font-bold text-red-600 animate-in fade-in">
+                                        {localErrors.main_photo}
+                                    </p>
+                                )}
                                 <p className="text-[10px] italic text-muted-foreground">
                                     Replaced instantly on selection.
                                 </p>
@@ -572,6 +630,11 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                     <Label>
                                         Gallery Photos (Drag & Drop available)
                                     </Label>
+                                    {localErrors.photos && (
+                                        <p className="mt-2 text-[12px] font-bold text-red-600 animate-in fade-in">
+                                            {localErrors.photos}
+                                        </p>
+                                    )}
 
                                     <div
                                         onDragOver={handleDragOver}
@@ -586,6 +649,7 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                                 'pointer-events-none opacity-70',
                                         )}
                                     >
+                                        {}
                                         {/* Tasto Aggiungi (anche cliccabile) */}
                                         <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border border-muted-foreground/20 hover:bg-muted">
                                             <Plus className="h-5 w-5" />

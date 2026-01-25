@@ -31,8 +31,20 @@ export default function DashboardLayout({
     breadcrumbs?: BreadcrumbItemType[];
     className?: string;
 }) {
+    /*
+    |-----------------------------------------------------------------------
+    | Data
+    |-----------------------------------------------------------------------
+    */
+
     const { auth } = usePage<PageProps>().props;
     const user = auth.user as User;
+
+    /*
+    |-----------------------------------------------------------------------
+    | Render
+    |-----------------------------------------------------------------------
+    */
 
     return (
         <SidebarProvider>
@@ -82,7 +94,12 @@ export default function DashboardLayout({
                 <main
                     className={cn(
                         'relative flex flex-1 flex-col overflow-x-hidden',
-                        'before:absolute before:inset-0 before:z-0 before:bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] before:opacity-[0.03] before:[background-size:20px_20px] dark:before:bg-[radial-gradient(#ffffff_1px,transparent_1px)]',
+                        'before:absolute before:inset-0 before:z-0',
+                        'before:bg-[radial-gradient(#e5e7eb_1px,transparent_1px)]',
+                        'before:[background-size:20px_20px]',
+                        'before:opacity-[0.03]',
+                        'before:animate-space-float',
+                        'dark:before:bg-[radial-gradient(#ffffff_1px,transparent_1px)]',
                         className,
                     )}
                 >

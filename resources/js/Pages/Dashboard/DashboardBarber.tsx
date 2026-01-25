@@ -6,17 +6,14 @@ import { useMemo } from 'react';
 // Layout
 import Dashboard from '@/Layouts/Dashboard';
 
-// Components UI
-import { Button } from '@/components/ui/button';
-
 // Components
 import { PerformanceChart } from './Components/BarberDashboard/chart-area-interactive';
+import EfficiencySidebar from './Components/BarberDashboard/EfficiencySidebar';
 import { HeaderDashboard } from './Components/BarberDashboard/HeaderDashboard';
+import { InsightsGrid } from './Components/BarberDashboard/InsightsGrid';
 import { KpiGrid } from './Components/BarberDashboard/KpiGrid';
 import { LiveAgenda } from './Components/BarberDashboard/LiveAgenda';
-
-// Icons
-import { Terminal, TrendingUp } from 'lucide-react';
+import { OperationalMetrics } from './Components/BarberDashboard/OperationalMetrics';
 
 // Interfaces
 import { User } from '@/interfaces/auth';
@@ -26,6 +23,12 @@ interface DashboardBarberProps {
         completed_today: number;
         remaining_today: number;
         new_clients: number;
+        total_appointments: number;
+        unique_clients: number;
+        retention_rate: number;
+        efficiency_today: number;
+        peak_hour: string;
+        busy_day: string;
     };
     appointments: {
         time: string;
@@ -118,67 +121,21 @@ export default function DashboardBarber({
                 {/* --- KPI GRID --- */}
                 <KpiGrid stats={stats} />
 
+                {/* --- SEZIONE STATISTICHE REALI --- */}
+                <OperationalMetrics stats={stats} />
+
+                {/* --- 3. INSIGHTS STRATEGICI (ANALISI) --- */}
+                <InsightsGrid stats={stats} />
+
                 <div className="grid divide-x divide-border/60 md:grid-cols-12">
                     {/* --- MAIN: LIVE AGENDA --- */}
                     <LiveAgenda appointments={appointments} />
 
                     {/* --- SIDEBAR --- */}
-                    <div className="flex flex-col divide-y divide-border/60 md:col-span-4">
-                        <div className="space-y-6 bg-muted/5 p-8">
-                            <div className="flex items-center justify-between text-muted-foreground">
-                                <span className="text-[10px] font-black uppercase tracking-widest">
-                                    Efficiency_Index
-                                </span>
-                                <TrendingUp size={14} />
-                            </div>
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-4xl font-black italic leading-none">
-                                    94%
-                                </span>
-                                <span className="text-[9px] font-bold uppercase tracking-tighter text-emerald-500">
-                                    Above_Avg
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="space-y-4 bg-foreground p-8 text-background">
-                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary">
-                                Control_Panel
-                            </h3>
-                            <div className="grid grid-cols-1 gap-2">
-                                <Button className="h-11 rounded-none border-none bg-background text-[9px] font-black uppercase tracking-widest text-foreground hover:bg-primary">
-                                    Manage_Schedule
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    className="h-11 rounded-none border-border/20 text-[9px] font-black uppercase tracking-widest text-background hover:bg-white/5"
-                                >
-                                    Inventory_Logs
-                                </Button>
-                            </div>
-                        </div>
-
-                        <div className="flex-1 p-8">
-                            <div className="mb-4 flex items-center gap-2 text-muted-foreground">
-                                <Terminal size={12} />
-                                <span className="text-[9px] font-black uppercase tracking-widest">
-                                    Console_Logs
-                                </span>
-                            </div>
-                            <div className="space-y-2 font-mono text-[8px] uppercase italic leading-tight text-muted-foreground/40">
-                                <p>
-                                    [{new Date().getHours()}:00]
-                                    Operator_Login_Success
-                                </p>
-                                {appointments.slice(0, 2).map((apt, i) => (
-                                    <p key={i}>
-                                        [{apt.time}] Node_Active:{' '}
-                                        {apt.client.split(' ')[0]}
-                                    </p>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+                    <EfficiencySidebar
+                        appointments={appointments}
+                        stats={stats}
+                    />
                 </div>
             </div>
         </Dashboard>
