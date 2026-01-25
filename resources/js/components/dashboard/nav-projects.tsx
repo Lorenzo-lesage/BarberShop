@@ -52,7 +52,7 @@ export function NavProjects({
                                 className="group/item h-10 rounded-none border-l-2 border-transparent transition-all hover:border-primary hover:bg-primary/5"
                             >
                                 <Link
-                                    href={item.url}
+                                    href={route('appointments.index')}
                                     prefetch
                                     className="flex items-center gap-3"
                                 >

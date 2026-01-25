@@ -61,7 +61,7 @@ public function index(Request $request)
         return Inertia::render('Dashboard/Clients/Show', [
             'client' => $user->load([
                 'appointments' => function ($query) {
-                    $query->orderBy('appointment_time', 'desc')->take(10);
+                    $query->orderBy('appointment_time', 'desc')->take(5);
                 }
             ]),
             'breadcrumbs' => [

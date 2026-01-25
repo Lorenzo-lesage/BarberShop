@@ -16,43 +16,47 @@ class AppointmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-public function index(Request $request)
-{
-    $user = $request->user();
+    public function index(Request $request)
+    {
+        $user = $request->user();
 
-    return Inertia::render('Dashboard/Appointments/Index', [
-        // Appuntamenti Futuri
-        'appointments' => $this->getAppointmentsData($user, 'upcoming', $request->query('page')),
+        return Inertia::render('Dashboard/Appointments/Index', [
+            // Appuntamenti Futuri
+            'appointments' => $this->getAppointmentsData($user, 'upcoming', $request->query('page')),
 
-        // Appuntamenti Passati
-        'pastAppointments' => $this->getAppointmentsData($user, 'past', $request->query('past_page')),
+            // Appuntamenti Passati
+            'pastAppointments' => $this->getAppointmentsData($user, 'past', $request->query('past_page')),
 
-        'breadcrumbs' => [
-            ['label' => 'Dashboard', 'href' => route('dashboard')],
-            ['label' => $user->is_barber ? 'Appointments Received' : 'My Appointments', 'href' => null],
-        ],
-    ]);
-}
-
-private function getAppointmentsData($user, $type, $page)
-{
-
-    $query = $user->is_barber
-        ? Appointment::where('barber_id', $user->id)->with('client')
-        : $user->appointments()->with(['saloon.mainPhoto']);
-
-    if ($type === 'upcoming') {
-        $query->where('appointment_time', '>=', now())
-              ->orderBy('appointment_time', 'asc');
-        $pageName = 'page';
-    } else {
-        $query->where('appointment_time', '<', now())
-              ->orderBy('appointment_time', 'desc');
-        $pageName = 'past_page';
+            'breadcrumbs' => [
+                ['label' => 'Dashboard', 'href' => route('dashboard')],
+                ['label' => $user->is_barber ? 'Appointments Received' : 'My Appointments', 'href' => null],
+            ],
+        ]);
     }
 
-    return $query->paginate(7, ['*'], $pageName)->withQueryString();
-}
+    private function getAppointmentsData($user, $type, $page)
+    {
+        $query = $user->is_barber
+            ? Appointment::where('barber_id', $user->id)->with('client')
+            : $user->appointments()->with(['saloon.mainPhoto']);
+
+        // FORZA l'orario di riferimento a quello italiano
+        $nowItaly = Carbon::now('Europe/Rome');
+
+        if ($type === 'upcoming') {
+            // Usa l'orario italiano per il confronto
+            $query->where('appointment_time', '>=', $nowItaly)
+                ->orderBy('appointment_time', 'asc');
+            $pageName = 'page';
+        } else {
+            // Usa l'orario italiano per il confronto
+            $query->where('appointment_time', '<', $nowItaly)
+                ->orderBy('appointment_time', 'desc');
+            $pageName = 'past_page';
+        }
+
+        return $query->paginate(7, ['*'], $pageName)->withQueryString();
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -71,7 +75,7 @@ private function getAppointmentsData($user, $type, $page)
         $validated = $request->validated();
 
         // Carbon parse per sicurezza se vuoi il formato DB
-        $time = Carbon::parse($validated['appointment_time'])->format('Y-m-d H:i:s', 'Europe/Rome');
+        $time = Carbon::parse($validated['appointment_time'])->shiftTimezone('Europe/Rome');
 
         Appointment::create([
             'client_id' => auth()->id(),

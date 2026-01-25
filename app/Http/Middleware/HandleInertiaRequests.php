@@ -41,18 +41,19 @@ class HandleInertiaRequests extends Middleware
                         'user' => null,
                     ];
                 }
+                $nowItaly = \Carbon\Carbon::now('Europe/Rome');
 
                 // 2. Se l'utente esiste, carichiamo gli appuntamenti
                 $appointments = $user->is_barber
                     ? Appointment::where('barber_id', $user->id)
                         ->with('client')
-                        ->where('appointment_time', '>=', now())
+                        ->where('appointment_time', '>=', $nowItaly)
                         ->orderBy('appointment_time', 'asc')
                         ->take(5)
                         ->get()
                     : $user->appointments()
                         ->with('saloon')
-                        ->where('appointment_time', '>=', now())
+                        ->where('appointment_time', '>=', $nowItaly)
                         ->orderBy('appointment_time', 'asc')
                         ->take(5)
                         ->get();

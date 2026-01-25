@@ -23,85 +23,58 @@ class DashboardController extends Controller
 
     private function barberDashboard(Request $request, $user)
     {
-        $filter = $request->query('filter', 'days');
+        // DashboardController.php
 
+        $filter = $request->query('filter', '7d'); // Default 7 giorni
         $query = Appointment::where('barber_id', $user->id)
-            ->where('status', '!=', 'cancelled')
-            ->where('appointment_time', '<', now());
+            ->where('status', '!=', 'cancelled');
 
-        $labels = [];
-        $data = [];
-
-        if ($filter === 'weeks') {
-            $start = now()->subDays(7);
-            $end = now();
-            $range = $end->diffInDays($start);
-            for ($i = 0; $i <= $range; $i++) {
-                $day = $start->copy()->addDays($i);
-                $labels[] = $day->format('D');
-                $data[] = Appointment::where('barber_id', $user->id)
-                    ->where('status', '!=', 'cancelled')
-                    ->whereDate('appointment_time', $day)
-                    ->count();
-            }
-        } elseif ($filter === 'months') {
-            $start = now()->subDays(30);
-            $end = now();
-            $range = $end->diffInDays($start);
-            for ($i = 0; $i <= $range; $i++) {
-                $day = $start->copy()->addDays($i);
-                $labels[] = $day->format('d M');
-                $data[] = Appointment::where('barber_id', $user->id)
-                    ->where('status', '!=', 'cancelled')
-                    ->whereDate('appointment_time', $day)
-                    ->count();
-            }
-        } elseif ($filter === 'years') {
-            $start = now()->subDays(365);
-            $end = now();
-            $range = $end->diffInDays($start);
-            for ($i = 0; $i <= $range; $i++) {
-                $day = $start->copy()->addDays($i);
-                $labels[] = $day->format('d M');
-                $data[] = Appointment::where('barber_id', $user->id)
-                    ->where('status', '!=', 'cancelled')
-                    ->whereDate('appointment_time', $day)
-                    ->count();
-            }
+        if ($filter === '90d') {
+            $days = 90;
+        } elseif ($filter === '30d') {
+            $days = 30;
         } else {
-            $start = now()->startOfDay();
-            $end = now()->endOfDay();
-            $range = 24;
-            for ($i = 0; $i < $range; $i++) {
-                $hour = $start->copy()->addHours($i);
-                $labels[] = $hour->format('H');
-                $data[] = Appointment::where('barber_id', $user->id)
-                    ->where('status', '!=', 'cancelled')
-                    ->whereBetween('appointment_time', [$hour, $hour->copy()->addHour()])
-                    ->count();
-            }
+            $days = 7;
         }
 
-        $chartData = collect($labels)->map(function ($label, $index) use ($data) {
-            return [
-                'label' => $label,
-                'value' => $data[$index],
-            ];
-        });
+        $chartData = $query->selectRaw('DATE_FORMAT(appointment_time, "%d %b") as label, COUNT(*) as value, MIN(appointment_time) as sort_date')
+            ->where('appointment_time', '>=', now()->subDays($days))
+            ->where('appointment_time', '<=', now())
+            ->groupBy('label')
+            ->orderBy('sort_date', 'asc')
+            ->get()
+            ->map(fn($item) => [
+                'label' => (string) $item->label,
+                'value' => (int) $item->value
+            ])
+            ->values();
+
 
         // --- APPUNTAMENTI E STATS ---
+        $now = Carbon::now('Europe/Rome');
+
         $todayAppointments = Appointment::where('barber_id', $user->id)
-            ->whereDate('appointment_time', Carbon::today())
-            ->with('client')
+            ->whereDate('appointment_time', Carbon::today('Europe/Rome')) // Specifica il fuso anche qui!
+            ->where('status', 'confirmed')
+            ->with('client') // Carica i clienti per evitare la query N+1 nel map successivo
             ->orderBy('appointment_time', 'asc')
             ->get();
 
         $stats = [
-            'revenue_today' => (float) $todayAppointments->where('status', 'completed')->sum('price'),
-            'appointments_count' => $todayAppointments->count(),
-            'pending_count' => $todayAppointments->where('status', 'pending')->count(),
+            'completed_today' => $todayAppointments->filter(
+                fn($apt) =>
+                Carbon::parse($apt->appointment_time, 'Europe/Rome')->isPast()
+            )->count(),
+
+            'remaining_today' => $todayAppointments->filter(
+                fn($apt) =>
+                Carbon::parse($apt->appointment_time, 'Europe/Rome')->isFuture()
+            )->count(),
+
+            'total_today' => $todayAppointments->count(),
+
             'new_clients' => Appointment::where('barber_id', $user->id)
-                ->whereDate('created_at', Carbon::today())
+                ->whereDate('created_at', Carbon::today('Europe/Rome'))
                 ->distinct('client_id')
                 ->count(),
         ];
@@ -109,8 +82,10 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard/DashboardBarber', [
             'stats' => $stats,
             'appointments' => $todayAppointments->map(fn($apt) => [
-                'time' => Carbon::parse($apt->appointment_time)->format('H:i'),
+                'time' => Carbon::parse($apt->appointment_time, 'Europe/Rome')->format('H:i'),
                 'client' => $apt->client->name,
+                'client_id' => $apt->client_id,
+                'photo' => $apt->client->profile_photo,
                 'status' => $apt->status,
             ]),
             'chartData' => $chartData,
