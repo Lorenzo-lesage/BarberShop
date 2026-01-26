@@ -85,7 +85,7 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
     const [isDragging, setIsDragging] = useState(false);
     const [localErrors, setLocalErrors] = useState<{
         main_photo?: string;
-        photos?: string; // Errore per la galleria
+        photos?: string;
     }>({});
 
     /**
@@ -566,6 +566,7 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                             {/* Sezione Cover */}
                             <div className="space-y-3">
                                 <Label>Cover Photo (Main)</Label>
+
                                 <div
                                     className={cn(
                                         'group relative h-40 w-full overflow-hidden rounded-lg border bg-muted shadow-inner',
@@ -630,11 +631,6 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                     <Label>
                                         Gallery Photos (Drag & Drop available)
                                     </Label>
-                                    {localErrors.photos && (
-                                        <p className="mt-2 text-[12px] font-bold text-red-600 animate-in fade-in">
-                                            {localErrors.photos}
-                                        </p>
-                                    )}
 
                                     <div
                                         onDragOver={handleDragOver}
@@ -647,6 +643,8 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                                 : 'border-muted-foreground/25',
                                             uploadingPhotosCount > 0 &&
                                                 'pointer-events-none opacity-70',
+                                            localErrors.photos &&
+                                                'border-destructive',
                                         )}
                                     >
                                         {}
@@ -702,6 +700,11 @@ export default function SaloonConfig({ saloon, breadcrumbs }: Props) {
                                                 </div>
                                             ))}
                                     </div>
+                                    {localErrors.photos && (
+                                        <p className="mt-2 text-[12px] font-bold text-red-600 animate-in fade-in">
+                                            {localErrors.photos}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </div>

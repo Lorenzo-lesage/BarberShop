@@ -43,6 +43,8 @@ export default function DashboardClient({
     const { auth } = usePage().props;
     const user = auth.user as User;
 
+    console.log(history);
+
     /*
     |---------------------------------------------------------------------------
     | Methods
@@ -65,6 +67,13 @@ export default function DashboardClient({
     };
 
     const preferredBarber = getPreferredBarber();
+
+    const uniqueBySaloon = (history: DashboardProps['history'] = []) => {
+        return Array.from(
+            new Map(history.map((item) => [item.saloon.id, item])).values(),
+        );
+    };
+    const uniqueHistory = uniqueBySaloon(history);
 
     /*
     |---------------------------------------------------------------------------
@@ -170,7 +179,7 @@ export default function DashboardClient({
 
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             {/* Questa sezione filtrerebbe i saloni dalla history per mostrare i più frequentati */}
-                            {history.slice(0, 3).map((item, i) => (
+                            {uniqueHistory.slice(0, 3).map((item, i) => (
                                 <Link
                                     key={`fav-${i}`}
                                     href={route(

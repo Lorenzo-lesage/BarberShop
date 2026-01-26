@@ -387,7 +387,7 @@ class SaloonController extends Controller
         }
 
         // 2. Salva la nuova
-        $path = $request->file('cover')->store('saloons/covers', 'public');
+        $path = $request->file('main_photo')->store('saloons/covers', 'public');
 
         // Crea il record come is_main
         $saloon->photos()->create([
