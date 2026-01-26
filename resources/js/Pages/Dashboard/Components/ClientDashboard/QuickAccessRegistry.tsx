@@ -1,21 +1,44 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import type { DashboardProps } from '@/interfaces/saloon';
 import { Link } from '@inertiajs/react';
+
+// Componets
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+// Icons
 import { ArrowUpRight } from 'lucide-react';
+
+// Interfaces
+import type { DashboardProps } from '@/interfaces/saloon';
 
 export function QuickAccessRegistry({
     history,
 }: {
     history: DashboardProps['history'];
 }) {
-    if (!history.length) return null;
+    /*
+    |---------------------------------------------------------------------------
+    | Methods
+    |---------------------------------------------------------------------------
+    */
 
+    /**
+     * Get unique history
+     * @param history
+     * @returns
+     */
     const uniqueBySaloon = (history: DashboardProps['history'] = []) => {
         return Array.from(
             new Map(history.map((item) => [item.saloon.id, item])).values(),
         );
     };
     const uniqueHistory = uniqueBySaloon(history);
+
+    /*
+    |---------------------------------------------------------------------------
+    | Render
+    |---------------------------------------------------------------------------
+    */
+
+    if (!history.length) return null;
 
     return (
         <div className="space-y-4">
@@ -25,8 +48,10 @@ export function QuickAccessRegistry({
                     Quick_Access_Registry
                 </h2>
             </div>
+
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {uniqueHistory.map((item, i) => (
+                {/* Questa sezione filtrerebbe i saloni dalla history per mostrare i più frequentati */}
+                {uniqueHistory.slice(0, 3).map((item, i) => (
                     <Link
                         key={`fav-${i}`}
                         href={route('saloons.dashboard.show', item.saloon.id)}
@@ -43,6 +68,7 @@ export function QuickAccessRegistry({
                                 </AvatarFallback>
                             </Avatar>
                         </div>
+
                         <div className="flex flex-col overflow-hidden">
                             <span className="truncate text-xs font-black uppercase italic tracking-tight">
                                 {item.saloon.name}
@@ -51,6 +77,7 @@ export function QuickAccessRegistry({
                                 {item.saloon.city}
                             </span>
                         </div>
+
                         <ArrowUpRight
                             size={14}
                             className="ml-auto text-primary opacity-0 transition-all group-hover:opacity-100"

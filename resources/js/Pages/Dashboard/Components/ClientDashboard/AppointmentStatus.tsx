@@ -1,13 +1,26 @@
+import { Link } from '@inertiajs/react';
+
+// Components
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link } from '@inertiajs/react';
+
+// Icons
 import { ArrowUpRight, Clock, MapPin, Terminal, UserIcon } from 'lucide-react';
+
+// Interfaces
+import type { DashboardProps } from '@/interfaces/saloon';
 
 export function AppointmentStatus({
     nextAppointment,
 }: {
-    nextAppointment: any;
+    nextAppointment: DashboardProps['nextAppointment'] | null;
 }) {
+    /*
+    |---------------------------------------------------------------------------
+    | Render
+    |---------------------------------------------------------------------------
+    */
+
     if (!nextAppointment) {
         return (
             <Link href={route('saloons.dashboard.index')} className="group">

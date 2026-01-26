@@ -1,3 +1,6 @@
+import { Link } from '@inertiajs/react';
+
+// Components
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -7,10 +10,11 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 
-import type { DashboardProps } from '@/interfaces/saloon';
-import { Link } from '@inertiajs/react';
-
+// Icons
 import { Terminal } from 'lucide-react';
+
+// Interfaces
+import type { DashboardProps } from '@/interfaces/saloon';
 
 export function SessionLogs({
     history,
