@@ -98,7 +98,7 @@ export default function SaloonsComponent({
         <div className="grid grid-cols-2 gap-px sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {saloons.map((saloon) => (
                 <SaloonCard
-                    key={saloon.id}
+                    key={`${saloon.id}-${new Date(saloon.updated_at).getTime()}`}
                     saloon={saloon}
                     isOwner={authId === saloon.user_id}
                     routeName={routeName}

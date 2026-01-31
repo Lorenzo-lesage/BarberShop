@@ -1,7 +1,28 @@
+// Components
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 
-export function ScheduleManager({ data, setData, errors }: any) {
+// Interfaces
+import { OpeningHour } from '@/interfaces/saloon';
+
+export interface SaloonFormData {
+    opening_hours: Record<string, OpeningHour>;
+}
+interface Props {
+    data: SaloonFormData;
+    setData: <K extends keyof SaloonFormData>(
+        field: K,
+        value: SaloonFormData[K],
+    ) => void;
+    errors: Partial<Record<keyof SaloonFormData, string>>;
+}
+
+export function ScheduleManager({ data, setData, errors }: Props) {
+    /*
+    |-------------------------------------------------------------------
+    | Constants
+    |-------------------------------------------------------------------
+    */
     const DAYS = [
         'monday',
         'tuesday',
@@ -12,7 +33,17 @@ export function ScheduleManager({ data, setData, errors }: any) {
         'sunday',
     ];
 
-    const handleHourChange = (day: string, field: string, value: any) => {
+    /**
+     * Handle hour change
+     * @param day
+     * @param field
+     * @param value
+     */
+    const handleHourChange = (
+        day: string,
+        field: keyof OpeningHour,
+        value: string | boolean,
+    ) => {
         setData('opening_hours', {
             ...data.opening_hours,
             [day]: { ...data.opening_hours[day], [field]: value },
@@ -20,7 +51,7 @@ export function ScheduleManager({ data, setData, errors }: any) {
     };
 
     return (
-        <section className="space-y-6">
+        <section className="space-y-4">
             <header>
                 <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">
                     02_Weekly_Schedule
@@ -34,7 +65,7 @@ export function ScheduleManager({ data, setData, errors }: any) {
                 {DAYS.map((day) => (
                     <div
                         key={day}
-                        className="group flex items-center justify-between p-4 transition-colors hover:bg-muted/10"
+                        className="group flex h-16 items-center justify-between p-4 transition-colors hover:bg-muted/10"
                     >
                         <div className="flex items-center gap-4">
                             <span className="w-20 font-mono text-[10px] font-black uppercase tracking-widest">
@@ -92,7 +123,7 @@ export function ScheduleManager({ data, setData, errors }: any) {
                     </div>
                 ))}
             </div>
-            {errors.opening_hours && (
+            {!errors.opening_hours && (
                 <p className="text-[10px] font-black uppercase text-destructive">
                     {errors.opening_hours}
                 </p>

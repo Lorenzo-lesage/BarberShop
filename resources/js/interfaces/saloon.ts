@@ -60,9 +60,18 @@ export interface Saloon {
     province: string;
     region: string;
     cap: string;
-    main_photo?: { id: number; url: string; is_main: boolean; path: string };
+    main_photo?: {
+        id: number;
+        url: string;
+        is_main: boolean;
+        path: string;
+        created_at: string;
+        updated_at: string;
+    };
     gallery?: string[];
     photos?: SaloonPhoto[];
+    created_at: string;
+    updated_at: string;
 }
 
 export interface DashboardProps {

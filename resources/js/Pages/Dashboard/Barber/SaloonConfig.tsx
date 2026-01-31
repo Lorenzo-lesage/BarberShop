@@ -3,21 +3,17 @@ import { format, isBefore } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 
 // Icons
-import {
-    Calendar as CalendarIcon,
-    Loader2,
-    Plus,
-    Save,
-    Trash2,
-} from 'lucide-react';
+import { Calendar as CalendarIcon, Loader2, Plus, Trash2 } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 
 // Layout
 import Dashboard from '@/Layouts/Dashboard';
 
-// COmponents layout
+// Components layout
 import { GeneralSettings } from '@/Pages/Dashboard/Barber/Partials/GeneralSettings';
 import { MediaManager } from '@/Pages/Dashboard/Barber/Partials/MediaManager';
+import { ScheduleManager } from '@/Pages/Dashboard/Barber/Partials/ScheduleManager';
+import { SubmitSalon } from '@/Pages/Dashboard/Barber/Partials/SubmitSalon';
 
 // Shadcn UI Components
 import {
@@ -33,7 +29,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { CardDescription, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -180,23 +175,6 @@ export default function SaloonConfig({
     };
 
     /**
-     * Handle hour change
-     * @param day
-     * @param field
-     * @param value
-     */
-    const handleHourChange = (
-        day: string,
-        field: keyof OpeningHour,
-        value: string | boolean,
-    ) => {
-        setData('opening_hours', {
-            ...data.opening_hours,
-            [day]: { ...data.opening_hours[day], [field]: value },
-        });
-    };
-
-    /**
      * Submit Saloon (Update o Create)
      * @param e
      */
@@ -326,138 +304,19 @@ export default function SaloonConfig({
 
                     <Separator />
 
-                    <div className="space-y-4">
-                        <h3 className="text-sm font-bold uppercase tracking-tight text-muted-foreground">
-                            Weekly Schedule
-                        </h3>
-                        {errors.opening_hours && (
-                            <span className="text-xs font-bold text-destructive">
-                                {errors.opening_hours}
-                            </span>
-                        )}
-                        <div className="divide-y overflow-hidden rounded-md border">
-                            {DAYS.map((day) => (
-                                <div
-                                    key={day}
-                                    className="flex h-28 flex-col justify-between gap-4 p-3 hover:bg-muted/30 sm:flex-row sm:items-center md:h-16"
-                                >
-                                    {/* Sinistra: Giorno + Checkbox (Desktop & Mobile) */}
-                                    <div className="flex items-center justify-between sm:w-64 sm:justify-start sm:gap-6">
-                                        <span className="w-20 font-bold capitalize">
-                                            {day}
-                                        </span>
+                    {/* --- SCHEDULE MANAGER HOURS --- */}
+                    <ScheduleManager
+                        data={data}
+                        setData={setData}
+                        errors={errors}
+                    />
 
-                                        <div className="flex items-center space-x-2">
-                                            <Checkbox
-                                                id={`closed-${day}`}
-                                                checked={
-                                                    data.opening_hours[day]
-                                                        .is_closed
-                                                }
-                                                onCheckedChange={(c) =>
-                                                    handleHourChange(
-                                                        day,
-                                                        'is_closed',
-                                                        !!c,
-                                                    )
-                                                }
-                                            />
-                                            <Label
-                                                htmlFor={`closed-${day}`}
-                                                className="text-xs font-semibold uppercase text-muted-foreground"
-                                            >
-                                                Closed
-                                            </Label>
-                                        </div>
-                                    </div>
-
-                                    {/* Destra: Solo Input Ore */}
-                                    <div className="flex flex-1 items-center justify-end">
-                                        {!data.opening_hours[day].is_closed && (
-                                            <div className="flex items-center gap-2 duration-300 animate-in fade-in slide-in-from-right-2">
-                                                <Input
-                                                    type="time"
-                                                    className={cn(
-                                                        'h-9 w-[100px] bg-background text-center font-mono',
-                                                        'dark:[&::-webkit-calendar-picker-indicator]:invert',
-                                                        errors.opening_hours &&
-                                                            'border-destructive',
-                                                    )}
-                                                    value={
-                                                        data.opening_hours[day]
-                                                            .open
-                                                    }
-                                                    onChange={(e) =>
-                                                        handleHourChange(
-                                                            day,
-                                                            'open',
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                />
-                                                <span className="text-xs font-bold text-muted-foreground">
-                                                    TO
-                                                </span>
-                                                <Input
-                                                    type="time"
-                                                    className={cn(
-                                                        'h-9 w-[100px] bg-background text-center font-mono',
-                                                        'dark:[&::-webkit-calendar-picker-indicator]:invert',
-                                                        errors.opening_hours &&
-                                                            'border-destructive',
-                                                    )}
-                                                    value={
-                                                        data.opening_hours[day]
-                                                            .close
-                                                    }
-                                                    onChange={(e) =>
-                                                        handleHourChange(
-                                                            day,
-                                                            'close',
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                />
-                                            </div>
-                                        )}
-                                        {data.opening_hours[day].is_closed && (
-                                            <span className="pr-4 text-sm italic text-muted-foreground">
-                                                No working hours
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2 sm:flex-row">
-                        <Button
-                            type="submit"
-                            disabled={processing}
-                            className="min-w-[140px]"
-                        >
-                            {processing ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Saving...
-                                </>
-                            ) : (
-                                <>
-                                    <Save className="mr-2 h-4 w-4" /> Save
-                                    Schedule
-                                </>
-                            )}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => reset()}
-                            disabled={processing || !isDirty}
-                        >
-                            Reset Form
-                        </Button>
-                    </div>
+                    {/* --- SUBMIT AREA --- */}
+                    <SubmitSalon
+                        processing={processing}
+                        isDirty={isDirty}
+                        reset={reset}
+                    />
                 </form>
 
                 {saloon && (

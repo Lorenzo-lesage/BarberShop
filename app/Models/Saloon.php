@@ -81,4 +81,23 @@ class Saloon extends Model
     {
         return $this->hasOne(SaloonPhoto::class)->where('is_main', true);
     }
+
+    public function setMainPhoto($path)
+    {
+        $oldPhotos = $this->photos()->where('is_main', true)->get();
+        foreach ($oldPhotos as $old) {
+            \Storage::disk('public')->delete($old->path);
+            $old->delete();
+        }
+
+        // 2. Crea la nuova foto
+        $newPhoto = $this->photos()->create([
+            'path' => $path,
+            'is_main' => true
+        ]);
+
+        $this->unsetRelation('mainPhoto');
+
+        return $newPhoto;
+    }
 }
