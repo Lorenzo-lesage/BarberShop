@@ -40,9 +40,7 @@ export default function DashboardClient({
     */
 
     return (
-        <Dashboard
-            breadcrumbs={[{ label: 'USER_TERMINAL', href: '/dashboard' }]}
-        >
+        <Dashboard breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }]}>
             <Head title="CLIENT_DASHBOARD" />
 
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 p-6 md:p-10">

@@ -43,7 +43,7 @@ export function SaloonCard({
                 }}
             />
 
-            {/* Cinematic Overlay */}
+            {/* --- Cinematic Overlay --- */}
 
             {/* --- CONTENT LAYER --- */}
             <div className="relative z-20 flex h-full flex-col justify-between p-6">
@@ -80,7 +80,7 @@ export function SaloonCard({
                             </h3>
                             <div className="flex items-center gap-2 pt-1 text-[8px] font-bold uppercase tracking-tighter lg:text-[11px]">
                                 <MapPin size={10} className="text-primary" />
-                                <span className="line-clamp-1 text-primary/50 shadow-lg">
+                                <span className="line-clamp-1 text-primary/50">
                                     {saloon.city} — {saloon.province}
                                 </span>
                             </div>

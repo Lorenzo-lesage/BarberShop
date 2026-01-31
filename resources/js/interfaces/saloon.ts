@@ -40,6 +40,13 @@ export interface Exception {
     reason?: string;
 }
 
+export interface SaloonPhoto {
+    id: number;
+    url: string;
+    is_main: boolean;
+    path: string;
+}
+
 export interface Saloon {
     id: number;
     name: string;
@@ -55,7 +62,7 @@ export interface Saloon {
     cap: string;
     main_photo?: { id: number; url: string; is_main: boolean; path: string };
     gallery?: string[];
-    photos?: { id: number; url: string; is_main: boolean; path: string }[];
+    photos?: SaloonPhoto[];
 }
 
 export interface DashboardProps {

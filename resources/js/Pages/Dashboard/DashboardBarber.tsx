@@ -103,9 +103,7 @@ export default function DashboardBarber({
     */
 
     return (
-        <Dashboard
-            breadcrumbs={[{ label: 'CORE_OPERATOR', href: '/dashboard' }]}
-        >
+        <Dashboard breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }]}>
             <Head title="BARBER_DASHBOARD" />
 
             <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-0 border-x border-border/40 bg-background">

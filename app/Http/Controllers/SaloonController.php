@@ -162,7 +162,7 @@ class SaloonController extends Controller
         // Carichiamo il salone dell'utente con tutte le relazioni necessarie
         $saloon = Auth::user()->saloon()
             ->with(['exceptions', 'photos', 'mainPhoto'])
-            ->first() ?? new Saloon; // Se non esiste, crea un'istanza vuota in memoria
+            ->first();
 
         return Inertia::render('Dashboard/Barber/SaloonConfig', [
             'saloon' => $saloon,
