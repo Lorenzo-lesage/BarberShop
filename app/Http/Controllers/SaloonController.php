@@ -369,27 +369,28 @@ class SaloonController extends Controller
 
     public function updateCover(Request $request, Saloon $saloon)
     {
-        $request->validate(
-            [
-                'main_photo' => 'required|image|max:3000',
-            ],
-            [
-                'main_photo.required' => 'Please select an image to upload.',
-                'main_photo.image' => 'The file must be a valid image (jpg, png, webp).',
-                'main_photo.max' => 'The image size must not exceed 3MB.',
-            ]
-        );
+        $request->validate(['main_photo' => 'required|image|max:5120']);
 
-        // 1. Elimina vecchia cover se esiste
         if ($saloon->mainPhoto) {
             Storage::disk('public')->delete($saloon->mainPhoto->path);
             $saloon->mainPhoto()->delete();
         }
 
-        // 2. Salva la nuova
-        $path = $request->file('main_photo')->store('saloons/covers', 'public');
+        $file = $request->file('main_photo');
+        $filename = 'cover_' . uniqid() . '.webp';
+        $path = 'saloons/covers/' . $filename;
 
-        // Crea il record come is_main
+        // Elaborazione Immagine
+        $image = Image::read($file);
+
+        // Ridimensiona a 1200px di larghezza mantenendo il rapporto,
+        // poi converti in webp con qualità 80
+        $encoded = $image->scale(width: 1200)
+            ->toWebp(80);
+
+        // Salva sul disco
+        Storage::disk('public')->put($path, $encoded);
+
         $saloon->photos()->create([
             'path' => $path,
             'is_main' => true
@@ -397,37 +398,33 @@ class SaloonController extends Controller
 
         $this->clearSaloonCache($saloon->id);
 
-        return back()->with('toast', [
-            'type' => 'success',
-            'message' => 'Cover updated successfully.',
-        ]);
+        return back()->with('toast', ['type' => 'success', 'message' => 'Cover updated!']);
     }
 
     public function addPhoto(Request $request, Saloon $saloon)
     {
+        $request->validate(['photo' => 'required|image|max:5120']);
 
-        $request->validate(
-            [
-                'photo' => 'required|image|max:3000',
-            ],
-            [
-                'photo.required' => 'Please select an image to upload.',
-                'photo.image' => 'The file must be a valid image (jpg, png, webp).',
-                'photo.max' => 'The image size must not exceed 3MB.',
-            ]
-        );
+        $file = $request->file('photo');
+        $filename = 'gallery_' . uniqid() . '.webp';
+        $path = 'saloons/gallery/' . $filename;
 
+        // Leggi e ottimizza
+        $image = Image::read($file);
+        $encoded = $image->scale(width: 1000)
+            ->toWebp(75); // Qualità leggermente più bassa per la galleria
 
-        $path = $request->file('photo')->store('saloons/gallery', 'public');
+        Storage::disk('public')->put($path, $encoded);
 
         $saloon->photos()->create([
             'path' => $path,
             'is_main' => false
         ]);
 
+        $this->clearSaloonCache($saloon->id);
+
         return back();
     }
-
 }
 
 

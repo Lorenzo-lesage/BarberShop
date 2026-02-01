@@ -5,6 +5,7 @@ import { Link } from '@inertiajs/react';
 import type { Saloon } from '@/interfaces/saloon';
 
 // Components
+import SaloonImage from '@/components/saloon/SaloonImage';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
@@ -32,20 +33,28 @@ export function SaloonCard({
             )}
         >
             {/* --- VISUAL LAYER --- */}
-            <div
-                className="absolute inset-0 z-0 h-[101%] transition-transform duration-1000 ease-out group-hover:scale-110"
-                style={{
-                    backgroundImage: saloon.main_photo
-                        ? `linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background)) 100%), url('/storage/${saloon.main_photo.path}?v=${saloon.updated_at}')`
-                        : `linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background)) 100%), url('/android-chrome-512x512.png')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    fill: saloon.main_photo
-                        ? `linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background)) 100%)`
-                        : `currentColor`,
-                    filter: saloon.main_photo ? 'none' : 'brightness(3)',
-                }}
-            />
+            <div className="absolute inset-0 z-0 h-full w-full overflow-hidden">
+                <SaloonImage
+                    src={
+                        saloon.main_photo
+                            ? `/storage/${saloon.main_photo.path}`
+                            : '/android-chrome-512x512.png'
+                    }
+                    alt={saloon.name}
+                    className={cn(
+                        'lazy-load-image-background h-full w-full object-cover',
+                        !saloon.main_photo && 'brightness-[3]',
+                    )}
+                />
+
+                {/* --- Cinematic Overlay (Il gradiente lo facciamo qui) --- */}
+                <div
+                    className="absolute inset-0 z-10"
+                    style={{
+                        background: `linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background)) 100%)`,
+                    }}
+                />
+            </div>
 
             {/* --- Cinematic Overlay --- */}
 

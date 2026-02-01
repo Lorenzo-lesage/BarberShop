@@ -82,6 +82,17 @@
     }
 }
 
+/* Seleziona l'immagine dentro il wrapper del lazy load quando la card è in hover */
+.group:hover .lazy-load-image-background {
+    transform: scale(1.05);
+}
+
+/* Definisce la transizione base per tutte le immagini della gallery */
+.lazy-load-image-background  {
+    transition: transform 350ms ease-in-out !important;
+    will-change: transform;
+}
+
 @layer base {
     * {
         @apply border-border;
