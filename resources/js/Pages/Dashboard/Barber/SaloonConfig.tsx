@@ -1,43 +1,21 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { format, isBefore } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 
 // Icons
-import { Calendar as CalendarIcon, Loader2, Plus, Trash2 } from 'lucide-react';
-import { DateRange } from 'react-day-picker';
 
 // Layout
 import Dashboard from '@/Layouts/Dashboard';
 
 // Components layout
+import { DeleteAlertDialog } from '@/Pages/Dashboard/Barber/Partials/DeleteAlertDialog';
+import { ExceptionManager } from '@/Pages/Dashboard/Barber/Partials/ExceptionManager';
 import { GeneralSettings } from '@/Pages/Dashboard/Barber/Partials/GeneralSettings';
 import { MediaManager } from '@/Pages/Dashboard/Barber/Partials/MediaManager';
 import { ScheduleManager } from '@/Pages/Dashboard/Barber/Partials/ScheduleManager';
 import { SubmitSalon } from '@/Pages/Dashboard/Barber/Partials/SubmitSalon';
 
 // Shadcn UI Components
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { CardDescription, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
 
 // Interfaces
 import type BreadcrumbItemType from '@/interfaces/breadcrumbs';
@@ -69,10 +47,7 @@ export default function SaloonConfig({
     | Data
     |-------------------------------------------------------------------
     */
-    const [dateRange, setDateRange] = useState<DateRange | undefined>({
-        from: undefined,
-        to: undefined,
-    });
+
     const [deleteTarget, setDeleteTarget] = useState<{
         id: number;
         type: 'exception' | 'saloon' | 'photo';
@@ -158,23 +133,6 @@ export default function SaloonConfig({
     */
 
     /**
-     * Handle date select
-     * @param range
-     */
-    const handleDateSelect = (range: DateRange | undefined) => {
-        setDateRange(range);
-        setExceptionData({
-            ...exceptionData,
-            start_date: range?.from ? format(range.from, 'yyyy-MM-dd') : '',
-            end_date: range?.to
-                ? format(range.to, 'yyyy-MM-dd')
-                : range?.from
-                  ? format(range.from, 'yyyy-MM-dd')
-                  : '',
-        });
-    };
-
-    /**
      * Submit Saloon (Update o Create)
      * @param e
      */
@@ -186,21 +144,6 @@ export default function SaloonConfig({
             onSuccess: () => {
                 // Opzionale: puliamo i campi file dopo il caricamento riuscito
                 setData((prev) => ({ ...prev, main_photo: null, gallery: [] }));
-            },
-        });
-    };
-
-    /**
-     * Submit Exception
-     * @param e
-     */
-    const addException = (e: React.FormEvent) => {
-        e.preventDefault();
-        postException(route('dashboard.barber.saloon.exceptions.store'), {
-            preserveScroll: true,
-            onSuccess: () => {
-                resetException();
-                setDateRange(undefined);
             },
         });
     };
@@ -233,43 +176,6 @@ export default function SaloonConfig({
         });
     };
 
-    /**
-     * Resetta il form delle Ferie/Eccezioni e il calendario
-     */
-    const clearExceptionForm = () => {
-        resetException(); // Resetta start_date, end_date, reason
-        setDateRange(undefined); // Pulisce la selezione sul calendario
-    };
-
-    /**
-     * Filtra le eccezioni future
-     */
-    const upcomingExceptions =
-        saloon?.exceptions?.filter((ex) => {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // Reset orario per includere le chiusure di oggi
-            const endDate = new Date(ex.end_date);
-            return !isBefore(endDate, today);
-        }) || [];
-
-    /**
-     * Filtra le eccezioni passate
-     */
-    const previousExceptions =
-        saloon?.exceptions
-            ?.filter((ex) => {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const endDate = new Date(ex.end_date);
-                return isBefore(endDate, today);
-            })
-            .sort((a, b) => {
-                return (
-                    new Date(b.start_date).getTime() -
-                    new Date(a.start_date).getTime()
-                );
-            }) || [];
-
     /*
     |-------------------------------------------------------------------
     | Render
@@ -280,8 +186,34 @@ export default function SaloonConfig({
         <Dashboard breadcrumbs={breadcrumbs}>
             <Head title="Saloon Configuration" />
 
+            {/* Wrapper di Sezione Artisan */}
+            <div className="relative border-l-[1px] border-primary/20 py-4 pl-6 transition-all hover:border-primary">
+                {/* Label tecnica nell'angolo */}
+                <div className="absolute -left-[1px] top-0 h-8 w-[1px] bg-primary" />
+
+                <header className="mb-8 flex items-end justify-between">
+                    <div>
+                        <span className="font-mono text-[10px] uppercase tracking-tighter text-primary/50">
+                            Section_Code: SC-01
+                        </span>
+                        <h3 className="text-xl font-light tracking-tight text-foreground/90">
+                            General{' '}
+                            <span className="font-bold text-primary">
+                                Configuration
+                            </span>
+                        </h3>
+                    </div>
+                    <div className="text-[9px] font-medium uppercase tracking-[0.2em] opacity-30">
+                        v1.0_Stable
+                    </div>
+                </header>
+
+                <div className="space-y-8">
+                    {/* Il tuo componente (es. GeneralSettings) */}
+                </div>
+            </div>
+
             <div className="mx-auto w-full max-w-2xl space-y-6 px-0 pb-10 sm:px-4">
-                {/* General Settings Card */}
 
                 <form onSubmit={submitSaloon} className="space-y-6">
                     {/* --- GENERAL SETTINGS --- */}
@@ -296,11 +228,13 @@ export default function SaloonConfig({
                     <Separator />
 
                     {/* --- SALOON PHOTOS --- */}
-                    <MediaManager
-                        saloon={saloon}
-                        setDeleteTarget={setDeleteTarget}
-                        saloonPhotos={saloonPhotos}
-                    />
+                    {saloon && (
+                        <MediaManager
+                            saloon={saloon}
+                            setDeleteTarget={setDeleteTarget}
+                            saloonPhotos={saloonPhotos}
+                        />
+                    )}
 
                     <Separator />
 
@@ -322,284 +256,30 @@ export default function SaloonConfig({
                 {saloon && (
                     <>
                         <Separator />
-                        {/* Holidays Card */}
-                        <div>
-                            <CardTitle>Vacations & Closures</CardTitle>
-                            <CardDescription>
-                                Block specific dates for holidays or
-                                emergencies.
-                            </CardDescription>
-                            <form
-                                onSubmit={addException}
-                                className="mt-3 flex flex-col gap-4 md:grid md:grid-cols-12 md:items-end"
-                            >
-                                <div className="space-y-2 md:col-span-5">
-                                    <Label>Dates</Label>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant="outline"
-                                                className={cn(
-                                                    'w-full justify-start text-left font-normal',
-                                                    !dateRange &&
-                                                        'text-muted-foreground',
-                                                )}
-                                            >
-                                                <CalendarIcon className="mr-2 h-4 w-4 text-destructive" />
-                                                {dateRange?.from ? (
-                                                    dateRange.to ? (
-                                                        `${format(dateRange.from, 'LLL dd')} - ${format(dateRange.to, 'LLL dd, y')}`
-                                                    ) : (
-                                                        format(
-                                                            dateRange.from,
-                                                            'LLL dd, y',
-                                                        )
-                                                    )
-                                                ) : (
-                                                    <span>Select range</span>
-                                                )}
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent
-                                            className="w-auto p-0"
-                                            align="start"
-                                        >
-                                            <Calendar
-                                                mode="range"
-                                                selected={dateRange}
-                                                onSelect={handleDateSelect}
-                                                numberOfMonths={
-                                                    isMobile ? 1 : 2
-                                                }
-                                                disabled={(d) =>
-                                                    d <
-                                                    new Date(
-                                                        new Date().setHours(
-                                                            0,
-                                                            0,
-                                                            0,
-                                                            0,
-                                                        ),
-                                                    )
-                                                }
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    {(exceptionErrors.start_date ||
-                                        exceptionErrors.end_date) && (
-                                        <p className="text-sm font-medium text-destructive">
-                                            {exceptionErrors.start_date ||
-                                                exceptionErrors.end_date}
-                                        </p>
-                                    )}
-                                </div>
-                                <div className="space-y-2 md:col-span-4">
-                                    <Label htmlFor="reason">Reason</Label>
-                                    <Input
-                                        id="reason"
-                                        placeholder="Vacation, Holiday..."
-                                        value={exceptionData.reason}
-                                        onChange={(e) =>
-                                            setExceptionData(
-                                                'reason',
-                                                e.target.value,
-                                            )
-                                        }
-                                    />
-                                    {exceptionErrors.reason && (
-                                        <p className="text-sm font-medium text-destructive">
-                                            {exceptionErrors.reason}
-                                        </p>
-                                    )}
-                                </div>
-                                <div className="flex gap-1 md:col-span-3">
-                                    <Button
-                                        type="submit"
-                                        variant="destructive"
-                                        className="w-full p-2"
-                                        disabled={
-                                            exceptionProcessing ||
-                                            !exceptionData.start_date
-                                        }
-                                    >
-                                        {exceptionProcessing ? (
-                                            <Loader2 className="h-4 w-4 animate-spin" />
-                                        ) : (
-                                            <>
-                                                <Plus className="mr-1" /> Add
-                                            </>
-                                        )}
-                                    </Button>
-                                    <Button
-                                        type="button"
-                                        variant="secondary"
-                                        className="w-full p-2"
-                                        disabled={
-                                            !exceptionIsDirty ||
-                                            exceptionProcessing
-                                        }
-                                        onClick={clearExceptionForm} // Collega la funzione qui
-                                    >
-                                        <Trash2 className="mr-1" /> Reset
-                                    </Button>
-                                </div>
-                            </form>
 
-                            <div className="mt-5 space-y-3">
-                                <h4 className="text-sm font-semibold uppercase text-muted-foreground">
-                                    Upcoming Closures
-                                </h4>
-                                <div className="grid grid-cols-1 gap-3">
-                                    {upcomingExceptions.map((ex) => (
-                                        <div
-                                            key={ex.id}
-                                            className="flex items-center justify-between rounded-lg border bg-muted/20 p-4"
-                                        >
-                                            <div className="space-y-1">
-                                                <p className="text-sm font-bold leading-none">
-                                                    {format(
-                                                        new Date(ex.start_date),
-                                                        'PP',
-                                                    )}{' '}
-                                                    —{' '}
-                                                    {format(
-                                                        new Date(ex.end_date),
-                                                        'PP',
-                                                    )}
-                                                </p>
-                                                {ex.reason && (
-                                                    <p className="text-xs italic text-muted-foreground">
-                                                        {ex.reason}
-                                                    </p>
-                                                )}
-                                            </div>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={() =>
-                                                    setDeleteTarget({
-                                                        id: ex.id,
-                                                        type: 'exception',
-                                                    })
-                                                }
-                                                className="text-destructive"
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    ))}
-                                    {saloon?.exceptions?.length === 0 ||
-                                        (upcomingExceptions.length === 0 && (
-                                            <p className="py-4 text-center text-sm text-muted-foreground">
-                                                No closures planned.
-                                            </p>
-                                        ))}
-                                </div>
-                            </div>
-
-                            {previousExceptions.length > 0 ? (
-                                <div className="mt-5 space-y-3">
-                                    <h4 className="text-sm font-semibold uppercase text-muted-foreground">
-                                        Previous Closures
-                                    </h4>
-                                    <div className="grid grid-cols-1 gap-3">
-                                        {previousExceptions.map((ex) => (
-                                            <div
-                                                key={ex.id}
-                                                className="flex items-center justify-between rounded-lg border bg-muted/20 p-4"
-                                            >
-                                                <div className="space-y-1">
-                                                    <p className="text-sm font-bold leading-none">
-                                                        {format(
-                                                            new Date(
-                                                                ex.start_date,
-                                                            ),
-                                                            'PP',
-                                                        )}{' '}
-                                                        —{' '}
-                                                        {format(
-                                                            new Date(
-                                                                ex.end_date,
-                                                            ),
-                                                            'PP',
-                                                        )}
-                                                    </p>
-                                                    {ex.reason && (
-                                                        <p className="text-xs italic text-muted-foreground">
-                                                            {ex.reason}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            ) : (
-                                <>
-                                    <div className="mt-5 space-y-3">
-                                        <h4 className="text-sm font-semibold uppercase text-muted-foreground">
-                                            Previous Closures
-                                        </h4>
-                                        <p className="py-4 text-center text-sm text-muted-foreground">
-                                            No closures found.
-                                        </p>
-                                    </div>
-                                </>
-                            )}
-                        </div>
+                        {/* --- EXCEPTION MANAGER --- */}
+                        <ExceptionManager
+                            saloon={saloon}
+                            exceptionData={exceptionData}
+                            setExceptionData={setExceptionData}
+                            postException={postException}
+                            setDeleteTarget={setDeleteTarget}
+                            resetException={resetException}
+                            exceptionErrors={exceptionErrors}
+                            exceptionProcessing={exceptionProcessing}
+                            exceptionIsDirty={exceptionIsDirty}
+                        />
                     </>
                 )}
             </div>
 
-            {/* Delete Confirmation */}
-            <AlertDialog
-                open={deleteTarget !== null}
-                onOpenChange={(o) => !o && setDeleteTarget(null)}
-            >
-                <AlertDialogContent className="max-w-[90vw] rounded-lg sm:max-w-lg">
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>
-                            Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                            {deleteTarget?.type === 'exception'
-                                ? 'This action will immediately reopen these dates for customer bookings.'
-                                : deleteTarget?.type === 'photo'
-                                  ? 'This image will be permanently removed from your gallery.'
-                                  : 'This will permanently delete your salon and all associated data.'}
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="flex-col gap-2 sm:flex-row">
-                        <AlertDialogCancel className="w-full sm:w-auto">
-                            Cancel
-                        </AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={(e) => {
-                                e.preventDefault(); // Evita che il dialog si chiuda prima della fine della richiesta
-                                confirmGlobalDelete();
-                            }}
-                            // Usiamo la proprietà nativa dell'oggetto router
-                            disabled={isDeleting}
-                            className="w-full min-w-[110px] bg-destructive text-white hover:bg-destructive/90 sm:w-auto"
-                        >
-                            {isDeleting ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Deleting...
-                                </>
-                            ) : (
-                                `Delete ${
-                                    deleteTarget?.type === 'exception'
-                                        ? 'Closure'
-                                        : deleteTarget?.type === 'photo'
-                                          ? 'Photo'
-                                          : 'Saloon'
-                                }`
-                            )}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            {/* --- DELETE CONFIRMATION --- */}
+            <DeleteAlertDialog
+                target={deleteTarget}
+                isDeleting={isDeleting}
+                onConfirm={confirmGlobalDelete}
+                onClose={() => setDeleteTarget(null)}
+            />
         </Dashboard>
     );
 }

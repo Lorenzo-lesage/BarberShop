@@ -36,10 +36,14 @@ export function SaloonCard({
                 className="absolute inset-0 z-0 h-[101%] transition-transform duration-1000 ease-out group-hover:scale-110"
                 style={{
                     backgroundImage: saloon.main_photo
-                        ? `linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background)) 100%), url('/storage/${saloon.main_photo.path}')`
-                        : 'none',
+                        ? `linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background)) 100%), url('/storage/${saloon.main_photo.path}?v=${saloon.updated_at}')`
+                        : `linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background)) 100%), url('/android-chrome-512x512.png')`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
+                    fill: saloon.main_photo
+                        ? `linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background)) 100%)`
+                        : `currentColor`,
+                    filter: saloon.main_photo ? 'none' : 'brightness(3)',
                 }}
             />
 

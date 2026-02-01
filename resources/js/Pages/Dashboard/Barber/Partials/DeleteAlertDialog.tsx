@@ -1,3 +1,4 @@
+// Components
 import {
     AlertDialog,
     AlertDialogAction,
@@ -8,8 +9,11 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+
+// Icons
 import { AlertTriangle, Loader2 } from 'lucide-react';
 
+// Interfaces
 interface DeleteAlertDialogProps {
     target: { id: number; type: 'exception' | 'saloon' | 'photo' } | null;
     isDeleting: boolean;
@@ -23,6 +27,16 @@ export function DeleteAlertDialog({
     onConfirm,
     onClose,
 }: DeleteAlertDialogProps) {
+    /*
+    |-------------------------------------------------------------------
+    | Methods
+    |-------------------------------------------------------------------
+    */
+
+    /**
+     * Get content
+     * @returns
+     */
     const getContent = () => {
         switch (target?.type) {
             case 'exception':
@@ -50,6 +64,11 @@ export function DeleteAlertDialog({
 
     const content = getContent();
 
+    /*
+    |-------------------------------------------------------------------
+    | Render
+    |-------------------------------------------------------------------
+    */
     return (
         <AlertDialog
             open={target !== null}

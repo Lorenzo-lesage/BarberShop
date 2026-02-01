@@ -15,7 +15,7 @@ interface Props {
 
 export function SubmitSalon({ processing, isDirty, reset }: Props) {
     return (
-        <div className="mt-10 flex flex-col gap-0 border border-border/60 bg-muted/5 p-1 sm:flex-row sm:items-center">
+        <div className="mt-10 flex flex-col gap-0 space-y-2  bg-muted/5 p-1 sm:flex-row sm:items-center">
             <Button
                 type="submit"
                 disabled={processing}
