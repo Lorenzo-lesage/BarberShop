@@ -104,7 +104,6 @@ export default function DashboardLayout({
                     )}
                 >
                     <div className="relative z-10 flex-1 p-4 sm:p-6 lg:p-8">
-                        {/* Wrapper per il contenuto con padding coerente */}
                         <div className="mx-auto max-w-[1600px] space-y-8">
                             {children}
                         </div>

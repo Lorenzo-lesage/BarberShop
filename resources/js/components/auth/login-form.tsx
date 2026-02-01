@@ -6,7 +6,6 @@ import { useState } from 'react';
 
 // UI Components
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -100,7 +99,7 @@ export function LoginForm({
                     <div className="group space-y-2">
                         <Label
                             htmlFor="email"
-                            className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground group-focus-within:text-primary"
+                            className="text-[9px] font-black tracking-[0.3em] text-muted-foreground group-focus-within:text-primary"
                         >
                             System_ID (Email)
                         </Label>
@@ -113,8 +112,10 @@ export function LoginForm({
                                 onChange={(e) =>
                                     setData('email', e.target.value)
                                 }
-                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-widest placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-0"
-                                required
+                                className={cn(
+                                    'h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-widest placeholder:text-muted-foreground/40 focus-visible:border-primary focus-visible:ring-0',
+                                    errors.email && 'border-destructive',
+                                )}
                             />
                             <Mail
                                 size={14}
@@ -154,8 +155,10 @@ export function LoginForm({
                                 onChange={(e) =>
                                     setData('password', e.target.value)
                                 }
-                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-[0.4em] focus-visible:border-primary focus-visible:ring-0"
-                                required
+                                className={cn(
+                                    'h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-widest placeholder:text-muted-foreground/40 focus-visible:border-primary focus-visible:ring-0',
+                                    errors.email && 'border-destructive',
+                                )}
                             />
                             <button
                                 type="button"
@@ -169,24 +172,11 @@ export function LoginForm({
                                 )}
                             </button>
                         </div>
-                    </div>
-
-                    {/* Remember Me */}
-                    <div className="flex items-center gap-3 pt-2">
-                        <Checkbox
-                            id="remember"
-                            checked={data.remember}
-                            onCheckedChange={(checked) =>
-                                setData('remember', checked === true)
-                            }
-                            className="rounded-none border-muted-foreground/30 data-[state=checked]:border-primary data-[state=checked]:bg-primary"
-                        />
-                        <Label
-                            htmlFor="remember"
-                            className="cursor-pointer text-[10px] font-black uppercase tracking-widest text-muted-foreground/60"
-                        >
-                            Maintain_Session
-                        </Label>
+                        {errors.password && (
+                            <p className="text-[10px] font-bold uppercase italic text-destructive">
+                                {errors.password}
+                            </p>
+                        )}
                     </div>
                 </div>
 

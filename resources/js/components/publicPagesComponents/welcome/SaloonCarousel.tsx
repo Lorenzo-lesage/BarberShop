@@ -30,7 +30,6 @@ export function SaloonCarousel({ saloons }: { saloons: Saloon[] }) {
                 className="w-full"
                 opts={{
                     align: 'start',
-                    loop: true,
                 }}
             >
                 <CarouselContent className="-ml-4">

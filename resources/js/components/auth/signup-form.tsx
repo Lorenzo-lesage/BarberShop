@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import { useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -107,12 +108,14 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                             <Input
                                 id="name"
                                 placeholder="IDENTIFY YOURSELF"
-                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold uppercase tracking-widest placeholder:text-muted-foreground/40 focus-visible:border-primary focus-visible:ring-0"
                                 value={data.name}
+                                className={cn(
+                                    'h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold uppercase tracking-widest placeholder:text-muted-foreground/40 focus-visible:border-primary focus-visible:ring-0',
+                                    errors.email && 'border-destructive',
+                                )}
                                 onChange={(e) =>
                                     setData('name', e.target.value)
                                 }
-                                required
                             />
                             <UserIcon
                                 size={14}
@@ -139,12 +142,14 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                                 id="email"
                                 type="email"
                                 placeholder="m@example.com"
-                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-widest placeholder:text-muted-foreground/40 focus-visible:border-primary focus-visible:ring-0"
+                                className={cn(
+                                    'h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-widest placeholder:text-muted-foreground/40 focus-visible:border-primary focus-visible:ring-0',
+                                    errors.email && 'border-destructive',
+                                )}
                                 value={data.email}
                                 onChange={(e) =>
                                     setData('email', e.target.value)
                                 }
-                                required
                             />
                             <Mail
                                 size={14}
@@ -170,12 +175,14 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                             <Input
                                 id="password"
                                 type={showPassword ? 'text' : 'password'}
-                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-[0.4em] focus-visible:border-primary focus-visible:ring-0"
+                                className={cn(
+                                    'h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-widest placeholder:text-muted-foreground/40 focus-visible:border-primary focus-visible:ring-0',
+                                    errors.email && 'border-destructive',
+                                )}
                                 value={data.password}
                                 onChange={(e) =>
                                     setData('password', e.target.value)
                                 }
-                                required
                             />
                             <button
                                 type="button"
@@ -189,6 +196,11 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                                 )}
                             </button>
                         </div>
+                        {errors.password && (
+                            <p className="text-[10px] font-bold uppercase italic text-destructive">
+                                {errors.password}
+                            </p>
+                        )}
                     </div>
 
                     {/* Confirm Password */}
@@ -203,7 +215,10 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                             <Input
                                 id="password_confirmation"
                                 type={showPasswordConfirm ? 'text' : 'password'}
-                                className="h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-[0.4em] focus-visible:border-primary focus-visible:ring-0"
+                                className={cn(
+                                    'h-12 rounded-none border-x-0 border-b border-t-0 border-primary/40 bg-transparent px-0 text-sm font-bold tracking-widest placeholder:text-muted-foreground/40 focus-visible:border-primary focus-visible:ring-0',
+                                    errors.email && 'border-destructive',
+                                )}
                                 value={data.password_confirmation}
                                 onChange={(e) =>
                                     setData(
@@ -211,7 +226,6 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                                         e.target.value,
                                     )
                                 }
-                                required
                             />
                             <button
                                 type="button"

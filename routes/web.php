@@ -14,10 +14,12 @@ use App\Models\Saloon;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
+
+
 // Rotte principali
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'saloons' => Saloon::latest()->with('barber:id,name', 'mainPhoto')->take(10)->get(),
+        'saloons' => Saloon::latest()->with('barber:id,name', 'mainPhoto')->take(5)->get(),
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
