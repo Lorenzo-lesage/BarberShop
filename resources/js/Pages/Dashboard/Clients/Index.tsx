@@ -64,130 +64,174 @@ export default function Index({ clients, breadcrumbs }: Props) {
             </header>
 
             {/* --- TABELLA REGISTRO --- */}
-            <div className="space-y-8">
-                <div className="relative overflow-hidden border border-border bg-card/30 backdrop-blur-sm">
-                    <Table>
-                        <TableHeader className="bg-muted/50">
-                            <TableRow className="hover:bg-transparent">
-                                <TableHead className="h-12 text-[9px] font-black uppercase tracking-widest">
-                                    Identity_Subject
-                                </TableHead>
-                                <TableHead className="h-12 text-[9px] font-black uppercase tracking-widest">
-                                    Contact_Details
-                                </TableHead>
-                                <TableHead className="h-12 text-center text-[9px] font-black uppercase tracking-widest">
-                                    Appointment_Frequency
-                                </TableHead>
-                                <TableHead className="h-12 text-right text-[9px] font-black uppercase tracking-widest">
-                                    Access_Profile
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {clients.data.map((client: User) => (
-                                <TableRow
-                                    key={client.id}
-                                    className="group border-b border-border/50 transition-colors hover:bg-muted/30"
-                                >
-                                    {/* Name & Avatar Icon */}
-                                    <TableCell className="py-6">
-                                        <div className="flex items-center gap-4">
-                                            <div className="flex h-10 w-10 items-center justify-center border border-border bg-background transition-colors group-hover:border-primary/50">
-                                                {client.profile_photo ? (
-                                                    <Avatar className="h-full w-full rounded-none">
-                                                        <AvatarImage
-                                                            src={
-                                                                client.profile_photo
-                                                                    ? `/storage/${client.profile_photo}`
-                                                                    : undefined
-                                                            }
-                                                            className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                                        />
-                                                    </Avatar>
-                                                ) : (
-                                                    <div className="flex h-10 w-10 items-center justify-center border border-border bg-background transition-colors group-hover:border-primary/50">
-                                                        <UserCircle
-                                                            size={18}
-                                                            className="text-muted-foreground/40 transition-colors group-hover:text-primary"
-                                                        />
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-xs font-black uppercase tracking-tighter">
-                                                    {client.name}
-                                                </span>
-                                                <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-primary">
-                                                    ID_
-                                                    {client.id
-                                                        .toString()
-                                                        .padStart(4, '0')}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </TableCell>
-
-                                    {/* Email */}
-                                    <TableCell className="py-6">
-                                        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                                            <Mail
-                                                size={12}
-                                                className="opacity-40"
-                                            />
-                                            {client.email}
-                                        </div>
-                                    </TableCell>
-
-                                    {/* Stats */}
-                                    <TableCell className="py-6 text-center">
-                                        <div className="inline-flex flex-col items-center gap-1">
-                                            <div className="flex items-center gap-2">
-                                                <CalendarCheck
-                                                    size={14}
-                                                    className="text-primary/60"
-                                                />
-                                                <span className="font-mono text-lg font-black tracking-tighter">
-                                                    {client.appointments_count}
-                                                </span>
-                                            </div>
-                                            <span className="text-[8px] font-black uppercase tracking-[0.1em] text-muted-foreground/40">
-                                                Entries_Log
-                                            </span>
-                                        </div>
-                                    </TableCell>
-
-                                    {/* Actions */}
-                                    <TableCell className="py-6 text-right">
-                                        <Link
-                                            href={route(
-                                                'clients.show',
-                                                client.id,
-                                            )}
-                                        >
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="h-9 rounded-none border border-border px-4 text-[9px] font-black uppercase tracking-widest transition-all hover:bg-foreground hover:text-background"
-                                            >
-                                                Open_File
-                                                <ArrowUpRight
-                                                    size={12}
-                                                    className="ml-2 opacity-50"
-                                                />
-                                            </Button>
-                                        </Link>
-                                    </TableCell>
+            {clients.data.length > 0 ? (
+                <div className="space-y-8">
+                    <div className="relative overflow-hidden border border-border bg-card/30 backdrop-blur-sm">
+                        <Table>
+                            <TableHeader className="bg-muted/50">
+                                <TableRow className="hover:bg-transparent">
+                                    <TableHead className="h-12 text-[9px] font-black uppercase tracking-widest">
+                                        Identity_Subject
+                                    </TableHead>
+                                    <TableHead className="h-12 text-[9px] font-black uppercase tracking-widest">
+                                        Contact_Details
+                                    </TableHead>
+                                    <TableHead className="h-12 text-center text-[9px] font-black uppercase tracking-widest">
+                                        Appointment_Frequency
+                                    </TableHead>
+                                    <TableHead className="h-12 text-right text-[9px] font-black uppercase tracking-widest">
+                                        Access_Profile
+                                    </TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
+                            </TableHeader>
+                            <TableBody>
+                                {clients.data.map((client: User) => (
+                                    <TableRow
+                                        key={client.id}
+                                        className="group border-b border-border/50 transition-colors hover:bg-muted/30"
+                                    >
+                                        {/* Name & Avatar Icon */}
+                                        <TableCell className="py-6">
+                                            <div className="flex items-center gap-4">
+                                                <div className="flex h-10 w-10 items-center justify-center border border-border bg-background transition-colors group-hover:border-primary/50">
+                                                    {client.profile_photo ? (
+                                                        <Avatar className="h-full w-full rounded-none">
+                                                            <AvatarImage
+                                                                src={
+                                                                    client.profile_photo
+                                                                        ? `/storage/${client.profile_photo}`
+                                                                        : undefined
+                                                                }
+                                                                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                                            />
+                                                        </Avatar>
+                                                    ) : (
+                                                        <div className="flex h-10 w-10 items-center justify-center border border-border bg-background transition-colors group-hover:border-primary/50">
+                                                            <UserCircle
+                                                                size={18}
+                                                                className="text-muted-foreground/40 transition-colors group-hover:text-primary"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-xs font-black uppercase tracking-tighter">
+                                                        {client.name}
+                                                    </span>
+                                                    <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-primary">
+                                                        ID_
+                                                        {client.id
+                                                            .toString()
+                                                            .padStart(4, '0')}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </TableCell>
 
-                {/* --- PAGINATION --- */}
-                <div className="flex justify-center">
-                    <MyPagination links={clients.links} />
+                                        {/* Email */}
+                                        <TableCell className="py-6">
+                                            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                                <Mail
+                                                    size={12}
+                                                    className="opacity-40"
+                                                />
+                                                {client.email}
+                                            </div>
+                                        </TableCell>
+
+                                        {/* Stats */}
+                                        <TableCell className="py-6 text-center">
+                                            <div className="inline-flex flex-col items-center gap-1">
+                                                <div className="flex items-center gap-2">
+                                                    <CalendarCheck
+                                                        size={14}
+                                                        className="text-primary/60"
+                                                    />
+                                                    <span className="font-mono text-lg font-black tracking-tighter">
+                                                        {
+                                                            client.appointments_count
+                                                        }
+                                                    </span>
+                                                </div>
+                                                <span className="text-[8px] font-black uppercase tracking-[0.1em] text-muted-foreground/40">
+                                                    Entries_Log
+                                                </span>
+                                            </div>
+                                        </TableCell>
+
+                                        {/* Actions */}
+                                        <TableCell className="py-6 text-right">
+                                            <Link
+                                                href={route(
+                                                    'clients.show',
+                                                    client.id,
+                                                )}
+                                            >
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-9 rounded-none border border-border px-4 text-[9px] font-black uppercase tracking-widest transition-all hover:bg-foreground hover:text-background"
+                                                >
+                                                    Open_File
+                                                    <ArrowUpRight
+                                                        size={12}
+                                                        className="ml-2 opacity-50"
+                                                    />
+                                                </Button>
+                                            </Link>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+
+                    {/* --- PAGINATION --- */}
+                    <div className="flex justify-center">
+                        <MyPagination links={clients.links} />
+                    </div>
                 </div>
-            </div>
+            ) : (
+                <div className="relative flex h-[50vh] flex-col items-center justify-center overflow-hidden rounded-xl border border-dashed border-border/60 bg-muted/5 px-6 transition-all">
+                    {/* Background Decorative - Griglia tecnica minima */}
+                    <div
+                        className="pointer-events-none absolute inset-0 opacity-[0.03]"
+                        style={{
+                            backgroundImage:
+                                'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)',
+                            backgroundSize: '20px 20px',
+                        }}
+                    />
+
+                    {/* Icona o Simbolo di Standby */}
+                    <div className="relative mb-6">
+                        <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
+                        <div className="relative flex h-16 w-16 items-center justify-center rounded-full border border-primary/30 bg-background shadow-[0_0_20px_rgba(0,0,0,0.1)]">
+                            <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+                        </div>
+                    </div>
+
+                    {/* Testo Principale */}
+                    <div className="relative z-10 flex flex-col items-center gap-2 text-center">
+                        <h3 className="text-sm font-black uppercase tracking-[0.4em] text-foreground/80">
+                            Registry_Empty
+                        </h3>
+
+                        <div className="h-[1px] w-12 bg-primary/50" />
+
+                        <p className="max-w-[200px] text-[10px] font-medium uppercase leading-relaxed tracking-widest text-muted-foreground/60">
+                            Waiting for inbound data connection. No active nodes
+                            found.
+                        </p>
+                    </div>
+
+                    {/* Angoli decorativi stile interfaccia */}
+                    <div className="absolute left-4 top-4 h-2 w-2 border-l border-t border-primary/40" />
+                    <div className="absolute right-4 top-4 h-2 w-2 border-r border-t border-primary/40" />
+                    <div className="absolute bottom-4 left-4 h-2 w-2 border-b border-l border-primary/40" />
+                    <div className="absolute bottom-4 right-4 h-2 w-2 border-b border-r border-primary/40" />
+                </div>
+            )}
         </Dashboard>
     );
 }

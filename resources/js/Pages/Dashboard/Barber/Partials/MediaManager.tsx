@@ -31,7 +31,9 @@ export function MediaManager({ saloon, setDeleteTarget }: MediaManagerProps) {
     */
     const [uploadingCover, setUploadingCover] = useState(false);
     const [uploadingPhotosCount, setUploadingPhotosCount] = useState(0);
-    const [isDragging, setIsDragging] = useState(false);
+    const [activeDragZone, setActiveDragZone] = useState<
+        'cover' | 'gallery' | null
+    >(null);
     const [localErrors, setLocalErrors] = useState<{
         main_photo?: string;
         photos?: string;
@@ -134,20 +136,32 @@ export function MediaManager({ saloon, setDeleteTarget }: MediaManagerProps) {
         });
     };
 
-    const handleDragOver = (e: React.DragEvent) => {
+    const handleDragOver = (e: React.DragEvent, zone: 'cover' | 'gallery') => {
         e.preventDefault();
-        setIsDragging(true);
+        setActiveDragZone(zone);
     };
 
     const handleDragLeave = () => {
-        setIsDragging(false);
+        setActiveDragZone(null);
     };
 
-    const handleDrop = (e: React.DragEvent) => {
+    const handleDrop = (e: React.DragEvent, zone: 'cover' | 'gallery') => {
         e.preventDefault();
-        setIsDragging(false);
+        setActiveDragZone(null);
         const files = Array.from(e.dataTransfer.files);
-        uploadFiles(files);
+
+        if (zone === 'cover') {
+            // Se è la cover, prendiamo solo il primo file
+            if (files[0]) {
+                // Simula l'evento del ChangeEvent per riutilizzare handleCoverUpload
+                // O meglio, estrai la logica in una funzione handleFiles(file, type)
+                handleCoverUpload({
+                    target: { files: [files[0]] },
+                } as unknown as React.ChangeEvent<HTMLInputElement>);
+            }
+        } else {
+            uploadFiles(files);
+        }
     };
 
     /*
@@ -175,10 +189,18 @@ export function MediaManager({ saloon, setDeleteTarget }: MediaManagerProps) {
                     </Label>
                     <div
                         className={cn(
-                            'group relative aspect-video overflow-hidden border border-border/60 bg-muted/5',
-                            localErrors.main_photo &&
-                                'border-destructive bg-destructive/5 ring-1 ring-destructive',
+                            'group relative aspect-video overflow-hidden border-2 border-dashed bg-muted/5 p-2 transition-all',
+                            activeDragZone === 'cover'
+                                ? 'border-primary bg-primary/5'
+                                : localErrors.main_photo
+                                  ? 'border-destructive bg-destructive/5 ring-1 ring-destructive'
+                                  : 'border-border/90',
+                            uploadingPhotosCount > 0 &&
+                                'pointer-events-none opacity-50',
                         )}
+                        onDragOver={(e) => handleDragOver(e, 'cover')}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleDrop(e, 'cover')}
                     >
                         {saloon?.main_photo ? (
                             <SaloonImage
@@ -225,12 +247,12 @@ export function MediaManager({ saloon, setDeleteTarget }: MediaManagerProps) {
                         Gallery_Nodes
                     </Label>
                     <div
-                        onDragOver={handleDragOver}
+                        onDragOver={(e) => handleDragOver(e, 'gallery')}
                         onDragLeave={handleDragLeave}
-                        onDrop={handleDrop}
+                        onDrop={(e) => handleDrop(e, 'gallery')}
                         className={cn(
                             'grid min-h-[120px] grid-cols-3 gap-2 border-2 border-dashed p-2 transition-all',
-                            isDragging
+                            activeDragZone === 'gallery'
                                 ? 'border-primary bg-primary/5'
                                 : localErrors.photos
                                   ? 'border-destructive bg-destructive/5 ring-1 ring-destructive'

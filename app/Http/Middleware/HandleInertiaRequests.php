@@ -49,7 +49,7 @@ class HandleInertiaRequests extends Middleware
                         ->with('client')
                         ->where('appointment_time', '>=', $nowItaly)
                         ->orderBy('appointment_time', 'asc')
-                        ->take(5)
+                        ->take(3)
                         ->get()
                     : $user->appointments()
                         ->with('saloon')
