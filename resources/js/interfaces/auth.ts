@@ -1,3 +1,4 @@
+import { PageProps as InertiaPageProps } from '@inertiajs/core';
 import { Appointment } from './saloon';
 
 export interface User {
@@ -10,9 +11,9 @@ export interface User {
     appointments_count?: number;
     created_at: string;
     updated_at: string;
-    profile_photo: string | null;
+    profile_photo: string | undefined;
     profile_photo_url: string | undefined;
-    email_verified_at: string | null;
+    email_verified_at: string | undefined;
 }
 
 export interface ToastFlash {
@@ -21,7 +22,7 @@ export interface ToastFlash {
     description?: string;
 }
 
-export interface AuthProps {
+export interface AuthProps extends InertiaPageProps {
     auth: {
         user: User;
     };

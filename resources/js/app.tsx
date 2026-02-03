@@ -17,11 +17,11 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 import { PageProps } from '@/types';
 
 interface AppWrapperProps {
-    App: React.ElementType<PageProps>;
-    props: PageProps;
+    App: React.ElementType;
+    props: any;
 }
 
-function AppWrapper({ App, props }: AppWrapperProps) {
+function AppWrapper({ App, props }: React.PropsWithChildren<AppWrapperProps>) {
     const theme = useThemeStore((state) => state.theme);
     return (
         <TooltipProvider delayDuration={150}>
