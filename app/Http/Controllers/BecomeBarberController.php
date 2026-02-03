@@ -35,7 +35,7 @@ class BecomeBarberController extends Controller
             ['user' => $user->id]
         );
 
-        $adminEmail = env('MAIL_ADMIN_ADDRESS');
+        $adminEmail = config('mail.admin_address');
 
         Mail::to($adminEmail)->send(
             new BarberRequestMail($user, $approveUrl)
