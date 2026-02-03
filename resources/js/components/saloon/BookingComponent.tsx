@@ -256,8 +256,6 @@ export default function BookingComponent({ saloon }: Props) {
         return null;
     }, [saloon.appointments, isOwner, isAuthenticated, authId, auth.user]);
 
-    console.log('Stats:', stats);
-
     /*
     |-------------------------------------------------------------------
     | Handlers

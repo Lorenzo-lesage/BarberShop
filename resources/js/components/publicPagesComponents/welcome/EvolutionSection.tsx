@@ -6,6 +6,12 @@ import { useRef } from 'react';
 gsap.registerPlugin(ScrollTrigger);
 
 export function EvolutionSection() {
+    /*
+    |----------------------------------------------------------------
+    | GSAP
+    |----------------------------------------------------------------
+    */
+
     const container = useRef<HTMLDivElement>(null);
     const textRef = useRef<HTMLHeadingElement>(null);
     const bgOverlayRef = useRef<HTMLDivElement>(null);
@@ -60,6 +66,12 @@ export function EvolutionSection() {
         },
         { scope: container },
     );
+
+    /*
+    |----------------------------------------------------------------
+    | Render
+    |----------------------------------------------------------------
+    */
 
     return (
         <section

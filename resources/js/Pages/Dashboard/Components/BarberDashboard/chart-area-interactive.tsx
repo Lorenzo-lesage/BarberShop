@@ -65,7 +65,6 @@ export function PerformanceChart({
     |--------------------------------------------------------------------------
     */
 
-    console.log('data', data);
 
     return (
         <Card className="rounded-none border-x-0 border-b border-t-0 border-border/60 bg-muted/5 shadow-none">

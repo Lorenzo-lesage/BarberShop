@@ -44,8 +44,6 @@ export function InsightsGrid({ stats }: InsightsGridProps) {
         },
     ];
 
-    console.log(insights);
-
     return (
         <div className="relative grid grid-cols-2 divide-x divide-y border-b border-border/60 md:grid-cols-4 md:divide-y-0">
             <div className="absolute -top-3 left-6 z-10 border border-border/60 bg-background px-2 py-1 text-[8px] font-black uppercase tracking-[0.3em] text-violet-500">

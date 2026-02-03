@@ -7,10 +7,18 @@ import { useState } from 'react';
 
 // UI Components
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from '@/components/ui/sheet';
 
 // Icons
 import {
+    Home,
     LayoutDashboard,
     LogIn,
     LogOut,
@@ -22,6 +30,15 @@ import {
 
 // Toast
 import { toast } from 'sonner';
+
+// Interfaces
+import type { LucideIcon } from 'lucide-react';
+interface MobileMenuProps {
+    href: string;
+    icon: LucideIcon;
+    children: string;
+    active: boolean;
+}
 
 export default function MobileMenu() {
     const { auth } = usePage<AuthProps>().props;
@@ -43,7 +60,12 @@ export default function MobileMenu() {
         );
     };
 
-    const NavLink = ({ href, icon: Icon, children, active }: any) => (
+    const NavLink = ({
+        href,
+        icon: Icon,
+        children,
+        active,
+    }: MobileMenuProps) => (
         <a
             href={href}
             className={cn(
@@ -89,6 +111,13 @@ export default function MobileMenu() {
                 side="right"
                 className="border-l border-border bg-background p-0 sm:w-[350px]"
             >
+                <SheetHeader className="sr-only">
+                    <SheetTitle>Navigation Menu</SheetTitle>
+                    <SheetDescription>
+                        Access system dashboard, profile settings, and
+                        authentication.
+                    </SheetDescription>
+                </SheetHeader>
                 {/* --- HEADER TECNICO --- */}
                 <div className="flex h-20 items-center justify-between border-b border-border bg-muted/20 px-6">
                     <div className="flex items-center gap-2">
@@ -123,6 +152,13 @@ export default function MobileMenu() {
                             {auth?.user ? (
                                 <>
                                     <NavLink
+                                        href={route('welcome')}
+                                        icon={Home}
+                                        active={route().current('welcome')}
+                                    >
+                                        Home
+                                    </NavLink>
+                                    <NavLink
                                         href={route('dashboard')}
                                         icon={LayoutDashboard}
                                         active={route().current('dashboard')}
@@ -151,6 +187,13 @@ export default function MobileMenu() {
                                 </>
                             ) : (
                                 <>
+                                    <NavLink
+                                        href={route('welcome')}
+                                        icon={Home}
+                                        active={route().current('welcome')}
+                                    >
+                                        Home
+                                    </NavLink>
                                     <NavLink
                                         href={route('login')}
                                         icon={LogIn}

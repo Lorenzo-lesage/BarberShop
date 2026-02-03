@@ -46,7 +46,6 @@ export const AppointmentTable = ({
     isBarber,
     showActions = true,
 }: AppointmentTableProps) => {
-    console.log(appointments);
     return (
         <Table className="border-collapse">
             <TableHeader className="bg-muted/50">
