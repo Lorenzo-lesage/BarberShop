@@ -1,28 +1,27 @@
 import '../css/app.css';
 import './bootstrap';
 
-import type { InertiaAppProps } from '@inertiajs/react';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-// Stores
-import { useThemeStore } from '@/stores/themeStores';
-
-// Components
+// Stores e UI
 import { Toaster } from '@/components/ui/sonner';
-
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { useThemeStore } from '@/stores/themeStores';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
-function AppWrapper({
-    App,
-    props,
-}: {
-    App: React.ComponentType<InertiaAppProps>;
-    props: InertiaAppProps;
-}) {
+// Interfaces
+import { PageProps } from '@/types';
+
+interface AppWrapperProps {
+    App: React.ElementType<PageProps>;
+    props: PageProps;
+}
+
+function AppWrapper({ App, props }: AppWrapperProps) {
     const theme = useThemeStore((state) => state.theme);
     return (
         <TooltipProvider delayDuration={150}>
@@ -46,7 +45,9 @@ createInertiaApp({
         ),
     setup({ el, App, props }) {
         const root = createRoot(el);
-        root.render(<AppWrapper App={App} props={props} />);
+        root.render(
+            <AppWrapper App={App} props={props as unknown as PageProps} />,
+        );
     },
     progress: { color: '#4B5563' },
 });

@@ -12,6 +12,7 @@ export interface User {
     updated_at: string;
     profile_photo: string | null;
     profile_photo_url: string | undefined;
+    email_verified_at: string | null;
 }
 
 export interface ToastFlash {

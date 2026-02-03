@@ -19,7 +19,6 @@ import { AlertCircle, Camera, CheckCircle2, Loader2 } from 'lucide-react';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
-    status,
     className = '',
 }: {
     mustVerifyEmail: boolean;

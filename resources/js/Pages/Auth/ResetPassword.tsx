@@ -2,7 +2,7 @@ import InputError from '@/components/ui/InputError';
 import InputLabel from '@/components/ui/InputLabel';
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import TextInput from '@/components/ui/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
+import Appshell from '@/Layouts/Appshell';
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
@@ -29,7 +29,7 @@ export default function ResetPassword({
     };
 
     return (
-        <GuestLayout>
+        <Appshell>
             <Head title="Reset Password" />
 
             <form onSubmit={submit}>
@@ -95,6 +95,6 @@ export default function ResetPassword({
                     </PrimaryButton>
                 </div>
             </form>
-        </GuestLayout>
+        </Appshell>
     );
 }
