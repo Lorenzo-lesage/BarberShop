@@ -32,7 +32,6 @@ interface Props {
 }
 
 export default function Index({ clients, breadcrumbs }: Props) {
-    console.log(clients);
     return (
         <Dashboard
             breadcrumbs={breadcrumbs}

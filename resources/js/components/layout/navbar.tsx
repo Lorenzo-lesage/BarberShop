@@ -4,10 +4,14 @@ import { Link, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 // Components
+<<<<<<< HEAD
 import ApplicationLogo from '@/components/ApplicationLogo';
+=======
+>>>>>>> dev
 import DropdownDashboard from '@/components/navbarComponents/dropdownDashboard';
 import MobileMenu from '@/components/navbarComponents/mobileMenu';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
+import ApplicationLogo from '@/components/ui/ApplicationLogo';
 
 // Icons
 import { LogIn } from 'lucide-react';
@@ -45,7 +49,7 @@ export default function Navbar() {
     return (
         <nav
             className={cn(
-                'fixed left-0 right-0 top-0 z-50  transition-all duration-500 ease-in-out',
+                'fixed left-0 right-0 top-0 z-50 transition-all duration-500 ease-in-out',
                 scrolled
                     ? 'bg-background/50 backdrop-blur-lg'
                     : 'bg-transparent',
@@ -126,7 +130,7 @@ export default function Navbar() {
                             </span>
                         </Link>
                     ) : (
-                        <div className="flex items-center gap-6">
+                        <div className="flex hidden items-center gap-6 md:flex">
                             <div
                                 className={cn(
                                     'hidden h-8 w-[1px] bg-border transition-opacity md:block',

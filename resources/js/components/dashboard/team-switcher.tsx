@@ -7,7 +7,11 @@ import { Link, usePage } from '@inertiajs/react';
 import { User } from 'lucide-react';
 
 // Components
+<<<<<<< HEAD
 import ApplicationLogo from '@/components/ApplicationLogo';
+=======
+import ApplicationLogo from '@/components/ui/ApplicationLogo';
+>>>>>>> dev
 import {
     SidebarMenu,
     SidebarMenuItem,
