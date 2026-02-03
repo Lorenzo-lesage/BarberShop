@@ -14,7 +14,6 @@ import { useThemeStore } from '@/stores/themeStores';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 // Interfaces
-import { PageProps } from '@/types';
 
 interface AppWrapperProps {
     App: React.ElementType;
@@ -45,9 +44,7 @@ createInertiaApp({
         ),
     setup({ el, App, props }) {
         const root = createRoot(el);
-        root.render(
-            <AppWrapper App={App} props={props as unknown as PageProps} />,
-        );
+        root.render(<AppWrapper App={App} props={props} />);
     },
     progress: { color: '#4B5563' },
 });

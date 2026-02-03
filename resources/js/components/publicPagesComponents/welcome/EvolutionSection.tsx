@@ -25,7 +25,7 @@ export function EvolutionSection() {
                 scrollTrigger: {
                     trigger: container.current,
                     start: 'top top',
-                    end: isMobile ? '+=1000' : '+=3500',
+                    end: isMobile ? '+=1200' : '+=3000',
                     scrub: 1,
                     pin: true,
                     anticipatePin: 1,
