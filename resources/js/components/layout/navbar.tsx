@@ -4,7 +4,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 // Components
-import ApplicationLogo from '@/Components/ApplicationLogo';
+import ApplicationLogo from '@/components/ApplicationLogo';
 import DropdownDashboard from '@/components/navbarComponents/dropdownDashboard';
 import MobileMenu from '@/components/navbarComponents/mobileMenu';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
