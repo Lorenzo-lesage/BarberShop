@@ -70,18 +70,22 @@ class OAuthController extends Controller
 
             Auth::login($user);
 
-            return redirect('/dashboard')->with('toast', [
+            session()->flash('toast', [
                 'type' => 'success',
                 'message' => 'Authenticated!',
             ]);
+
+            return redirect('/dashboard');
         } catch (\Exception $e) {
             Log::error('OAuth callback error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
-            return redirect('/login')->with('toast', [
+            session()->flash('toast', [
                 'type' => 'error',
                 'message' => 'Authentication failed',
                 'description' => 'Authentication error occurred',
             ]);
+
+            return redirect('/login');
         }
     }
 }

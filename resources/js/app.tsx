@@ -11,6 +11,7 @@ import { GlobalNotificationDialog } from '@/components/GlobalNotificationDialog'
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useThemeStore } from '@/stores/themeStores';
+import { toast } from 'sonner';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -56,28 +57,70 @@ createInertiaApp({
             import.meta.glob('./Pages/**/*.tsx'),
         ),
     setup({ el, App, props }) {
-        // --- Notifications ---
-        let lastNotifId: string | null = null;
+        const root = createRoot(el);
+
+        // --- FUNZIONE PER MOSTRARE IL TOAST ---
+        const triggerToast = (toastData: any) => {
+            if (toastData) {
+                // Usiamo un timeout per essere sicuri che il Toaster sia montato nel DOM
+                setTimeout(() => {
+                    // @ts-ignore
+                    toast[toastData.type || 'success'](toastData.message, {
+                        description: toastData.description,
+                    });
+                }, 500);
+            }
+        };
+
+        // --- 1. CONTROLLO AL BOOT (Per OAuth e Refresh F5) ---
+        // Leggiamo i dati che Laravel ha passato nel primo caricamento
+        const initialProps = props.initialPage.props as any;
+        const initialToast = initialProps.flash?.toast || initialProps.toast;
+
+        if (initialToast) {
+            triggerToast(initialToast);
+        }
+
+        // --- 2. LOGICA NOTIFICHE (La tua già esistente) ---
+        const showNotification = (notification: any) => {
+            if (notification && notification.id) {
+                window.dispatchEvent(
+                    new CustomEvent('show-global-notification', {
+                        detail: {
+                            id: notification.id,
+                            title: notification.data.message,
+                            description: notification.data.description,
+                        },
+                    }),
+                );
+            }
+        };
+
+        const initialAuth = initialProps.auth as any;
+        if (initialAuth?.notification) {
+            setTimeout(() => showNotification(initialAuth.notification), 500);
+        }
+
+        // --- 3. CONTROLLO DURANTE NAVIGAZIONE (SPA) ---
+        let lastId = initialAuth?.notification?.id;
 
         router.on('success', (event) => {
-            const auth = event.detail.page.props.auth as any;
-            const notification = auth?.notification;
+            const pageProps = event.detail.page.props as any;
 
-            if (notification && lastNotifId !== notification.id) {
-                lastNotifId = notification.id;
+            // Toast durante navigazione
+            const navToast = pageProps.flash?.toast || pageProps.toast;
+            if (navToast) {
+                triggerToast(navToast);
+            }
 
-                const event = new CustomEvent('show-global-notification', {
-                    detail: {
-                        id: notification.id,
-                        title: notification.data.message,
-                        description: notification.data.description,
-                    },
-                });
-                window.dispatchEvent(event);
+            // Notifica durante navigazione
+            const auth = pageProps.auth as any;
+            if (auth?.notification && auth.notification.id !== lastId) {
+                lastId = auth.notification.id;
+                showNotification(auth.notification);
             }
         });
-        // --------------------------------
-        const root = createRoot(el);
+
         root.render(<AppWrapper App={App} props={props} />);
     },
     progress: { color: '#4B5563' },

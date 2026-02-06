@@ -4,11 +4,7 @@ import { cn } from '@/lib/utils';
 import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 
-import { useEffect } from 'react';
-import { toast } from 'sonner';
-
 // Interfaces
-import type { AuthProps } from '@/interfaces/auth';
 
 // Interfaces
 import { User } from '@/interfaces/auth';
@@ -45,39 +41,12 @@ export default function DashboardLayout({
 
     const { auth } = usePage<PageProps>().props;
     const user = auth.user as User;
-    const { props } = usePage<AuthProps>();
-    const flashToast = props.flash?.toast;
-    const lastToastMessage = React.useRef<string | null>(null);
 
     /*
     |-----------------------------------------------------------------------
     | Effects
     |-----------------------------------------------------------------------
     */
-
-    useEffect(() => {
-        if (
-            !flashToast ||
-            lastToastMessage.current === JSON.stringify(flashToast)
-        ) {
-            return;
-        }
-
-        const toastId = `flash-${JSON.stringify(flashToast.message)}`;
-
-        toast[flashToast.type](flashToast.message, {
-            id: toastId,
-            description: flashToast.description,
-        });
-
-        lastToastMessage.current = JSON.stringify(flashToast);
-
-        window.history.replaceState({}, document.title);
-
-        if (props.flash) {
-            (props.flash as any).toast = undefined;
-        }
-    }, [flashToast, lastToastMessage, props]);
 
     /*
     |-----------------------------------------------------------------------

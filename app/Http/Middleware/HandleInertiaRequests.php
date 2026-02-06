@@ -42,6 +42,7 @@ class HandleInertiaRequests extends Middleware
                     ];
                 }
                 $nowItaly = \Carbon\Carbon::now('Europe/Rome');
+                $notification = $user->unreadNotifications()->first();
 
                 // 2. Se l'utente esiste, carichiamo gli appuntamenti
                 $appointments = $user->is_barber
@@ -73,14 +74,13 @@ class HandleInertiaRequests extends Middleware
                         'created_at' => $user->created_at,
                         'updated_at' => $user->updated_at
                     ],
-                    'notification' => $request->user()
-                        ? $request->user()->unreadNotifications()->first()
-                        : null,
+                    'notification' => $notification ? [
+                        'id' => $notification->id,
+                        'data' => $notification->data,
+                    ] : null,
                 ];
             },
-            'flash' => [
-                'toast' => fn() => $request->session()->get('toast')
-            ],
+            'toast' => $request->session()->get('toast'),
         ];
     }
 }
