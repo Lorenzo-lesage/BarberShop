@@ -22,12 +22,26 @@ export interface ToastFlash {
     description?: string;
 }
 
+export interface NotificationData {
+    type: 'success' | 'error' | 'info';
+    message: string;
+    description?: string;
+}
+
+export interface DatabaseNotification {
+    id: string;
+    data: NotificationData;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface AuthProps extends InertiaPageProps {
     auth: {
         user: User;
+        notification?: DatabaseNotification | null;
     };
     flash?: {
-        toast?: ToastFlash;
+        toast?: ToastFlash | undefined;
     };
     [key: string]: unknown;
 }

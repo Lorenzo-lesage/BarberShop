@@ -27,6 +27,16 @@ Route::get('/', function () {
     ]);
 })->name('welcome');
 
+/**
+ * Notifications
+ */
+Route::post('/notifications/{id}/mark-as-read', function ($id) {
+    $notification = auth()->user()->notifications()->find($id);
+    if ($notification) {
+        $notification->markAsRead();
+    }
+    return back();
+})->middleware(['auth']);
 
 /**
  * Dashboard

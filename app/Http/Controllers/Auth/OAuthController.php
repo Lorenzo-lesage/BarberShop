@@ -28,6 +28,11 @@ class OAuthController extends Controller
      */
     public function callback(string $provider)
     {
+
+        if (Auth::check()) {
+            return redirect('/dashboard');
+        }
+
         try {
             $socialUser = Socialite::driver($provider)->user();
 

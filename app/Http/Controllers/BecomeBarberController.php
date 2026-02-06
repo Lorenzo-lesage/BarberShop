@@ -54,19 +54,15 @@ class BecomeBarberController extends Controller
     public function approve(User $user)
     {
         if ($user->is_barber) {
-            return redirect('/')->with('toast', [
-                'type' => 'info',
-                'message' => 'User already barber',
-            ]);
+            return response("User already barber.", 200);
         }
 
-        $user->update([
-            'is_barber' => true,
-        ]);
+        $user->update(['is_barber' => true]);
 
-        return redirect('/')->with('toast', [
-            'type' => 'success',
-            'message' => 'Barber approved!',
-        ]);
+        // Creiamo la notifica per l'utente (che vedrà lui quando si collegherà)
+        $user->notify(new \App\Notifications\BarberApproved());
+
+        // Risposta testuale semplice per l'Admin
+        return response("Request successfully approved. User is now barber. You can close this window.", 200);
     }
 }

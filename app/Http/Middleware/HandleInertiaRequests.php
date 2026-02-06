@@ -48,12 +48,14 @@ class HandleInertiaRequests extends Middleware
                     ? Appointment::where('barber_id', $user->id)
                         ->with('client')
                         ->where('appointment_time', '>=', $nowItaly)
+                        ->where('status', '!=', 'cancelled')
                         ->orderBy('appointment_time', 'asc')
                         ->take(3)
                         ->get()
                     : $user->appointments()
                         ->with('saloon')
                         ->where('appointment_time', '>=', $nowItaly)
+                        ->where('status', '!=', 'cancelled')
                         ->orderBy('appointment_time', 'asc')
                         ->take(5)
                         ->get();
@@ -71,6 +73,9 @@ class HandleInertiaRequests extends Middleware
                         'created_at' => $user->created_at,
                         'updated_at' => $user->updated_at
                     ],
+                    'notification' => $request->user()
+                        ? $request->user()->unreadNotifications()->first()
+                        : null,
                 ];
             },
             'flash' => [
