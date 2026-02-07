@@ -86,10 +86,10 @@ export function ScheduleManager({ data, setData, errors }: Props) {
                         </div>
 
                         {!data.opening_hours[day].is_closed ? (
-                            <div className="flex items-center animate-in fade-in slide-in-from-right-1 md:gap-2">
+                            <div className="flex items-center gap-1 animate-in fade-in slide-in-from-right-1 md:gap-2">
                                 <Input
                                     type="time"
-                                    className="h-7 w-14 rounded-none border-border/40 bg-transparent font-mono text-[10px] focus-visible:ring-primary md:w-20"
+                                    className="h-7 w-20 rounded-none border-border/40 bg-transparent text-center font-mono text-[13px] selection:bg-primary/30 focus-visible:ring-primary md:w-24 md:text-sm [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-datetime-edit-fields-wrapper]:justify-center [&::-webkit-datetime-edit]:text-center"
                                     value={data.opening_hours[day].open}
                                     onChange={(e) =>
                                         handleHourChange(
@@ -104,7 +104,7 @@ export function ScheduleManager({ data, setData, errors }: Props) {
                                 </span>
                                 <Input
                                     type="time"
-                                    className="h-7 w-14 rounded-none border-border/40 bg-transparent font-mono text-[10px] focus-visible:ring-primary md:w-20"
+                                    className="h-7 w-20 rounded-none border-border/40 bg-transparent text-center font-mono text-[13px] selection:bg-primary/30 focus-visible:ring-primary md:w-24 md:text-sm [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-datetime-edit-fields-wrapper]:justify-center [&::-webkit-datetime-edit]:text-center"
                                     value={data.opening_hours[day].close}
                                     onChange={(e) =>
                                         handleHourChange(
