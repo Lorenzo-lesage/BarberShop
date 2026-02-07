@@ -43,7 +43,7 @@ export default function DashboardClient({
         <Dashboard breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }]}>
             <Head title="CLIENT_DASHBOARD" />
 
-            <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 p-6 md:p-10">
+            <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 md:p-10">
                 {/* --- HEADER SEZIONALE --- */}
                 <HeaderClientDashboard user={user} />
 

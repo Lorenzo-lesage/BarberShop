@@ -318,7 +318,7 @@ export default function BookingComponent({ saloon }: Props) {
                     {/* --- SALOON HEADER: THE IDENTITY --- */}
                     <header className="flex flex-col justify-between gap-10 border-b border-border pb-12 lg:flex-row lg:items-end">
                         <div className="flex-1 space-y-6">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center justify-between gap-3">
                                 <Badge
                                     variant="outline"
                                     className="border-primary/30 bg-primary/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-primary"
@@ -489,29 +489,67 @@ export default function BookingComponent({ saloon }: Props) {
                                         </div>
                                     </Carousel>
                                 </div>
+                                <DialogContent className="flex h-screen max-w-[100vw] flex-col border-none bg-background/95 p-0 shadow-none backdrop-blur-2xl">
+                                    {/* --- Header superiore minimale --- */}
+                                    <div className="absolute top-0 z-50 flex w-full items-center justify-between p-6">
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">
+                                                Studio Gallery
+                                            </span>
+                                            <span className="text-[8px] font-medium uppercase tracking-widest text-muted-foreground">
+                                                {saloon.name} —{' '}
+                                                {galleryPhotos.length} Photos
+                                            </span>
+                                        </div>
+                                        {/* Il tasto chiusura di Shadcn è già presente, ma puoi stilizzarlo meglio via CSS nel Dialog */}
+                                    </div>
 
-                                <DialogContent className="h-[90vh] max-w-[95vw] border-none bg-background/95 p-0 shadow-none backdrop-blur-xl">
                                     <Carousel
                                         className="h-full w-full"
-                                        opts={{ startIndex: selectedIndex }}
+                                        opts={{
+                                            startIndex: selectedIndex,
+                                            loop: true,
+                                        }}
                                     >
-                                        <CarouselContent>
-                                            {galleryPhotos.map((p) => (
+                                        <CarouselContent className="h-full ml-0">
+                                            {galleryPhotos.map((p, index) => (
                                                 <CarouselItem
                                                     key={p.id}
-                                                    className="flex items-center justify-center"
+                                                    className="relative flex h-screen items-center justify-center p-4"
                                                 >
+                                                    {/* Numero della foto in background (effetto editoriale) */}
+                                                    <span className="absolute -bottom-10 -left-10 select-none text-[20vh] font-black italic text-foreground/5 md:bottom-0 md:left-0">
+                                                        {String(
+                                                            index + 1,
+                                                        ).padStart(2, '0')}
+                                                    </span>
+
                                                     <img
                                                         src={`/storage/${p.path}`}
-                                                        className="max-h-[85vh] w-full object-contain p-4"
+                                                        className="z-10 max-h-[75vh] w-auto object-contain shadow-[0_0_50px_rgba(0,0,0,0.5)] md:max-h-[80vh]"
                                                         alt="Studio Gallery"
                                                     />
                                                 </CarouselItem>
                                             ))}
                                         </CarouselContent>
-                                        <CarouselPrevious className="left-10 bg-foreground/10" />
-                                        <CarouselNext className="right-10 bg-foreground/10" />
+
+                                        {/* Frecce stilizzate: visibili solo su desktop, posizionate meglio */}
+                                        <div className="hidden md:block">
+                                            <CarouselPrevious className="left-8 border-primary/20 bg-background/20 text-primary hover:bg-primary hover:text-black" />
+                                            <CarouselNext className="right-8 border-primary/20 bg-background/20 text-primary hover:bg-primary hover:text-black" />
+                                        </div>
                                     </Carousel>
+
+                                    {/* --- Footer: Progress Bar o Thumbnail --- */}
+                                    <div className="absolute bottom-10 w-full px-10">
+                                        <div className="h-[1px] w-full bg-primary/10">
+                                            {/* Qui potresti mappare una barra di progresso dinamica basata sullo stato del carosello */}
+                                            <div
+                                                className="h-full bg-primary transition-all duration-300"
+                                                style={{ width: '30%' }}
+                                            />
+                                        </div>
+                                    </div>
                                 </DialogContent>
                             </Dialog>
                         </section>

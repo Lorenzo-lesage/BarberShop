@@ -207,14 +207,9 @@ export default function SaloonConfig({
                         v1.0_Stable
                     </div>
                 </header>
-
-                <div className="space-y-8">
-                    {/* Il tuo componente (es. GeneralSettings) */}
-                </div>
             </div>
 
             <div className="mx-auto w-full max-w-2xl space-y-6 px-0 pb-10 sm:px-4">
-
                 <form onSubmit={submitSaloon} className="space-y-6">
                     {/* --- GENERAL SETTINGS --- */}
                     <GeneralSettings

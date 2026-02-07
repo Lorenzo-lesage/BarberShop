@@ -40,7 +40,7 @@ export function GeneralSettings({
     return (
         <div className="space-y-8 duration-500 animate-in fade-in">
             {/* --- HEADER SECTOR --- */}
-            <header className="flex items-center justify-between border-b border-border/40 pb-5">
+            <header className="flex flex-col justify-between gap-4 border-b border-border/40 pb-5 md:flex-row md:items-end">
                 <div>
                     <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">
                         01_Primary_Information
@@ -60,7 +60,7 @@ export function GeneralSettings({
                             })
                         }
                         type="button"
-                        className="h-8 rounded-none border border-destructive/20 bg-destructive/5 px-3 text-[9px] font-black uppercase tracking-widest text-destructive transition-all hover:bg-destructive hover:text-white"
+                        className="h-8 w-[50%] rounded-none border border-destructive/20 bg-destructive/5 px-3 text-[9px] font-black uppercase tracking-widest text-destructive transition-all hover:bg-destructive hover:text-white md:w-auto"
                     >
                         <Trash2 className="mr-2 h-3.5 w-3.5" />
                         Terminate_Saloon

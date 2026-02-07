@@ -1,7 +1,5 @@
 import hero from '@/assets/hero.jpg';
 
-// Layout Components
-
 // Partials
 import { CallToAction } from '@/components/publicPagesComponents/welcome/CallToAction';
 import { DashboardPreview } from '@/components/publicPagesComponents/welcome/DashboardPreview';
@@ -11,14 +9,10 @@ import { FeaturedSaloons } from '@/components/publicPagesComponents/welcome/Feat
 import { FeautersBento } from '@/components/publicPagesComponents/welcome/FeaturesBento';
 import { HeroSection } from '@/components/publicPagesComponents/welcome/HeroSection';
 
-// Components
-
 // Layout
 import AppShell from '@/Layouts/Appshell';
 import { PageProps } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-
-// Icons
 
 // Interfaces
 import type { User } from '@/interfaces/auth';
@@ -31,7 +25,19 @@ export default function Welcome({
     phpVersion: string;
     saloons: Saloon[];
 }>) {
+    /*
+    |-------------------------------------------------------------------
+    | Data
+    |-------------------------------------------------------------------
+    */
+
     const { auth } = usePage().props;
+
+    /*
+    |-------------------------------------------------------------------
+    | Render
+    |-------------------------------------------------------------------
+    */
 
     return (
         <AppShell>

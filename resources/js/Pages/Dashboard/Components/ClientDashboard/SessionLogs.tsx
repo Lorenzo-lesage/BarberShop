@@ -87,7 +87,7 @@ export function SessionLogs({
                             </div>
                         ))
                     ) : (
-                        <div className="p-10 text-center text-[10px] font-bold uppercase italic tracking-[0.3em] text-muted-foreground/30">
+                        <div className="p-10 text-center text-[8px] font-bold uppercase italic tracking-[0.3em] text-muted-foreground/30 md:text-[10px]">
                             No_History_Found_In_Local_Buffer
                         </div>
                     )}

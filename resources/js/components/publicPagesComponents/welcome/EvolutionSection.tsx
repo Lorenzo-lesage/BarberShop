@@ -25,7 +25,7 @@ export function EvolutionSection() {
                 scrollTrigger: {
                     trigger: container.current,
                     start: 'top top',
-                    end: isMobile ? '+=1200' : '+=3000',
+                    end: isMobile ? '+=1500' : '+=3000',
                     scrub: 1,
                     pin: true,
                     anticipatePin: 1,
@@ -61,7 +61,7 @@ export function EvolutionSection() {
                 .to(bgOverlayRef.current, { opacity: 0, duration: 1 }, '-=0.5')
 
                 // STEP 3
-                .from('.step-3', { opacity: 0, scale: 1.5, duration: 1 }, '<')
+                .from('.step-3', { opacity: 0, scale: 0.5, duration: 1 }, '<')
                 .to('.step-3', { scale: 1.2, duration: 2 });
         },
         { scope: container },

@@ -44,7 +44,7 @@ const Index = ({ appointments, pastAppointments, breadcrumbs }: Props) => {
     return (
         <Dashboard
             breadcrumbs={breadcrumbs}
-            className="min-h-screen space-y-12 px-6 py-12 lg:px-12"
+            className="min-h-screen space-y-12 py-12 md:px-6 lg:px-12"
         >
             <Head title="Appointments Registry" />
 
@@ -54,7 +54,7 @@ const Index = ({ appointments, pastAppointments, breadcrumbs }: Props) => {
                     <div className="text-[10px] font-black uppercase tracking-[0.5em] text-primary/60">
                         Operational_Dashboard
                     </div>
-                    <h1 className="text-4xl font-black uppercase italic leading-none tracking-tighter text-foreground">
+                    <h1 className="text-3xl font-black uppercase italic leading-none tracking-tighter text-foreground md:text-4xl">
                         {isBarber ? 'Appointment_Log' : 'My_Schedule'}
                     </h1>
                 </div>
@@ -78,14 +78,20 @@ const Index = ({ appointments, pastAppointments, breadcrumbs }: Props) => {
                             className="relative rounded-none border-b-2 border-transparent bg-transparent px-6 pb-4 pt-2 text-[11px] font-black uppercase tracking-widest text-muted-foreground transition-all data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground"
                         >
                             <CalendarDays size={14} className="mr-2" />
-                            Active_Queue
+                            <span className="hidden md:inline">
+                                Active_Queue
+                            </span>
+                            <span className="inline md:hidden">Next</span>
                         </TabsTrigger>
                         <TabsTrigger
                             value="past"
                             className="relative rounded-none border-b-2 border-transparent bg-transparent px-6 pb-4 pt-2 text-[11px] font-black uppercase tracking-widest text-muted-foreground transition-all data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground"
                         >
                             <History size={14} className="mr-2" />
-                            Archive_History
+                            <span className="hidden md:inline">
+                                Archive_History
+                            </span>
+                            <span className="inline md:hidden">previous</span>
                         </TabsTrigger>
                     </TabsList>
 

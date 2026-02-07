@@ -38,7 +38,7 @@ export default function MySaloons({ saloons, breadcrumbs }: Props) {
     return (
         <Dashboard
             breadcrumbs={breadcrumbs}
-            className="min-h-screen space-y-12 px-6 py-12 lg:px-12"
+            className="min-h-screen space-y-12 py-12 md:px-6 lg:px-12"
         >
             <Head title="Visited Saloons" />
 
@@ -48,7 +48,7 @@ export default function MySaloons({ saloons, breadcrumbs }: Props) {
                     <div className="text-[10px] font-black uppercase tracking-[0.5em] text-primary/60">
                         Client_Network
                     </div>
-                    <h1 className="text-4xl font-black uppercase italic leading-none tracking-tighter text-foreground">
+                    <h1 className="text-3xl font-black uppercase italic leading-none tracking-tighter text-foreground md:text-4xl">
                         My_Saloons
                     </h1>
                     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">

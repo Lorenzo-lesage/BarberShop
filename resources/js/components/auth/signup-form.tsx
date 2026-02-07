@@ -285,7 +285,12 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                                     fill="currentColor"
                                 />
                             </svg>
-                            Continue with GitHub
+                            <div className="flex gap-1 whitespace-nowrap">
+                                <span className="hidden md:inline">
+                                    Continue with
+                                </span>
+                                <span>GitHub</span>
+                            </div>
                         </Button>
                         <Button
                             variant="outline"
@@ -305,7 +310,12 @@ export function SignupForm({ submitRoute, isBarber }: SignupFormProps) {
                                     fill="currentColor"
                                 />
                             </svg>
-                            Continue with Google
+                            <div className="flex gap-1 whitespace-nowrap">
+                                <span className="hidden md:inline">
+                                    Continue with
+                                </span>
+                                <span>Google</span>
+                            </div>
                         </Button>
                     </div>
                 </div>

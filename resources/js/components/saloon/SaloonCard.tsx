@@ -59,7 +59,7 @@ export function SaloonCard({
             {/* --- Cinematic Overlay --- */}
 
             {/* --- CONTENT LAYER --- */}
-            <div className="relative z-20 flex h-full flex-col justify-between p-6">
+            <div className="relative z-20 flex h-full flex-col justify-between p-2 md:p-6">
                 {/* Header: Status Badge */}
                 <div className="flex items-start justify-between">
                     <Badge
@@ -105,7 +105,9 @@ export function SaloonCard({
 
                     <div className="flex flex-col gap-4">
                         <p className="line-clamp-1 text-[8px] font-medium uppercase tracking-widest text-primary lg:text-[10px]">
-                            Directed by{' '}
+                            <span className="hidden md:inline">
+                                Directed by{' '}
+                            </span>
                             <span className="font-black italic text-primary/50">
                                 {saloon.barber?.name}
                             </span>
@@ -118,10 +120,14 @@ export function SaloonCard({
                         >
                             <Button
                                 variant="outline"
-                                className="group h-11 w-full rounded-none border-primary/20 bg-primary/5 px-4 text-[9px] font-black uppercase tracking-[0.08em] text-primary backdrop-blur-md transition-all hover:border-white hover:bg-white hover:text-black md:h-12 md:px-6 md:text-xs lg:tracking-[0.3em]"
+                                className="group h-10 w-full rounded-none border-primary/20 bg-primary/5 px-2 text-[9px] font-black uppercase tracking-[0.1em] text-primary backdrop-blur-md transition-all hover:border-white hover:bg-white hover:text-black md:h-12 md:px-3 lg:tracking-[0.3em]"
                             >
-                                {isOwner ? 'Manage Registry' : 'Secure Session'}
-                                <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-1 lg:ml-2 lg:h-4 lg:w-4" />
+                                <span className="truncate">
+                                    {isOwner
+                                        ? 'Manage Registry'
+                                        : 'Secure Session'}
+                                </span>
+                                <ArrowRight className="ml-1 hidden h-3 w-3 shrink-0 transition-transform duration-300 md:block md:group-hover:translate-x-1 lg:ml-2 lg:h-4 lg:w-4" />
                             </Button>
                         </Link>
                     </div>

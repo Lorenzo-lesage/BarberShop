@@ -35,7 +35,7 @@ export default function Index({ clients, breadcrumbs }: Props) {
     return (
         <Dashboard
             breadcrumbs={breadcrumbs}
-            className="min-h-screen space-y-12 px-6 py-12 lg:px-12"
+            className="min-h-screen space-y-12 py-12 md:px-6 lg:px-12"
         >
             <Head title="Client Registry" />
 
@@ -45,7 +45,7 @@ export default function Index({ clients, breadcrumbs }: Props) {
                     <div className="text-[10px] font-black uppercase tracking-[0.5em] text-primary/60">
                         Customer_Database
                     </div>
-                    <h1 className="text-4xl font-black uppercase italic leading-none tracking-tighter text-foreground">
+                    <h1 className="text-3xl font-black uppercase italic leading-none tracking-tighter text-foreground md:text-4xl">
                         Client_Registry
                     </h1>
                 </div>
