@@ -70,7 +70,7 @@ export function CallToAction({ user }: { user: User | null }) {
                                         {},
                                         {
                                             preserveScroll: true,
-                                            onSuccess: () => {
+                                            onFinish: () => {
                                                 toast.success('Request sent!', {
                                                     description: 'We will review your request soon.',
                                                 });
