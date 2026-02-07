@@ -41,11 +41,13 @@ class BecomeBarberController extends Controller
             new BarberRequestMail($user, $approveUrl)
         );
 
-        return back()->with('toast', [
+        session()->flash('toast', [
             'type' => 'success',
             'message' => 'Request sent!',
             'description' => 'We will review your request soon.',
         ]);
+
+        return back();
     }
 
     /**
