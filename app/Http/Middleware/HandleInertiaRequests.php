@@ -80,7 +80,9 @@ class HandleInertiaRequests extends Middleware
                     ] : null,
                 ];
             },
-            'toast' => $request->session()->get('toast'),
+            'flash' => [
+                'toast' => fn() => $request->session()->get('toast')
+            ],
         ];
     }
 }

@@ -68,7 +68,7 @@ createInertiaApp({
                     toast[toastData.type || 'success'](toastData.message, {
                         description: toastData.description,
                     });
-                }, 500);
+                }, 100);
             }
         };
 
@@ -98,7 +98,7 @@ createInertiaApp({
 
         const initialAuth = initialProps.auth as any;
         if (initialAuth?.notification) {
-            setTimeout(() => showNotification(initialAuth.notification), 500);
+            setTimeout(() => showNotification(initialAuth.notification), 100);
         }
 
         // --- 3. CONTROLLO DURANTE NAVIGAZIONE (SPA) ---

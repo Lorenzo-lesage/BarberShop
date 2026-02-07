@@ -1,10 +1,7 @@
 'use client';
 
-import { router, usePage } from '@inertiajs/react';
-import { useEffect } from 'react';
-
-// Interfaces
-import type { AuthProps } from '@/interfaces/auth';
+import { router } from '@inertiajs/react';
+import { toast } from 'sonner';
 
 // Components
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -27,9 +24,6 @@ import {
 // Icons
 import { Power, Shield, Terminal, User as UserIcon } from 'lucide-react';
 
-// Toast
-import { toast } from 'sonner';
-
 export function NavUser({
     user,
 }: {
@@ -46,24 +40,6 @@ export function NavUser({
     */
 
     const { isMobile } = useSidebar();
-    const { flash } = usePage<AuthProps>().props;
-
-    /*
-    |---------------------------------------------------------------------------
-    | Hooks
-    |---------------------------------------------------------------------------
-    */
-
-    useEffect(() => {
-        if (flash?.toast) {
-            const { type, message, description } = flash.toast;
-            setTimeout(() => {
-                const toastFn =
-                    type === 'success' ? toast.success : toast.error;
-                toastFn(message, { description });
-            }, 100);
-        }
-    }, [flash]);
 
     /*
     |---------------------------------------------------------------------------
