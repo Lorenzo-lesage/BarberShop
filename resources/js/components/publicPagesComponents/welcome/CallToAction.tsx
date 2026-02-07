@@ -1,4 +1,5 @@
 import { Link, router } from '@inertiajs/react';
+import { toast } from 'sonner';
 
 // Components
 import { Button } from '@/components/ui/button';
@@ -69,6 +70,11 @@ export function CallToAction({ user }: { user: User | null }) {
                                         {},
                                         {
                                             preserveScroll: true,
+                                            onSuccess: () => {
+                                                toast.success('Request sent!', {
+                                                    description: 'We will review your request soon.',
+                                                });
+                                            },
                                         },
                                     )
                                 }
