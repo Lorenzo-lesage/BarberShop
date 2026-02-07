@@ -69,7 +69,6 @@ export function CallToAction({ user }: { user: User | null }) {
                                         {},
                                         {
                                             preserveScroll: true,
-                                            preserveState: false,
                                         },
                                     )
                                 }
