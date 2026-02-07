@@ -65,10 +65,10 @@ export function ScheduleManager({ data, setData, errors }: Props) {
                 {DAYS.map((day) => (
                     <div
                         key={day}
-                        className="group flex h-16 items-center justify-between p-4 transition-colors hover:bg-muted/10"
+                        className="group flex h-16 items-center justify-between p-2 transition-colors hover:bg-muted/10 md:p-4"
                     >
-                        <div className="flex items-center gap-4">
-                            <span className="w-20 font-mono text-[10px] font-black uppercase tracking-widest">
+                        <div className="flex items-center">
+                            <span className="w-8 font-mono text-[10px] font-black uppercase tracking-widest">
                                 {day.slice(0, 3)}
                             </span>
                             <div className="flex items-center gap-2">
@@ -77,7 +77,7 @@ export function ScheduleManager({ data, setData, errors }: Props) {
                                     onCheckedChange={(v) =>
                                         handleHourChange(day, 'is_closed', !!v)
                                     }
-                                    className="rounded-none border-border/60 data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                                    className="rounded-none border-border data-[state=checked]:border-primary data-[state=checked]:bg-primary"
                                 />
                                 <span className="text-[8px] font-bold uppercase text-muted-foreground/50">
                                     OFF
@@ -86,10 +86,10 @@ export function ScheduleManager({ data, setData, errors }: Props) {
                         </div>
 
                         {!data.opening_hours[day].is_closed ? (
-                            <div className="flex items-center gap-2 animate-in fade-in slide-in-from-right-1">
+                            <div className="flex items-center animate-in fade-in slide-in-from-right-1 md:gap-2">
                                 <Input
                                     type="time"
-                                    className="h-7 w-20 rounded-none border-border/40 bg-transparent font-mono text-[10px] focus-visible:ring-primary"
+                                    className="h-7 w-14 rounded-none border-border/40 bg-transparent font-mono text-[10px] focus-visible:ring-primary md:w-20"
                                     value={data.opening_hours[day].open}
                                     onChange={(e) =>
                                         handleHourChange(
@@ -104,7 +104,7 @@ export function ScheduleManager({ data, setData, errors }: Props) {
                                 </span>
                                 <Input
                                     type="time"
-                                    className="h-7 w-20 rounded-none border-border/40 bg-transparent font-mono text-[10px] focus-visible:ring-primary"
+                                    className="h-7 w-14 rounded-none border-border/40 bg-transparent font-mono text-[10px] focus-visible:ring-primary md:w-20"
                                     value={data.opening_hours[day].close}
                                     onChange={(e) =>
                                         handleHourChange(

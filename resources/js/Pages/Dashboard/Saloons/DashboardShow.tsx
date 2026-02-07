@@ -21,7 +21,7 @@ export default function DashboardShow({ saloon, breadcrumbs }: Props) {
     */
 
     return (
-        <Dashboard breadcrumbs={breadcrumbs} className="px-4 py-8 sm:py-12">
+        <Dashboard breadcrumbs={breadcrumbs} className="py-8 sm:py-12 md:px-4">
             <Head title={`${saloon.name} - Booking`} />
             <BookingComponent saloon={saloon} />
         </Dashboard>

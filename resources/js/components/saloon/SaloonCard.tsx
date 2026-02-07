@@ -64,7 +64,7 @@ export function SaloonCard({
                 <div className="flex items-start justify-between">
                     <Badge
                         className={cn(
-                            'md:traking-[0.2em] rounded-none border-none bg-white/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.1em] shadow-2xl',
+                            'md:traking-[0.2em] rounded-none border-none bg-white/10 px-2 py-0.5 text-[5px] font-black uppercase tracking-[0.1em] shadow-2xl md:text-[8px]',
                             isOwner
                                 ? 'bg-white text-black shadow-[0_0_10px_rgba(var(--primary),0.8)]'
                                 : 'bg-white/10 text-white backdrop-blur-xl',
@@ -88,7 +88,7 @@ export function SaloonCard({
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <div className="space-y-0">
-                            <h3 className="font-black uppercase italic leading-none tracking-tighter text-primary transition-transform duration-500 group-hover:-translate-y-1 lg:text-3xl">
+                            <h3 className="text-xs font-black uppercase leading-none tracking-tighter text-primary transition-transform duration-500 [text-shadow:_0_0_4px_hsl(var(--background))] group-hover:-translate-y-1 lg:text-xl">
                                 {saloon.name}
                             </h3>
                             <div className="flex items-center gap-2 pt-1 text-[8px] font-bold uppercase tracking-tighter lg:text-[11px]">

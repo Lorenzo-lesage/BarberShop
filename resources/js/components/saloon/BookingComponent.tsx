@@ -340,7 +340,7 @@ export default function BookingComponent({ saloon }: Props) {
                             </div>
 
                             <div className="space-y-4">
-                                <h1 className="text-5xl font-black uppercase italic leading-[0.85] tracking-tighter sm:text-7xl md:text-8xl">
+                                <h1 className="text-3xl font-black uppercase italic leading-[0.85] tracking-tighter sm:text-7xl md:text-4xl md:text-8xl">
                                     {saloon.name}
                                 </h1>
                                 <div className="flex flex-col gap-6 pt-4 text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground md:flex-row md:items-center">
@@ -511,7 +511,7 @@ export default function BookingComponent({ saloon }: Props) {
                                             loop: true,
                                         }}
                                     >
-                                        <CarouselContent className="h-full ml-0">
+                                        <CarouselContent className="ml-0 h-full">
                                             {galleryPhotos.map((p, index) => (
                                                 <CarouselItem
                                                     key={p.id}

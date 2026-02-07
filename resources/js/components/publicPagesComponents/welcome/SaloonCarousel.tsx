@@ -32,7 +32,7 @@ export function SaloonCarousel({ saloons }: { saloons: Saloon[] }) {
                     align: 'start',
                 }}
             >
-                <CarouselContent className="-ml-4">
+                <CarouselContent className="ml-0">
                     {saloons.map((saloon) => {
                         return (
                             <CarouselItem

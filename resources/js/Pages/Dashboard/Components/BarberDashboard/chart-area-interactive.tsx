@@ -54,7 +54,7 @@ export function PerformanceChart({
             {
                 preserveState: true,
                 preserveScroll: true,
-                only: ['chartData', 'activeFilter'],
+                only: ['chartData', 'activeFilter', 'flash'],
             },
         );
     };
