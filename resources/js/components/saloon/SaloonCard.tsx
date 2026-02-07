@@ -32,7 +32,7 @@ export function SaloonCard({
                 className,
             )}
         >
-            {/* --- VISUAL LAYER --- */}
+            {/* --- VISUAL LAYERS --- */}
             <div className="absolute inset-0 z-0 h-full w-full overflow-hidden">
                 <SaloonImage
                     src={
