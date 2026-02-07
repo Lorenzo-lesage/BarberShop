@@ -72,8 +72,18 @@ export function CallToAction({ user }: { user: User | null }) {
                                             preserveScroll: true,
                                             onFinish: () => {
                                                 toast.success('Request sent!', {
-                                                    description: 'We will review your request soon.',
+                                                    description:
+                                                        'We will review your request soon.',
                                                 });
+                                            },
+                                            onError: () => {
+                                                toast.error(
+                                                    'Error sending request',
+                                                    {
+                                                        description:
+                                                            'Please try again later.',
+                                                    },
+                                                );
                                             },
                                         },
                                     )
