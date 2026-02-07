@@ -89,7 +89,7 @@ export function ScheduleManager({ data, setData, errors }: Props) {
                             <div className="flex items-center gap-1 animate-in fade-in slide-in-from-right-1 md:gap-2">
                                 <Input
                                     type="time"
-                                    className="h-7 w-20 rounded-none border-border/40 bg-transparent text-center font-mono text-[13px] selection:bg-primary/30 focus-visible:ring-primary md:w-24 md:text-sm [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-datetime-edit-fields-wrapper]:justify-center [&::-webkit-datetime-edit]:text-center"
+                                    className="h-7 min-w-[90px] flex-1 rounded-none border-border/40 bg-transparent p-0 text-center font-mono text-xs selection:bg-primary/30 focus-visible:ring-primary sm:w-24 sm:flex-none md:text-sm [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-datetime-edit-fields-wrapper]:flex [&::-webkit-datetime-edit-fields-wrapper]:w-full [&::-webkit-datetime-edit-fields-wrapper]:justify-center [&::-webkit-datetime-edit-fields-wrapper]:px-0 [&::-webkit-datetime-edit]:px-0 [&::-webkit-datetime-edit]:text-center [&::-webkit-datetime-edit-hour-field]:px-0 [&::-webkit-datetime-edit-minute-field]:px-0"
                                     value={data.opening_hours[day].open}
                                     onChange={(e) =>
                                         handleHourChange(
@@ -104,7 +104,7 @@ export function ScheduleManager({ data, setData, errors }: Props) {
                                 </span>
                                 <Input
                                     type="time"
-                                    className="h-7 w-20 rounded-none border-border/40 bg-transparent text-center font-mono text-[13px] selection:bg-primary/30 focus-visible:ring-primary md:w-24 md:text-sm [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-datetime-edit-fields-wrapper]:justify-center [&::-webkit-datetime-edit]:text-center"
+                                    className="h-7 min-w-[90px] flex-1 rounded-none border-border/40 bg-transparent p-0 text-center font-mono text-xs selection:bg-primary/30 focus-visible:ring-primary sm:w-24 sm:flex-none md:text-sm [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-datetime-edit-fields-wrapper]:flex [&::-webkit-datetime-edit-fields-wrapper]:w-full [&::-webkit-datetime-edit-fields-wrapper]:justify-center [&::-webkit-datetime-edit-fields-wrapper]:px-0 [&::-webkit-datetime-edit]:px-0 [&::-webkit-datetime-edit]:text-center [&::-webkit-datetime-edit-hour-field]:px-0 [&::-webkit-datetime-edit-minute-field]:px-0"
                                     value={data.opening_hours[day].close}
                                     onChange={(e) =>
                                         handleHourChange(
