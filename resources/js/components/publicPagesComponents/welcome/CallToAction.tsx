@@ -64,7 +64,14 @@ export function CallToAction({ user }: { user: User | null }) {
                                 className="h-24 w-full rounded-none bg-primary-foreground text-xl font-black uppercase italic text-primary shadow-xl transition-all hover:scale-[1.02] hover:shadow-2xl active:scale-[0.98] sm:w-64"
                                 onClick={() =>
                                     user &&
-                                    router.post(route('become.barber.request'))
+                                    router.post(
+                                        route('become.barber.request'),
+                                        {},
+                                        {
+                                            preserveScroll: true,
+                                            preserveState: false,
+                                        },
+                                    )
                                 }
                             >
                                 {user
