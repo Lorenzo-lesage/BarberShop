@@ -343,7 +343,7 @@ class SaloonController extends Controller
         $saloon = Auth::user()->saloon;
 
         if (!$saloon) {
-            return redirect()->back()->with('toast', ['type' => 'error', 'message' => 'Saloon not found.']);
+            return back()->with('toast', ['type' => 'error', 'message' => 'Saloon not found.']);
         }
 
         // 2. Cerca la foto solo tra quelle che appartengono a QUESTO salone
@@ -360,7 +360,7 @@ class SaloonController extends Controller
         // 5. Svuota la cache (perché i dati del salone sono cambiati)
         $this->clearSaloonCache($saloon->id);
 
-        return redirect()->back()->with('toast', [
+        return back()->with('toast', [
             'type' => 'success',
             'message' => 'Removed!',
             'description' => 'The photo has been removed from your gallery.',
@@ -398,7 +398,7 @@ class SaloonController extends Controller
 
         $this->clearSaloonCache($saloon->id);
 
-        return redirect()->back()->with('toast', ['type' => 'success', 'message' => 'Cover updated!']);
+        return back()->with('toast', ['type' => 'success', 'message' => 'Cover updated!']);
     }
 
     public function addPhoto(Request $request, Saloon $saloon)
@@ -423,7 +423,7 @@ class SaloonController extends Controller
 
         $this->clearSaloonCache($saloon->id);
 
-        return redirect()->back();
+        return back();
     }
 }
 

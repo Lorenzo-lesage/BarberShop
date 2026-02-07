@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { router, usePage } from '@inertiajs/react';
 
 // Interfaces
@@ -17,8 +18,19 @@ import { LayoutDashboard, LogOut, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function DropdownDashboard() {
-    const { auth } = usePage<AuthProps>().props;
+    const { auth, flash } = usePage<AuthProps>().props;
     const user = auth.user;
+
+    useEffect(() => {
+        if (flash?.toast) {
+            const { type, message, description } = flash.toast;
+            setTimeout(() => {
+                const toastFn =
+                    type === 'success' ? toast.success : toast.error;
+                toastFn(message, { description });
+            }, 100);
+        }
+    }, [flash]);
 
     const handleLogout = () => {
         const loadingToast = toast.loading('Terminating session...');

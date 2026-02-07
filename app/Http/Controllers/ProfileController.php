@@ -95,7 +95,7 @@ class ProfileController extends Controller
             $user->update(['profile_photo' => $path]);
         }
 
-        return redirect()->back()->with('toast', [
+        return back()->with('toast', [
             'type' => 'success',
             'message' => 'Profile photo updated successfully.',
         ]);

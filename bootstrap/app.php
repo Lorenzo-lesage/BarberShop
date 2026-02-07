@@ -25,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
 
         $exceptions->render(function (\Illuminate\Http\Exceptions\PostTooLargeException $e, $request) {
-            return redirect()->back()->with('toast', [
+            return back()->with('toast', [
                 'type' => 'error',
                 'message' => 'Upload failed',
                 'description' => 'The file is too large.',
