@@ -200,7 +200,7 @@ class SaloonController extends Controller
 
             $this->clearSaloonCache($saloon->id);
 
-            return back()->with('toast', [
+            return redirect()->back()->with('toast', [
                 'type' => 'success',
                 'message' => 'Success!',
                 'description' => 'Your saloon information has been saved.',
@@ -218,7 +218,7 @@ class SaloonController extends Controller
         $saloon = Auth::user()->saloon;
 
         if (!$saloon) {
-            return back()->with('toast', [
+            return redirect()->back()->with('toast', [
                 'type' => 'error',
                 'message' => 'Error!',
                 'description' => 'No saloon found to delete.',
@@ -262,7 +262,7 @@ class SaloonController extends Controller
             })->exists();
 
         if ($overlap) {
-            return back()->with('toast', [
+            return redirect()->back()->with('toast', [
                 'type' => 'error',
                 'message' => 'Attention!',
                 'description' => 'This period overlaps with an existing one.',
@@ -274,7 +274,7 @@ class SaloonController extends Controller
         // SVUOTA CACHE: Le eccezioni sono cambiate!
         $this->clearSaloonCache($saloon->id);
 
-        return back()->with('toast', [
+        return redirect()->back()->with('toast', [
             'type' => 'success',
             'message' => 'Saved!',
             'description' => 'The closed period has been saved.',
@@ -296,7 +296,7 @@ class SaloonController extends Controller
         // SVUOTA CACHE
         $this->clearSaloonCache($saloon->id);
 
-        return back()->with('toast', [
+        return redirect()->back()->with('toast', [
             'type' => 'success',
             'message' => 'Removed!',
             'description' => 'The closed period has been removed.',
@@ -343,7 +343,7 @@ class SaloonController extends Controller
         $saloon = Auth::user()->saloon;
 
         if (!$saloon) {
-            return back()->with('toast', ['type' => 'error', 'message' => 'Saloon not found.']);
+            return redirect()->back()->with('toast', ['type' => 'error', 'message' => 'Saloon not found.']);
         }
 
         // 2. Cerca la foto solo tra quelle che appartengono a QUESTO salone
@@ -360,7 +360,7 @@ class SaloonController extends Controller
         // 5. Svuota la cache (perché i dati del salone sono cambiati)
         $this->clearSaloonCache($saloon->id);
 
-        return back()->with('toast', [
+        return redirect()->back()->with('toast', [
             'type' => 'success',
             'message' => 'Removed!',
             'description' => 'The photo has been removed from your gallery.',
@@ -398,7 +398,7 @@ class SaloonController extends Controller
 
         $this->clearSaloonCache($saloon->id);
 
-        return back()->with('toast', ['type' => 'success', 'message' => 'Cover updated!']);
+        return redirect()->back()->with('toast', ['type' => 'success', 'message' => 'Cover updated!']);
     }
 
     public function addPhoto(Request $request, Saloon $saloon)
@@ -423,7 +423,7 @@ class SaloonController extends Controller
 
         $this->clearSaloonCache($saloon->id);
 
-        return back();
+        return redirect()->back();
     }
 }
 
