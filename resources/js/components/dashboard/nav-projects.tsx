@@ -32,14 +32,26 @@ export function NavProjects({
     return (
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
             {/* Label tecnica con icona */}
-            <SidebarGroupLabel className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-primary/70">
-                <Terminal size={12} />
-                Live_Queue
+            <SidebarGroupLabel className="flex items-center justify-between text-[9px] font-black uppercase tracking-[0.3em] text-primary/70">
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-primary/70">
+                    <Terminal size={12} />
+                    Live_Queue
+                </div>
+                <Link
+                    href={route('appointments.index')}
+                    prefetch
+                    className="flex items-center justify-center gap-2 rounded border border-border/40 bg-muted/20 px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/70 transition-colors hover:bg-foreground hover:text-background"
+                >
+                    <MoreHorizontal className="h-3 w-3" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em]">
+                        More
+                    </span>
+                </Link>
             </SidebarGroupLabel>
 
             <SidebarMenu className="mt-2 space-y-1">
                 {appointments.length === 0 ? (
-                    <SidebarMenuItem className="border border-dashed border-border/40 bg-muted/5 px-2 py-4 text-center">
+                    <SidebarMenuItem className="border border-dashed border-border/40 bg-muted/5 py-2 text-center">
                         <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40">
                             Queue_Empty
                         </span>
@@ -49,7 +61,7 @@ export function NavProjects({
                         <SidebarMenuItem key={item.id}>
                             <SidebarMenuButton
                                 asChild
-                                className="group/item h-10 rounded-none border-l-2 border-transparent transition-all hover:border-primary hover:bg-primary/5"
+                                className="group/item h-9 rounded-none border-l-2 border-transparent transition-all hover:border-primary hover:bg-primary/5"
                             >
                                 <Link
                                     href={route('appointments.index')}
@@ -76,25 +88,6 @@ export function NavProjects({
                         </SidebarMenuItem>
                     ))
                 )}
-
-                {/* Pulsante "Show All" integrato come comando di sistema */}
-                <SidebarMenuItem className="pt-2">
-                    <SidebarMenuButton
-                        asChild
-                        className="h-8 rounded-none border border-border/40 bg-muted/20 transition-all hover:bg-foreground hover:text-background"
-                    >
-                        <Link
-                            href={route('appointments.index')}
-                            prefetch
-                            className="justify-center gap-2"
-                        >
-                            <MoreHorizontal className="h-3 w-3" />
-                            <span className="text-[9px] font-black uppercase tracking-[0.2em]">
-                                Open_Full_Registry
-                            </span>
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
             </SidebarMenu>
         </SidebarGroup>
     );

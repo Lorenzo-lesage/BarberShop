@@ -1,6 +1,17 @@
-import { CalendarClock, ClipboardList, Users, Warehouse } from 'lucide-react';
+import {
+    Activity,
+    CalendarClock,
+    ClipboardList,
+    Users,
+    Warehouse,
+} from 'lucide-react';
 
 export const barberItems = [
+    {
+        label: 'OPERATIONAL_CORE',
+        href: '/dashboard',
+        icon: Activity,
+    },
     {
         label: 'Saloon_Registry',
         href: '/dashboard/my-saloon',

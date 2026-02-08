@@ -69,7 +69,7 @@ export default function MobileMenu() {
         <a
             href={href}
             className={cn(
-                'group flex items-center justify-between border-b border-border/50 py-5 transition-all',
+                'group flex items-center justify-between border-b border-border/50 py-3 transition-all',
                 active
                     ? 'text-primary'
                     : 'text-muted-foreground hover:text-foreground',
@@ -80,16 +80,16 @@ export default function MobileMenu() {
                 router.get(href);
             }}
         >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
                 <Icon
-                    size={18}
+                    size={12}
                     className={cn(
                         active
                             ? 'text-primary'
                             : 'text-muted-foreground/40 group-hover:text-primary',
                     )}
                 />
-                <span className="text-xl font-black uppercase italic tracking-tighter">
+                <span className="text-sm font-black uppercase italic tracking-tighter">
                     {children}
                 </span>
             </div>
@@ -135,7 +135,7 @@ export default function MobileMenu() {
                             <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-primary">
                                 Identity_Context
                             </p>
-                            <h2 className="truncate text-3xl font-black uppercase italic tracking-tighter">
+                            <h2 className="truncate text-lg font-black uppercase italic tracking-tighter">
                                 {auth?.user
                                     ? auth.user.name.replace(' ', '_')
                                     : 'Guest_User'}
@@ -177,10 +177,10 @@ export default function MobileMenu() {
                                         onClick={handleLogout}
                                         className="group mt-10 flex items-center gap-4 py-4 text-muted-foreground transition-colors hover:text-destructive"
                                     >
-                                        <div className="flex h-10 w-10 items-center justify-center border border-border group-hover:border-destructive/30 group-hover:bg-destructive/5">
-                                            <LogOut size={16} />
+                                        <div className="flex h-6 w-6 items-center justify-center border border-border group-hover:border-destructive/30 group-hover:bg-destructive/5">
+                                            <LogOut size={12} />
                                         </div>
-                                        <span className="text-xs font-black uppercase tracking-[0.3em]">
+                                        <span className="text-[9px] font-black uppercase tracking-[0.3em]">
                                             Terminate_Session
                                         </span>
                                     </button>

@@ -45,7 +45,7 @@ export function NavMain({
                                 asChild
                                 tooltip={item.label}
                                 className={cn(
-                                    'group/menu relative h-11 rounded-none border-l-2 transition-all duration-200',
+                                    'group/menu relative h-10 rounded-none border-l-2 transition-all duration-200',
                                     isActive
                                         ? 'border-primary bg-primary/5 text-foreground'
                                         : 'border-transparent text-muted-foreground hover:bg-muted hover:text-foreground',
