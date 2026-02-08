@@ -3,7 +3,6 @@
 import { cn } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { it } from 'date-fns/locale';
 import { useMemo } from 'react';
 
 // Components
@@ -32,6 +31,13 @@ interface Props {
 }
 
 export default function Show({ client, breadcrumbs }: Props) {
+    /*
+    |-------------------------------------------------------------------
+    | Data
+    |-------------------------------------------------------------------
+    */
+    const isMobile = window.innerWidth < 768;
+
     /*
     |-------------------------------------------------------------------
     | Methods
@@ -76,7 +82,7 @@ export default function Show({ client, breadcrumbs }: Props) {
     return (
         <Dashboard
             breadcrumbs={breadcrumbs}
-            className="min-h-screen space-y-12 px-6 py-12 lg:px-12"
+            className="min-h-screen space-y-12 py-12 md:px-6 lg:px-12"
         >
             <Head title={`Dossier: ${client?.name}`} />
 
@@ -86,14 +92,14 @@ export default function Show({ client, breadcrumbs }: Props) {
                     <div className="text-[10px] font-black uppercase tracking-[0.5em] text-primary/60">
                         Subject_Profile_File
                     </div>
-                    <h1 className="text-5xl font-black uppercase italic leading-none tracking-tighter">
+                    <h1 className="text-3xl font-black uppercase italic leading-none tracking-tighter md:text-4xl">
                         {client.name}
                     </h1>
-                    <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
+                    <div className="flex flex-col text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 md:flex-row md:items-center md:gap-4">
                         <span className="flex items-center gap-1">
                             <Mail size={12} /> {client.email}
                         </span>
-                        <span className="h-1 w-1 rounded-full bg-border" />
+                        <span className="hidden h-1 w-1 rounded-full bg-border md:block" />
                         <span>
                             Member_Since_
                             {format(new Date(client.created_at), 'yyyy')}
@@ -194,7 +200,7 @@ export default function Show({ client, breadcrumbs }: Props) {
                 <div className="space-y-6 lg:col-span-2">
                     <div className="flex items-center gap-4">
                         <Activity size={16} className="text-primary" />
-                        <h3 className="text-[11px] font-black uppercase tracking-[0.4em]">
+                        <h3 className="text-[9px] font-black uppercase tracking-[0.4em] md:text-[11px]">
                             Chronological_Activity_Log
                         </h3>
                         <div className="h-px flex-1 bg-border/50" />
@@ -202,7 +208,7 @@ export default function Show({ client, breadcrumbs }: Props) {
 
                     {/* --- COLONNA PAST 5 ACTIVITY (2/3) --- */}
                     <div className="flex items-center gap-4">
-                        <h3 className="text-[11px] font-black uppercase tracking-[0.4em]">
+                        <h3 className="text-[9px] font-black uppercase tracking-[0.4em] md:text-[11px]">
                             Last 5_Appointments
                         </h3>
                     </div>
@@ -216,16 +222,15 @@ export default function Show({ client, breadcrumbs }: Props) {
                                 >
                                     <div className="flex items-center gap-6">
                                         <div className="flex flex-col items-center border-r border-border pr-6 text-center">
-                                            <span className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">
+                                            <span className="text-[8px] font-black uppercase tracking-tighter text-muted-foreground md:text-[9px]">
                                                 {format(
                                                     new Date(
                                                         appointment.appointment_time,
                                                     ),
                                                     'MMM',
-                                                    { locale: it },
                                                 )}
                                             </span>
-                                            <span className="text-xl font-black italic leading-none tracking-tighter">
+                                            <span className="text-[15px] font-black italic leading-none tracking-tighter md:text-xl">
                                                 {format(
                                                     new Date(
                                                         appointment.appointment_time,
@@ -235,9 +240,9 @@ export default function Show({ client, breadcrumbs }: Props) {
                                             </span>
                                         </div>
                                         <div className="space-y-1">
-                                            <div className="flex items-center gap-2 font-mono text-sm font-black tracking-widest">
+                                            <div className="flex items-center gap-2 font-mono text-[11px] font-black tracking-widest md:text-sm">
                                                 <Clock
-                                                    size={12}
+                                                    size={isMobile ? 10 : 12}
                                                     className="text-primary/40"
                                                 />
                                                 {format(
@@ -247,7 +252,7 @@ export default function Show({ client, breadcrumbs }: Props) {
                                                     'HH:mm',
                                                 )}
                                             </div>
-                                            <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                                            <p className="text-[8px] font-bold uppercase tracking-widest text-muted-foreground/60 md:text-[9px]">
                                                 Service_Execution_Ref_
                                                 {appointment.id}
                                             </p>
@@ -257,7 +262,7 @@ export default function Show({ client, breadcrumbs }: Props) {
                                     <Badge
                                         variant="outline"
                                         className={cn(
-                                            'rounded-none border-none text-[9px] font-black uppercase tracking-[0.2em]',
+                                            'rounded-none border-none text-[7px] font-black uppercase tracking-[0.2em] md:text-[9px]',
                                             appointment.status === 'confirmed'
                                                 ? 'bg-primary/5 text-primary'
                                                 : 'bg-destructive/5 text-destructive',
@@ -279,7 +284,7 @@ export default function Show({ client, breadcrumbs }: Props) {
 
                     {/* --- COLONNA NEXT 5 ACTIVITY (2/3) --- */}
                     <div className="flex items-center gap-4">
-                        <h3 className="text-[11px] font-black uppercase tracking-[0.4em]">
+                        <h3 className="text-[9px] font-black uppercase tracking-[0.4em] md:text-[11px]">
                             Next 5_Appointments
                         </h3>
                     </div>
@@ -293,16 +298,15 @@ export default function Show({ client, breadcrumbs }: Props) {
                                 >
                                     <div className="flex items-center gap-6">
                                         <div className="flex flex-col items-center border-r border-border pr-6 text-center">
-                                            <span className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">
+                                            <span className="text-[8px] font-black uppercase tracking-tighter text-muted-foreground md:text-[9px]">
                                                 {format(
                                                     new Date(
                                                         appointment.appointment_time,
                                                     ),
                                                     'MMM',
-                                                    { locale: it },
                                                 )}
                                             </span>
-                                            <span className="text-xl font-black italic leading-none tracking-tighter">
+                                            <span className="text-[15px] font-black italic leading-none tracking-tighter md:text-xl">
                                                 {format(
                                                     new Date(
                                                         appointment.appointment_time,
@@ -312,9 +316,9 @@ export default function Show({ client, breadcrumbs }: Props) {
                                             </span>
                                         </div>
                                         <div className="space-y-1">
-                                            <div className="flex items-center gap-2 font-mono text-sm font-black tracking-widest">
+                                            <div className="flex items-center gap-2 font-mono text-[11px] font-black tracking-widest md:text-sm">
                                                 <Clock
-                                                    size={12}
+                                                    size={isMobile ? 10 : 12}
                                                     className="text-primary/40"
                                                 />
                                                 {format(
@@ -324,7 +328,7 @@ export default function Show({ client, breadcrumbs }: Props) {
                                                     'HH:mm',
                                                 )}
                                             </div>
-                                            <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                                            <p className="text-[8px] font-bold uppercase tracking-widest text-muted-foreground/60 md:text-[9px]">
                                                 Service_Execution_Ref_
                                                 {appointment.id}
                                             </p>
@@ -334,7 +338,7 @@ export default function Show({ client, breadcrumbs }: Props) {
                                     <Badge
                                         variant="outline"
                                         className={cn(
-                                            'rounded-none border-none text-[9px] font-black uppercase tracking-[0.2em]',
+                                            'rounded-none border-none text-[7px] font-black uppercase tracking-[0.2em] md:text-[9px]',
                                             appointment.status === 'confirmed'
                                                 ? 'bg-primary/5 text-primary'
                                                 : 'bg-destructive/5 text-destructive',

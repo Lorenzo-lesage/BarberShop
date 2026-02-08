@@ -489,9 +489,9 @@ export default function BookingComponent({ saloon }: Props) {
                                         </div>
                                     </Carousel>
                                 </div>
-                                <DialogContent className="flex h-screen max-w-[100vw] flex-col border-none bg-background/95 p-0 shadow-none backdrop-blur-2xl">
+                                <DialogContent className="flex h-screen max-w-[100vw] flex-col border-none bg-background/95 p-0 shadow-none backdrop-blur-2xl [&>button]:right-10 [&>button]:top-11 [&>button]:z-[100] [&>button]:text-primary [&>button]:opacity-100">
                                     {/* --- Header superiore minimale --- */}
-                                    <div className="absolute top-0 z-50 flex w-full items-center justify-between p-6">
+                                    <div className="absolute top-5 z-50 flex w-full items-center justify-between p-6">
                                         <div className="flex flex-col">
                                             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">
                                                 Studio Gallery
