@@ -146,7 +146,7 @@ export const AppointmentTable = ({
                                                       app.client?.id,
                                                   )
                                                 : route(
-                                                      'saloons.show',
+                                                      'saloons.dashboard.show',
                                                       app.saloon?.id,
                                                   )
                                         }
