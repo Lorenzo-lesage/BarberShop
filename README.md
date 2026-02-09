@@ -2,7 +2,7 @@
 
 # 💈 BarberShop
 
-### Enterprise-Grade Barbershop Management Platform
+### Barbershop Management Platform
 
 [![Laravel](https://img.shields.io/badge/Laravel-12.0-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
 [![React](https://img.shields.io/badge/React-18.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org)
