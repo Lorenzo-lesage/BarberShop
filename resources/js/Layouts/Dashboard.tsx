@@ -105,7 +105,7 @@ export default function DashboardLayout({
                         'before:absolute before:inset-0 before:z-0',
                         'before:bg-[radial-gradient(#e5e7eb_1px,transparent_1px)]',
                         'before:[background-size:20px_20px]',
-                        'before:opacity-[0.09]',
+                        'before:opacity-[0.05]',
                         'before:animate-space-float',
                         'dark:before:bg-[radial-gradient(#ffffff_1px,transparent_1px)]',
                         className,

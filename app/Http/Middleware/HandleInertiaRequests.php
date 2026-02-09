@@ -58,7 +58,7 @@ class HandleInertiaRequests extends Middleware
                         ->where('appointment_time', '>=', $nowItaly)
                         ->where('status', '!=', 'cancelled')
                         ->orderBy('appointment_time', 'asc')
-                        ->take(5)
+                        ->take(3)
                         ->get();
 
                 // 3. Restituiamo i dati dell'utente

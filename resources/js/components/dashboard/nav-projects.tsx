@@ -37,16 +37,18 @@ export function NavProjects({
                     <Terminal size={12} />
                     Live_Queue
                 </div>
-                <Link
-                    href={route('appointments.index')}
-                    prefetch
-                    className="flex items-center justify-center gap-2 rounded border border-border/40 bg-muted/20 px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/70 transition-colors hover:bg-foreground hover:text-background"
-                >
-                    <MoreHorizontal className="h-3 w-3" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em]">
-                        More
-                    </span>
-                </Link>
+                {appointments.length > 2 && (
+                    <Link
+                        href={route('appointments.index')}
+                        prefetch
+                        className="flex items-center justify-center gap-2 rounded border border-border/40 bg-muted/20 px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/70 transition-colors hover:bg-foreground hover:text-background"
+                    >
+                        <MoreHorizontal className="h-3 w-3" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em]">
+                            More
+                        </span>
+                    </Link>
+                )}
             </SidebarGroupLabel>
 
             <SidebarMenu className="mt-2 space-y-1">
