@@ -118,6 +118,8 @@ The application is deployed on **[IONOS](https://www.ionos.com)** hosting with t
 - **HSTS**: HTTP Strict Transport Security enabled
 - **Mixed Content**: All assets served over HTTPS
 
+---
+
 ## ✨ Features
 
 ### For Barbers
