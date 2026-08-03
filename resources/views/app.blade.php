@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="akintu-site-verification" content="akv_5bd0d1e061d0d5ec015ea0ee63e9decd82dce0111aa53e8f">
 
     <script>
         (function() {
