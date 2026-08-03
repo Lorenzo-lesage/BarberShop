@@ -14,7 +14,7 @@ import type { User } from '@/interfaces/auth';
 import { AkintuEmbed } from '@akintu/widget/react';
 
 // Constants
-const akintuApiKey = import.meta.env.AKINTU_API_KEY;
+const akintuApiKey = import.meta.env.VITE_AKINTU_API_KEY;
 
 export function HeroSection({ user }: { user: User }) {
     return (
