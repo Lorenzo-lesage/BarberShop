@@ -10,6 +10,12 @@ import { ArrowRight, Star } from 'lucide-react';
 // Interfaces
 import type { User } from '@/interfaces/auth';
 
+// Utils
+import { AkintuEmbed } from '@akintu/widget/react';
+
+// Constants
+const akintuApiKey = import.meta.env.VITE_AKINTU_API_KEY;
+
 export function HeroSection({ user }: { user: User }) {
     return (
         <header className="container mx-auto mb-10 flex h-[95vh] flex-col justify-center px-6 md:px-12">
@@ -42,6 +48,10 @@ export function HeroSection({ user }: { user: User }) {
                     </span>
                     . A high-performance engine for your barbering business.
                 </p>
+
+                <div className="pt-12">
+                    <AkintuEmbed apiKey={akintuApiKey} />
+                </div>
 
                 {!user && (
                     <div className="flex flex-col gap-6 pt-12 sm:flex-row">

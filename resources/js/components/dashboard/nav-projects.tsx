@@ -37,6 +37,7 @@ export function NavProjects({
                     <Terminal size={12} />
                     Live_Queue
                 </div>
+
                 {appointments.length > 2 && (
                     <Link
                         href={route('appointments.index')}
