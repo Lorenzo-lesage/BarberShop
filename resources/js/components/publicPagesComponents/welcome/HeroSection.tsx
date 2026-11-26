@@ -11,10 +11,9 @@ import { ArrowRight, Star } from 'lucide-react';
 import type { User } from '@/interfaces/auth';
 
 // Utils
-import { AkintuEmbed } from '@akintu/widget/react';
 
 // Constants
-const akintuApiKey = import.meta.env.VITE_AKINTU_API_KEY;
+// const akintuApiKey = import.meta.env.VITE_AKINTU_API_KEY;
 
 export function HeroSection({ user }: { user: User }) {
     return (
@@ -48,10 +47,12 @@ export function HeroSection({ user }: { user: User }) {
                     </span>
                     . A high-performance engine for your barbering business.
                 </p>
+                {/*
 
                 <div className="pt-12">
                     <AkintuEmbed apiKey={akintuApiKey} />
                 </div>
+                */}
 
                 {!user && (
                     <div className="flex flex-col gap-6 pt-12 sm:flex-row">
