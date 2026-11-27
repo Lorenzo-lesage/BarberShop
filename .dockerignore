@@ -1,0 +1,39 @@
+# VCS / editor / tooling
+.git
+.github
+.idea
+.vscode
+.claude
+docs
+repomix-output.xml
+*.log
+
+# Segreti: l'.env arriva a runtime, mai dentro l'immagine
+.env
+.env.*
+
+# Generati durante il build dentro Docker
+node_modules
+vendor
+public/build
+public/hot
+public/storage
+
+# Cache e file runtime locali (bootstrap/cache contiene i provider dev, es. Pail)
+bootstrap/cache/*.php
+storage/logs/*
+storage/pail/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/testing/*
+storage/framework/views/*
+storage/app/public/*
+storage/app/private/*
+!storage/**/.gitignore
+
+# Test e file Docker
+tests
+phpunit.xml
+Dockerfile
+.dockerignore
+docker-compose*.yml
