@@ -42,14 +42,14 @@ Branch: `feat/docker-deploy`
 
 ## Fase 2 — Pipeline GitHub Actions
 
-- [ ] `.github/workflows/docker.yml`: su PR verso `main` solo build (verifica), su push a `main` build + push
+- [x] `.github/workflows/docker.yml`: su PR verso `main` solo build (verifica), su push a `main` build + push
 - [x] Controllo tipi: già incluso, `npm run build` = `tsc && vite build` dentro il Dockerfile → se `tsc` fallisce l'immagine non nasce
 - [ ] ~~ESLint nella pipeline~~ → rimandato: oggi 1037 errori (1026 di formattazione Prettier, auto-fixabili). Da sistemare in un branch a parte, poi aggiungere il job
-- [ ] Build `linux/arm64` su runner `ubuntu-24.04-arm` (gratis per repo pubblici), push su `ghcr.io/lorenzo-lesage/barbershop` con tag `latest` + `sha-xxxxxxx`
+- [x] Build `linux/arm64` su runner `ubuntu-24.04-arm` (gratis per repo pubblici), push su `ghcr.io/lorenzo-lesage/barbershop` con tag `latest` + `sha-xxxxxxx` (~1m40s a run)
 - [x] `VITE_*`: per ora basta il default `VITE_APP_NAME=BarberShop` nel Dockerfile
-- [ ] PR aperta → run verde
-- [ ] Merge → immagine visibile su ghcr.io
-- [ ] Visibilità del package impostata su **Public** (Watchtower la scarica senza credenziali; contiene solo codice già pubblico, nessun segreto)
+- [x] PR #1 aperta → run verde
+- [x] Merge → immagine pubblicata: `latest` + `sha-1e3aae2`
+- [x] Package **Public** (già di default, ereditato dal repo pubblico: pull anonimo del manifest → 200). Watchtower la scarica senza credenziali; contiene solo codice già pubblico, nessun segreto
 
 ## Fase 3 — Stack sulla VPS (repo Oracle-VM-Docker)
 
@@ -84,4 +84,5 @@ Branch: `feat/docker-deploy`
 
 - **27/11** — Valutato CapRover e scartato: vuole le porte 80/443 (già di Nginx Proxy Manager) e gira su Docker Swarm, quindi andrebbero migrati tutti gli stack esistenti. Il Dockerfile servirebbe comunque.
 - **27/11** — Test locale: porta `8090:8080` perché sul PC la 8080 è occupata da `cinebox_reverb`. Env di test in `~/barbershop-test.env` (fuori dal repo). `--env-file` prende i valori alla lettera: niente virgolette.
+- **27/11** — `gh api .../packages/...` risponde 404 anche se il package esiste: il token di `gh` non ha lo scope `read:packages` (`gh auth refresh -s read:packages` se serve).
 - **27/11** — In MySQL il segnale di "pronto" è `mysqld: ready for connections ... port: 3306`; la riga con `port: 0` è il server temporaneo dell'init, quella con `33060` è l'X Plugin.
