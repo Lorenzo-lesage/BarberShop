@@ -53,12 +53,16 @@ Branch: `feat/docker-deploy`
 
 ## Fase 3 — Stack sulla VPS (repo Oracle-VM-Docker)
 
-- [ ] `docker/barbershop/docker-compose.yml`: `app` (label Watchtower, reti `reverse-proxy` + interna) + `mysql` (volume dedicato, niente label)
-- [ ] Target `barbershop` nel `Makefile` (creazione volumi + `docker_rebuild`)
-- [ ] `.env` di produzione **solo sulla VPS**, aggiunto a `.gitignore`
-- [ ] Proxy host in Nginx Proxy Manager su sottodominio di test → `barbershop:8080` + SSL Let's Encrypt
-- [ ] App raggiungibile sul sottodominio (con DB vuoto)
-- [ ] Test del ciclo completo: push banale → Watchtower aggiorna → notifica Gotify
+- [x] `docker/barbershop/docker-compose.yml`: `app` (label Watchtower, reti `reverse-proxy` + `barbershop_stack`) + `mysql` 8.4 (solo rete privata, healthcheck, niente label)
+- [x] Target `barbershop` nel `Makefile` (+ fix parentesi mancanti in glances/passbolt/n8n)
+- [x] `.env` di produzione **solo sulla VPS** (`chmod 600`), `docker/*/.env` in `.gitignore`. Utente DB dedicato `barbershop`, root casuale. Password salvata su Bitwarden
+- [x] CNAME `barbershop` → `vps.lorenzo99.abrdns.com`
+- [x] Proxy host NPM `barbershop.lorenzo99.abrdns.com` → `http://barbershop:8080`, Let's Encrypt (scade 25/02/2027, rinnovo automatico NPM), Force SSL
+- [x] Raggiungibile: `/up` 200, HTTP → 301 HTTPS, asset generati in `https://` (trustProxies ok)
+- [ ] Test da browser sul sottodominio: registrazione email/password, login, upload foto (OAuth Google qui fallisce per design: la callback punta a `barber-style.com`)
+- [x] Test del ciclo completo: `gh workflow run docker.yml` → immagine nuova → Watchtower (controllo ogni 3 min) ricrea solo `barbershop` → notifica Gotify ✔
+
+**Rollback**: nel compose sostituire `:latest` con `:sha-<commit>` di una versione buona, poi `make barbershop`. Tornare a `:latest` quando il fix è su main.
 
 ## Fase 4 — Migrazione dati e switch
 
@@ -84,5 +88,8 @@ Branch: `feat/docker-deploy`
 
 - **27/11** — Valutato CapRover e scartato: vuole le porte 80/443 (già di Nginx Proxy Manager) e gira su Docker Swarm, quindi andrebbero migrati tutti gli stack esistenti. Il Dockerfile servirebbe comunque.
 - **27/11** — Test locale: porta `8090:8080` perché sul PC la 8080 è occupata da `cinebox_reverb`. Env di test in `~/barbershop-test.env` (fuori dal repo). `--env-file` prende i valori alla lettera: niente virgolette.
+- **27/11** — Nel `.env` VPS `SESSION_DOMAIN=null` per il sottodominio di test (con `barber-style.com` il cookie non arriva → errori 419). **Da rimettere al passaggio definitivo.**
+- **27/11** — L'Nginx di serversideup invia già `Strict-Transport-Security: max-age=31536000; includeSubDomains`: HSTS è attivo anche se in NPM è spento. Su `barber-style.com` vale per tutti i sottodomini → devono essere tutti HTTPS.
+- **27/11** — Test di rete dalla VPS: `docker run --rm --network reverse-proxy curlimages/curl -sI http://barbershop:8080/up`.
 - **27/11** — `gh api .../packages/...` risponde 404 anche se il package esiste: il token di `gh` non ha lo scope `read:packages` (`gh auth refresh -s read:packages` se serve).
 - **27/11** — In MySQL il segnale di "pronto" è `mysqld: ready for connections ... port: 3306`; la riga con `port: 0` è il server temporaneo dell'init, quella con `33060` è l'X Plugin.
