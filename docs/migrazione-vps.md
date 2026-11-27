@@ -38,15 +38,18 @@ Branch: `feat/docker-deploy`
   - [x] automazioni all'avvio (`AUTORUN_ENABLED=true`): `storage:link`, `migrate --force`, `optimize`
 - [x] `trustProxies` in `bootstrap/app.php` (solo `X-Forwarded-Proto`, l'IP reale lo gestisce Nginx con `TRUSTED_PROXY=local`)
 - [x] `docker build` + `docker run` in locale con MySQL di test → migration ok, `/up` 200, registrazione e upload foto ok (OAuth non testabile in locale)
-- [ ] Commit
+- [x] Commit
 
 ## Fase 2 — Pipeline GitHub Actions
 
-- [ ] `.github/workflows/deploy.yml`: trigger su push a `main`
-- [ ] Job di controllo: `tsc` + ESLint (blocca il deploy se fallisce)
-- [ ] Build `linux/arm64` su runner `ubuntu-24.04-arm`, push su `ghcr.io` con tag `latest` + SHA del commit
-- [ ] `VITE_*` passati come secrets/variables del repo
-- [ ] Primo run verde, immagine visibile su ghcr.io
+- [ ] `.github/workflows/docker.yml`: su PR verso `main` solo build (verifica), su push a `main` build + push
+- [x] Controllo tipi: già incluso, `npm run build` = `tsc && vite build` dentro il Dockerfile → se `tsc` fallisce l'immagine non nasce
+- [ ] ~~ESLint nella pipeline~~ → rimandato: oggi 1037 errori (1026 di formattazione Prettier, auto-fixabili). Da sistemare in un branch a parte, poi aggiungere il job
+- [ ] Build `linux/arm64` su runner `ubuntu-24.04-arm` (gratis per repo pubblici), push su `ghcr.io/lorenzo-lesage/barbershop` con tag `latest` + `sha-xxxxxxx`
+- [x] `VITE_*`: per ora basta il default `VITE_APP_NAME=BarberShop` nel Dockerfile
+- [ ] PR aperta → run verde
+- [ ] Merge → immagine visibile su ghcr.io
+- [ ] Visibilità del package impostata su **Public** (Watchtower la scarica senza credenziali; contiene solo codice già pubblico, nessun segreto)
 
 ## Fase 3 — Stack sulla VPS (repo Oracle-VM-Docker)
 
